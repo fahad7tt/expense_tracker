@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:personal_expense_tracker/core/utils/theme/button_theme.dart';
 import 'package:provider/provider.dart';
 import '../../../domain/entities/expense.dart';
-import '../../pages/expense_list_page.dart';
 import '../../providers/expense_provider.dart';
 
 class ButtonWidget extends StatelessWidget {
@@ -10,45 +8,57 @@ class ButtonWidget extends StatelessWidget {
   final TextEditingController amountController;
   final TextEditingController descriptionController;
   final ValueNotifier<DateTime> selectedDate;
+  final bool isEdit;
+  final Expense? expense;
 
-  const ButtonWidget({
-    super.key,
+  const ButtonWidget({super.key, 
     required this.formKey,
     required this.amountController,
     required this.descriptionController,
     required this.selectedDate,
+    this.isEdit = false,
+    this.expense,
   });
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
-        if (formKey.currentState!.validate()) {
+        final isValid = formKey.currentState!.validate();
+        if (isValid) {
           final amount = double.parse(amountController.text);
           final description = descriptionController.text;
 
-          final expense = Expense(
-            id: DateTime.now().millisecondsSinceEpoch,
-            amount: amount,
-            date: selectedDate.value,
-            description: description,
-          );
-
-          await Provider.of<ExpenseProvider>(context, listen: false)
-              .addNewExpense(expense);
+          if (isEdit && expense != null) {
+            final updatedExpense = Expense(
+              id: expense!.id,
+              amount: amount,
+              date: selectedDate.value,
+              description: description,
+            );
+            await Provider.of<ExpenseProvider>(context, listen: false).modifyExpense(updatedExpense);
+          } else {
+            final newExpense = Expense(
+              id: DateTime.now().millisecondsSinceEpoch,
+              amount: amount,
+              date: selectedDate.value,
+              description: description,
+            );
+            await Provider.of<ExpenseProvider>(context, listen: false).addExpense(newExpense);
+          }
 
           // ignore: use_build_context_synchronously
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => const ExpenseListPage(),
-            ),
-          );
+          Navigator.of(context).pop();
         }
       },
-      style: ButtonThemes.elevatedButtonStyle,
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+      ),
       child: Text(
-        'Save Expense',
-        style: ButtonThemes.elevatedButtonTextStyle,
+        isEdit ? 'Save Changes' : 'Add Expense',
+        style: TextStyle(color: Colors.grey[800]),
       ),
     );
   }

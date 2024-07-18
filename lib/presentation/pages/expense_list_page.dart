@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import '../../core/utils/theme/button_theme.dart';
 import '../providers/expense_provider.dart';
+import '../widgets/confirm_dialog/confirm_dialog.dart';
 import '../widgets/expense_list_item.dart';
 import 'add_expense_page.dart';
+import 'edit_expense_page.dart';
 
 class ExpenseListPage extends StatelessWidget {
   const ExpenseListPage({super.key});
@@ -79,7 +82,42 @@ class ExpenseListPage extends StatelessWidget {
                 return ListView.builder(
                   itemCount: expenses.length,
                   itemBuilder: (context, index) {
-                    return ExpenseListItem(expense: expenses[index]);
+                    final expense = expenses[index];
+                    return Slidable(
+                      key: ValueKey(expense.id),
+                      startActionPane: ActionPane(
+                        motion: const ScrollMotion(),
+                        children: [
+                          SlidableAction(
+                            onPressed: (context) {
+                              // Edit action
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => EditExpensePage(expense: expense),
+                                ),
+                              );
+                            },
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            icon: Icons.edit,
+                            label: 'Edit',
+                          ),
+                          SlidableAction(
+                            onPressed: (context) {
+                              // Delete action
+                               DialogService.showDeleteConfirmationDialog(context, () {
+                                Provider.of<ExpenseProvider>(context, listen: false).removeExpense(expense.id);
+                              });
+                            },
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                            icon: Icons.delete,
+                            label: 'Delete',
+                          ),
+                        ],
+                      ),
+                      child: ExpenseListItem(expense: expense),
+                    );
                   },
                 );
               },

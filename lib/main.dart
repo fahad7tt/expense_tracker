@@ -35,11 +35,12 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Personal Expense Tracker',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
+        theme: ThemeData.light(),
+        darkTheme: ThemeData.dark(),
+        themeMode: ThemeMode.system,
         home: const ExpenseListPage(),
         debugShowCheckedModeBanner: false,
+        
       ),
     );
   }
