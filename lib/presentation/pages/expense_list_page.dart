@@ -10,13 +10,61 @@ class ExpenseListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Fetch expenses immediately when building the widget
-    Provider.of<ExpenseProvider>(context, listen: false).fetchAllExpenses();
-
     return Scaffold(
       appBar: AppBar(title: const Text('Expense List')),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Provider.of<ExpenseProvider>(context, listen: false).sortExpensesByDate();
+                  },
+                  style: ButtonThemes.elevatedButtonStyle,
+                  child: Consumer<ExpenseProvider>(
+                    builder: (context, provider, child) {
+                      return Text(
+                        provider.isAscending ? 'Sort Descending' : 'Sort Ascending',
+                        style: ButtonThemes.elevatedButtonTextStyle,
+                      );
+                    },
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    final DateTimeRange? picked = await showDateRangePicker(
+                      context: context,
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2101),
+                    );
+                    if (picked != null) {
+                      // ignore: use_build_context_synchronously
+                      Provider.of<ExpenseProvider>(context, listen: false)
+                          .filterExpensesByDate(picked.start, picked.end);
+                    }
+                  },
+                  style: ButtonThemes.elevatedButtonStyle,
+                  child: Text(
+                    'Filter by Date',
+                    style: ButtonThemes.elevatedButtonTextStyle,
+                  ),
+                ),
+                 ElevatedButton(
+                  onPressed: () {
+                    Provider.of<ExpenseProvider>(context, listen: false).clearFilters();
+                  },
+                  style: ButtonThemes.elevatedButtonStyle,
+                  child: Text(
+                    'Reset Filters',
+                    style: ButtonThemes.elevatedButtonTextStyle,
+                  ),
+                ),
+              ],
+            ),
+          ),
           Expanded(
             child: Consumer<ExpenseProvider>(
               builder: (context, provider, child) {

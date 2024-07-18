@@ -19,6 +19,9 @@ class ExpenseProvider with ChangeNotifier {
   });
 
   List<Expense> _expenses = [];
+  bool _isAscending = true;
+  DateTime? _startDate;
+  DateTime? _endDate;
 
   List<Expense> get expenses => _expenses;
 
@@ -41,4 +44,27 @@ class ExpenseProvider with ChangeNotifier {
     await deleteExpense(id);
     fetchAllExpenses();
   }
+
+  void sortExpensesByDate() {
+    _isAscending = !_isAscending;
+    _expenses.sort((a, b) => _isAscending ? a.date.compareTo(b.date) : b.date.compareTo(a.date));
+    notifyListeners();
+  }
+
+  void filterExpensesByDate(DateTime startDate, DateTime endDate) {
+    _startDate = startDate;
+    _endDate = endDate;
+    _expenses = _expenses.where((expense) => expense.date.isAfter(startDate) && expense.date.isBefore(endDate)).toList();
+    notifyListeners();
+  }
+
+  void clearFilters() {
+    _startDate = null;
+    _endDate = null;
+    fetchAllExpenses();
+  }
+
+  bool get isAscending => _isAscending;
+  DateTime? get startDate => _startDate;
+  DateTime? get endDate => _endDate;
 }
