@@ -10,8 +10,24 @@ class ExpenseListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Fetch expenses immediately when building the widget
+    Provider.of<ExpenseProvider>(context, listen: false).fetchAllExpenses();
     return Scaffold(
-      appBar: AppBar(title: const Text('Expense List')),
+      appBar: AppBar(
+        title: const Text('Expense List'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: IconButton(
+              onPressed: () {
+                Provider.of<ExpenseProvider>(context, listen: false).clearFilters();
+              },
+              icon: const Icon(Icons.restore_sharp),
+              tooltip: 'Reset Filters',
+            ),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           Padding(
@@ -49,16 +65,6 @@ class ExpenseListPage extends StatelessWidget {
                   style: ButtonThemes.elevatedButtonStyle,
                   child: Text(
                     'Filter by Date',
-                    style: ButtonThemes.elevatedButtonTextStyle,
-                  ),
-                ),
-                 ElevatedButton(
-                  onPressed: () {
-                    Provider.of<ExpenseProvider>(context, listen: false).clearFilters();
-                  },
-                  style: ButtonThemes.elevatedButtonStyle,
-                  child: Text(
-                    'Reset Filters',
                     style: ButtonThemes.elevatedButtonTextStyle,
                   ),
                 ),
