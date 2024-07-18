@@ -10,7 +10,7 @@ class ExpenseListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text('\$${expense.amount}'),
+      title: Text('₹${expense.amount}'),
       subtitle: Text(expense.description),
       trailing: Text(DateFormat.yMMMd().format(expense.date)),
     );

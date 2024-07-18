@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../core/utils/theme/button_theme.dart';
 import '../providers/expense_provider.dart';
 import '../widgets/expense_list_item.dart';
 import 'add_expense_page.dart';
@@ -11,7 +12,7 @@ class ExpenseListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Fetch expenses immediately when building the widget
     Provider.of<ExpenseProvider>(context, listen: false).fetchAllExpenses();
-    
+
     return Scaffold(
       appBar: AppBar(title: const Text('Expense List')),
       body: Column(
@@ -38,18 +39,14 @@ class ExpenseListPage extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (_) => AddExpensePage(), // Navigate to AddExpensePage
+                      builder: (_) => AddExpensePage(),
                     ),
                   );
                 },
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(0), // Make corners sharp
-                  ),
-                ),
+                style: ButtonThemes.elevatedButtonStyle,
                 child: Text(
                   'Add Expense',
-                  style: TextStyle(color: Colors.grey[800]), // Dark grey text color
+                  style: ButtonThemes.elevatedButtonTextStyle,
                 ),
               ),
             ),
