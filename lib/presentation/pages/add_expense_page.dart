@@ -11,7 +11,9 @@ class AddExpensePage extends StatelessWidget {
   final ValueNotifier<DateTime> selectedDate = ValueNotifier(DateTime.now());
   final DateFormat dateFormat = DateFormat('dd-MM-yyyy'); // Date format
 
-  AddExpensePage({Key? key}) : super(key: key);
+  final _formKey = GlobalKey<FormState>(); // GlobalKey for Form
+
+  AddExpensePage({super.key});
 
   String? validateDescription(String? value) {
     if (value == null || value.isEmpty) {
@@ -30,111 +32,114 @@ class AddExpensePage extends StatelessWidget {
       appBar: AppBar(title: const Text('Add Expense')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: TextFormField(
-                controller: amountController,
-                decoration: const InputDecoration(
-                  labelText: 'Amount',
-                  border: InputBorder.none,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8.0),
                 ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter amount';
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: TextFormField(
+                  controller: amountController,
+                  decoration: const InputDecoration(
+                    labelText: 'Amount',
+                    border: InputBorder.none,
+                  ),
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter amount';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 22.0),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: TextFormField(
+                  controller: descriptionController,
+                  decoration: const InputDecoration(
+                    labelText: 'Description',
+                    border: InputBorder.none,
+                  ),
+                  validator: validateDescription,
+                  maxLines: 3
+                ),
+              ),
+              const SizedBox(height: 22.0),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: ValueListenableBuilder<DateTime>(
+                  valueListenable: selectedDate,
+                  builder: (context, date, child) {
+                    return ListTile(
+                      title: Text(
+                        dateFormat.format(date),
+                      ),
+                      trailing: const Icon(Icons.calendar_today),
+                      onTap: () async {
+                        final DateTime? picked = await showDatePicker(
+                          context: context,
+                          initialDate: date,
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2101),
+                        );
+                        if (picked != null && picked != date) {
+                          selectedDate.value = picked;
+                        }
+                      },
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 28.0),
+              ElevatedButton(
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    final amount = double.parse(amountController.text);
+                    final description = descriptionController.text;
+          
+                    final expense = Expense(
+                      id: DateTime.now().millisecondsSinceEpoch,
+                      amount: amount,
+                      date: selectedDate.value,
+                      description: description,
+                    );
+          
+                    await Provider.of<ExpenseProvider>(context, listen: false)
+                        .addNewExpense(expense);
+          
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => const ExpenseListPage(),
+                      ),
+                    );
                   }
-                  return null;
                 },
-              ),
-            ),
-            const SizedBox(height: 22.0),
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: TextFormField(
-                controller: descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Description',
-                  border: InputBorder.none,
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0), // Sharp corners
+                  ),
                 ),
-                validator: validateDescription,
-                maxLines: 3
-              ),
-            ),
-            const SizedBox(height: 22.0),
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              child: ValueListenableBuilder<DateTime>(
-                valueListenable: selectedDate,
-                builder: (context, date, child) {
-                  return ListTile(
-                    title: Text(
-                      dateFormat.format(date),
-                    ),
-                    trailing: const Icon(Icons.calendar_today),
-                    onTap: () async {
-                      final DateTime? picked = await showDatePicker(
-                        context: context,
-                        initialDate: date,
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2101),
-                      );
-                      if (picked != null && picked != date) {
-                        selectedDate.value = picked;
-                      }
-                    },
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 28.0),
-            ElevatedButton(
-              onPressed: () async {
-                if (Form.of(context).validate()) {
-                  final amount = double.parse(amountController.text);
-                  final description = descriptionController.text;
-
-                  final expense = Expense(
-                    id: DateTime.now().millisecondsSinceEpoch,
-                    amount: amount,
-                    date: selectedDate.value,
-                    description: description,
-                  );
-
-                  await Provider.of<ExpenseProvider>(context, listen: false)
-                      .addNewExpense(expense);
-
-                  // ignore: use_build_context_synchronously
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (context) => const ExpenseListPage(),
-                    ),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0), // Sharp corners
+                child: Text(
+                  'Save Expense',
+                  style: TextStyle(color: Colors.grey[800]),
                 ),
               ),
-              child: Text(
-                'Save Expense',
-                style: TextStyle(color: Colors.grey[800]),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
