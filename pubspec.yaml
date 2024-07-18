@@ -18,8 +18,8 @@ dependencies:
   hive_flutter: ^1.1.0
 
   #firebase
-  firebase_core: ^3.2.0
-  firebase_auth: ^5.1.2
+  # firebase_core: ^3.2.0
+  # firebase_auth: ^5.1.2
 
   #local notifications
   flutter_local_notifications: ^17.2.1+2

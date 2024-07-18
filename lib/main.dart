@@ -9,12 +9,14 @@ import 'presentation/pages/expense_list_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Initialize local notifications plugin
-  // await initNotifications();
+  // final notificationInitialization = NotificationInitialization();
+  // await notificationInitialization.initializeNotifications();
+
   await Hive.initFlutter();
   Hive.registerAdapter(ExpenseModelAdapter());
 
   await di.init();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -27,13 +29,17 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<ExpenseProvider>(
           create: (_) => di.sl<ExpenseProvider>(),
         ),
+        // Provider<NotificationInitialization>(
+        //   create: (_) => NotificationInitialization(),
+        // ),
       ],
       child: MaterialApp(
         title: 'Personal Expense Tracker',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: ExpenseListPage(),
+        home: const ExpenseListPage(),
+        debugShowCheckedModeBanner: false,
       ),
     );
   }

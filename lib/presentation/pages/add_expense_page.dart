@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../domain/entities/expense.dart';
 import '../providers/expense_provider.dart';
+import 'expense_list_page.dart';
 
 // ignore: must_be_immutable
 class AddExpensePage extends StatelessWidget {
@@ -44,9 +45,22 @@ class AddExpensePage extends StatelessWidget {
                 await Provider.of<ExpenseProvider>(context, listen: false)
                     .addNewExpense(expense);
 
-                Navigator.pop(context);
+                // ignore: use_build_context_synchronously
+                Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => const ExpenseListPage(),
+                      ),
+                    );
               },
-              child: const Text('Add Expense'),
+              style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(0), // Make corners sharp
+                  ),
+                ),
+                child: Text(
+                  'Save Expense',
+                  style: TextStyle(color: Colors.grey[800]),
+                ),
             ),
           ],
         ),

@@ -1,11 +1,9 @@
-// ignore_for_file: annotate_overrides, overridden_fields
-
 import 'package:hive/hive.dart';
-import 'package:personal_expense_tracker/domain/entities/expense.dart';
+import '../../domain/entities/expense.dart';
 part 'expense_model.g.dart';
 
 @HiveType(typeId: 1)
-class ExpenseModel extends Expense {
+class ExpenseModel {
   @HiveField(0)
   final int id;
 
@@ -23,7 +21,7 @@ class ExpenseModel extends Expense {
     required this.amount,
     required this.date,
     required this.description,
-  }) : super(id: id, amount: amount, date: date, description: description);
+  });
 
   factory ExpenseModel.fromEntity(Expense expense) {
     return ExpenseModel(
@@ -40,6 +38,20 @@ class ExpenseModel extends Expense {
       amount: amount,
       date: date,
       description: description,
+    );
+  }
+
+  ExpenseModel copyWith({
+    int? id,
+    double? amount,
+    DateTime? date,
+    String? description,
+  }) {
+    return ExpenseModel(
+      id: id ?? this.id,
+      amount: amount ?? this.amount,
+      date: date ?? this.date,
+      description: description ?? this.description,
     );
   }
 }
