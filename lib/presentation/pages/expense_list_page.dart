@@ -9,13 +9,17 @@ import 'add_expense_page.dart';
 import 'edit_expense_page.dart';
 
 class ExpenseListPage extends StatelessWidget {
-  const ExpenseListPage({super.key});
+  ExpenseListPage({super.key});
+
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
     // Fetch expenses immediately when building the widget
     Provider.of<ExpenseProvider>(context, listen: false).fetchAllExpenses();
+
     return Scaffold(
+      key: _navigatorKey,
       appBar: AppBar(
         title: const Text('Expense List'),
         actions: [
@@ -105,9 +109,7 @@ class ExpenseListPage extends StatelessWidget {
                           SlidableAction(
                             onPressed: (context) {
                               // Delete action
-                               DialogService.showDeleteConfirmationDialog(context, () {
-                                Provider.of<ExpenseProvider>(context, listen: false).removeExpense(expense.id);
-                              });
+                              _showDeleteDialog(expense.id);
                             },
                             backgroundColor: Colors.red,
                             foregroundColor: Colors.white,
@@ -146,5 +148,11 @@ class ExpenseListPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _showDeleteDialog(int expenseId) {
+    DialogService.showDeleteConfirmationDialog(_navigatorKey.currentContext!, () {
+      Provider.of<ExpenseProvider>(_navigatorKey.currentContext!, listen: false).removeExpense(expenseId);
+    });
   }
 }
