@@ -23,39 +23,41 @@ class AddExpensePage extends StatelessWidget {
       appBar: AppBar(title: const Text('Add Expense')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TypePicker(selectedType: selectedType),
-              const SizedBox(height: 22.0),
-              FormFieldWidget(
-                controller: amountController,
-                labelText: 'Amount',
-                keyboardType: TextInputType.number,
-                validator: validateAmount,
-              ),
-              const SizedBox(height: 22.0),
-              FormFieldWidget(
-                controller: descriptionController,
-                labelText: 'Description',
-                maxLines: 3,
-                validator: validateDescription,
-              ),
-              const SizedBox(height: 22.0),
-              DatePickerWidget(
-                selectedDate: selectedDate,
-                dateFormat: dateFormat,
-              ),
-              const SizedBox(height: 28.0),
-              ButtonWidget(
-                formKey: _formKey,
-                amountController: amountController,
-                descriptionController: descriptionController,
-                selectedDate: selectedDate,
-                selectedType: selectedType
-              ),
-            ],
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                TypePicker(selectedType: selectedType),
+                const SizedBox(height: 22.0),
+                FormFieldWidget(
+                  controller: amountController,
+                  labelText: 'Amount',
+                  keyboardType: TextInputType.number,
+                  validator: validateAmount,
+                ),
+                const SizedBox(height: 22.0),
+                FormFieldWidget(
+                  controller: descriptionController,
+                  labelText: 'Description',
+                  maxLines: 3,
+                  validator: validateDescription,
+                ),
+                const SizedBox(height: 22.0),
+                DatePickerWidget(
+                  selectedDate: selectedDate,
+                  dateFormat: dateFormat,
+                ),
+                const SizedBox(height: 28.0),
+                ButtonWidget(
+                  formKey: _formKey,
+                  amountController: amountController,
+                  descriptionController: descriptionController,
+                  selectedDate: selectedDate,
+                  selectedType: selectedType
+                ),
+              ],
+            ),
           ),
         ),
       ),
