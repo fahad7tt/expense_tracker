@@ -21,7 +21,7 @@ class ExpenseListPage extends StatelessWidget {
     return Scaffold(
       key: _navigatorKey,
       appBar: AppBar(
-        title: const Text('Expense List'), 
+        title: const Text('Expense List'),
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6),
@@ -34,6 +34,15 @@ class ExpenseListPage extends StatelessWidget {
             ),
           ),
         ],
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.secondary],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: Column(
         children: [
@@ -118,7 +127,12 @@ class ExpenseListPage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: ExpenseListItem(expense: expense),
+                      child: Card(
+                        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        child: ExpenseListItem(expense: expense),
+                      ),
                     );
                   },
                 );

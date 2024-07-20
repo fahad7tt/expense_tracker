@@ -10,9 +10,24 @@ class ExpenseListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text('₹${expense.amount}'),
-      subtitle: Text(expense.description),
-      trailing: Text(DateFormat.yMMMd().format(expense.date)),
+      contentPadding: const EdgeInsets.all(16),
+      leading: Icon(
+        Icons.money_off,
+        color: Theme.of(context).colorScheme.primary,
+      ),
+      title: Text(
+        '₹${expense.amount}',
+        style: Theme.of(context).textTheme.titleLarge,
+      ),
+      subtitle: Text(
+        expense.description,
+        style: Theme.of(context).textTheme.bodyMedium,
+      ),
+      trailing: Text(
+        DateFormat.yMMMd().format(expense.date),
+        style: Theme.of(context).textTheme.bodySmall,
+      ),
+      tileColor: Theme.of(context).cardTheme.color,
     );
   }
 }
