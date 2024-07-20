@@ -18,11 +18,14 @@ final ThemeData lightTheme = ThemeData(
     titleTextStyle: TextStyle(
       color: Colors.white,
       fontSize: 20,
-      fontWeight: FontWeight.bold,
+      fontWeight: FontWeight.w400,
     ),
+    iconTheme: IconThemeData(
+    color: iconColor
+  ),
   ),
   cardTheme: const CardTheme(
-    color: Colors.white,
+    color: cardColor,
   ),
   dialogTheme: const DialogTheme(
     backgroundColor: Colors.white,
@@ -66,12 +69,12 @@ final ThemeData lightTheme = ThemeData(
     bodyMedium: TextStyle(
       color: lightGrayText,
       fontSize: 14,
-      fontWeight: FontWeight.normal,
+      fontWeight: FontWeight.bold,
     ),
     labelLarge: TextStyle(
       color: Colors.white,
       fontSize: 16,
-      fontWeight: FontWeight.bold,
+      fontWeight: FontWeight.w400,
     ),
     bodySmall: TextStyle(
       color: lightGrayText,
@@ -85,8 +88,8 @@ final ThemeData lightTheme = ThemeData(
     ),
   ),
   inputDecorationTheme: const InputDecorationTheme(
-    filled: true,
-    fillColor: lightGray,
+  //   filled: true,
+  //   fillColor: lightGray,
     border: OutlineInputBorder(
       borderSide: BorderSide(color: lightGrayText),
     ),

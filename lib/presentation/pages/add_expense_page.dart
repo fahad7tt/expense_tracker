@@ -41,26 +41,27 @@ class AddExpensePage extends StatelessWidget {
             key: _formKey,
             child: Column(
               children: [
+                const SizedBox(height: 12.0),
                 TypePicker(
                   selectedType: selectedType,
                   typesNotifier: typesNotifier,
                   typesBox: typesBox,
                 ),
-                const SizedBox(height: 22.0),
+                const SizedBox(height: 24.0),
                 FormFieldWidget(
                   controller: amountController,
                   labelText: 'Amount',
                   keyboardType: TextInputType.number,
                   validator: validateAmount,
                 ),
-                const SizedBox(height: 22.0),
+                const SizedBox(height: 24.0),
                 FormFieldWidget(
                   controller: descriptionController,
                   labelText: 'Description',
                   maxLines: 3,
                   validator: validateDescription,
                 ),
-                const SizedBox(height: 22.0),
+                const SizedBox(height: 24.0),
                 DatePickerWidget(
                   selectedDate: selectedDate,
                   dateFormat: dateFormat,

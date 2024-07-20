@@ -22,13 +22,15 @@ class ExpenseListPage extends StatelessWidget {
       key: _navigatorKey,
       appBar: AppBar(
         title: const Text('Expense List'),
-        backgroundColor: Theme.of(context).colorScheme.primary, // Deep Blue
+        centerTitle: true,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: IconButton(
               onPressed: () {
-                Provider.of<ExpenseProvider>(context, listen: false).clearFilters();
+                Provider.of<ExpenseProvider>(context, listen: false)
+                    .clearFilters();
               },
               icon: const Icon(Icons.restore_sharp),
               tooltip: 'Reset Filters',
@@ -45,13 +47,16 @@ class ExpenseListPage extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    Provider.of<ExpenseProvider>(context, listen: false).sortExpensesByDate();
+                    Provider.of<ExpenseProvider>(context, listen: false)
+                        .sortExpensesByDate();
                   },
-                  style: ButtonThemes.elevatedButtonStyle,
+                  style: ButtonThemes.sortFilterButtonStyle,
                   child: Consumer<ExpenseProvider>(
                     builder: (context, provider, child) {
                       return Text(
-                        provider.isAscending ? 'Sort Descending' : 'Sort Ascending',
+                        provider.isAscending
+                            ? 'Sort Descending'
+                            : 'Sort Ascending',
                         style: ButtonThemes.elevatedButtonTextStyle,
                       );
                     },
@@ -70,8 +75,8 @@ class ExpenseListPage extends StatelessWidget {
                           .filterExpensesByDate(picked.start, picked.end);
                     }
                   },
-                  style: ButtonThemes.elevatedButtonStyle,
-                  child: Text(
+                  style: ButtonThemes.sortFilterButtonStyle,
+                  child: const Text(
                     'Filter by Date',
                     style: ButtonThemes.elevatedButtonTextStyle,
                   ),
@@ -98,11 +103,13 @@ class ExpenseListPage extends StatelessWidget {
                               // Edit action
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (_) => EditExpensePage(expense: expense),
+                                  builder: (_) =>
+                                      EditExpensePage(expense: expense),
                                 ),
                               );
                             },
-                            backgroundColor: Theme.of(context).colorScheme.primary,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
                             foregroundColor: Colors.white,
                             icon: Icons.edit,
                             label: 'Edit',
@@ -112,7 +119,8 @@ class ExpenseListPage extends StatelessWidget {
                               // Delete action
                               _showDeleteDialog(expense.id);
                             },
-                            backgroundColor: Theme.of(context).colorScheme.error,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.error,
                             foregroundColor: Colors.white,
                             icon: Icons.delete,
                             label: 'Delete',
@@ -120,9 +128,14 @@ class ExpenseListPage extends StatelessWidget {
                         ],
                       ),
                       child: Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                        elevation: 4,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 16),
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(6), // Curved border
+                        ),
+                        clipBehavior: Clip.antiAlias,
                         child: ExpenseListItem(expense: expense),
                       ),
                     );
@@ -143,8 +156,8 @@ class ExpenseListPage extends StatelessWidget {
                     ),
                   );
                 },
-                style: ButtonThemes.elevatedButtonStyle,
-                child: Text(
+                 style: ButtonThemes.addExpenseButtonStyle,
+                child: const Text(
                   'Add Expense',
                   style: ButtonThemes.elevatedButtonTextStyle,
                 ),
@@ -157,8 +170,10 @@ class ExpenseListPage extends StatelessWidget {
   }
 
   void _showDeleteDialog(int expenseId) {
-    DialogService.showDeleteConfirmationDialog(_navigatorKey.currentContext!, () {
-      Provider.of<ExpenseProvider>(_navigatorKey.currentContext!, listen: false).removeExpense(expenseId);
+    DialogService.showDeleteConfirmationDialog(_navigatorKey.currentContext!,
+        () {
+      Provider.of<ExpenseProvider>(_navigatorKey.currentContext!, listen: false)
+          .removeExpense(expenseId);
     });
   }
 }

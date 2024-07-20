@@ -12,15 +12,15 @@ class ExpenseListItem extends StatelessWidget {
     return ListTile(
       contentPadding: const EdgeInsets.all(16),
       leading: Icon(
-        Icons.money_off,
+        Icons.currency_exchange,
         color: Theme.of(context).colorScheme.primary,
       ),
       title: Text(
-        '₹${expense.amount}',
+        expense.type!,
         style: Theme.of(context).textTheme.titleLarge,
       ),
       subtitle: Text(
-        expense.description,
+        '₹${expense.amount}',
         style: Theme.of(context).textTheme.bodyMedium,
       ),
       trailing: Text(

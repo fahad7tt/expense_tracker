@@ -19,7 +19,7 @@ class ExpenseProvider with ChangeNotifier {
   });
 
   List<Expense> _expenses = [];
-  List<String> _customTypes = [];
+  final List<String> _customTypes = [];
   bool _isAscending = true;
   DateTime? _startDate;
   DateTime? _endDate;

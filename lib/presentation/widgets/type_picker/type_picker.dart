@@ -28,10 +28,10 @@ class TypePicker extends StatelessWidget {
           child: TextFormField(
             readOnly: true,
             decoration: const InputDecoration(
-              hintText: 'Select type',
+              labelText: 'Select type',
               suffixIcon: Icon(Icons.arrow_drop_down),
               border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(vertical: 16.0),
+              contentPadding: EdgeInsets.symmetric(vertical: 10.0),
             ),
             onTap: () async {
               final selected = await _showTypeBottomSheet(context);
@@ -47,34 +47,41 @@ class TypePicker extends StatelessWidget {
   }
 
   Future<String?> _showTypeBottomSheet(BuildContext context) async {
-    return showModalBottomSheet<String>(
-      context: context,
-      builder: (BuildContext context) {
-        return ValueListenableBuilder<List<String>>(
-          valueListenable: typesNotifier,
-          builder: (context, types, child) {
-            return ListView.builder(
-              itemCount: types.length,
-              itemBuilder: (context, index) {
-                final type = types[index];
-                return ListTile(
-                  title: Text(type),
-                  onTap: () {
-                    if (type == 'Others') {
-                      Navigator.pop(context);
-                      _showCustomTypeDialog(context);
-                    } else {
-                      Navigator.pop(context, type);
-                    }
-                  },
-                );
-              },
-            );
-          },
-        );
-      },
-    );
-  }
+  return showModalBottomSheet<String>(
+    context: context,
+    builder: (BuildContext context) {
+      return ValueListenableBuilder<List<String>>(
+        valueListenable: typesNotifier,
+        builder: (context, types, child) {
+          // Sort the list with 'Others' at the end
+          final sortedTypes = List<String>.from(types)..sort((a, b) {
+            if (a == 'Others') return 1;
+            if (b == 'Others') return -1;
+            return a.compareTo(b);
+          });
+
+          return ListView.builder(
+            itemCount: sortedTypes.length,
+            itemBuilder: (context, index) {
+              final type = sortedTypes[index];
+              return ListTile(
+                title: Text(type),
+                onTap: () {
+                  if (type == 'Others') {
+                    Navigator.pop(context);
+                    _showCustomTypeDialog(context);
+                  } else {
+                    Navigator.pop(context, type);
+                  }
+                },
+              );
+            },
+          );
+        },
+      );
+    },
+  );
+}
 
   Future<void> _showCustomTypeDialog(BuildContext context) async {
     final TextEditingController customTypeController = TextEditingController();
@@ -101,21 +108,26 @@ class TypePicker extends StatelessWidget {
               },
             ),
             TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                if (formKey.currentState?.validate() ?? false) {
-                  final customType = customTypeController.text;
-                  Navigator.of(context).pop();
-                  
+            child: const Text('OK'),
+            onPressed: () {
+              if (formKey.currentState?.validate() ?? false) {
+                final customType = customTypeController.text;
+
+                // Ensure the custom type isn't already present
+                if (!typesBox.values.contains(customType)) {
                   // Update Hive box with new custom type
                   typesBox.add(customType);
 
                   // Update ValueNotifier with new list
-                  typesNotifier.value = List<String>.from(typesBox.values)..add(customType);
-                  selectedType.value = customType;
+                  typesNotifier.value = typesBox.values.toList();
                 }
-              },
-            ),
+                
+                // Update selectedType and close dialog
+                selectedType.value = customType;
+                Navigator.of(context).pop();
+              }
+            },
+          ),
           ],
         );
       },
