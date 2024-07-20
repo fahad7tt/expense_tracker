@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:personal_expense_tracker/data/models/expense_model.dart';
 import 'package:provider/provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'core/utils/theme/theme_data.dart';
 import 'injection_container.dart' as di;
 import 'presentation/providers/expense_provider.dart';
 import 'presentation/pages/expense_list_page.dart';
@@ -35,8 +36,8 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Personal Expense Tracker',
-        theme: ThemeData.light(),
-        darkTheme: ThemeData.dark(),
+        theme: lightTheme,
+        darkTheme: darkTheme,
         themeMode: ThemeMode.system,
         home: ExpenseListPage(),
         debugShowCheckedModeBanner: false,

@@ -22,9 +22,10 @@ class ExpenseListPage extends StatelessWidget {
       key: _navigatorKey,
       appBar: AppBar(
         title: const Text('Expense List'),
+        backgroundColor: Theme.of(context).colorScheme.primary, // Deep Blue
         actions: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: IconButton(
               onPressed: () {
                 Provider.of<ExpenseProvider>(context, listen: false).clearFilters();
@@ -34,15 +35,6 @@ class ExpenseListPage extends StatelessWidget {
             ),
           ),
         ],
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.secondary],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
       ),
       body: Column(
         children: [
@@ -110,7 +102,7 @@ class ExpenseListPage extends StatelessWidget {
                                 ),
                               );
                             },
-                            backgroundColor: Colors.blue,
+                            backgroundColor: Theme.of(context).colorScheme.primary,
                             foregroundColor: Colors.white,
                             icon: Icons.edit,
                             label: 'Edit',
@@ -120,7 +112,7 @@ class ExpenseListPage extends StatelessWidget {
                               // Delete action
                               _showDeleteDialog(expense.id);
                             },
-                            backgroundColor: Colors.red,
+                            backgroundColor: Theme.of(context).colorScheme.error,
                             foregroundColor: Colors.white,
                             icon: Icons.delete,
                             label: 'Delete',

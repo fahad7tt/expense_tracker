@@ -1,1 +1,0 @@
-const String hiveBox = 'expenses';
