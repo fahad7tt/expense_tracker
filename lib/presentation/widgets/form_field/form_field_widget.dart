@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
 
 class FormFieldWidget extends StatelessWidget {
   final TextEditingController controller;
@@ -20,7 +21,7 @@ class FormFieldWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
+        border: Border.all(color: darkColor),
         borderRadius: BorderRadius.circular(8.0),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 12.0),

@@ -5,7 +5,7 @@ class ButtonThemes {
   static final ButtonStyle sortFilterButtonStyle = ElevatedButton.styleFrom(
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(6.0),
-    ), backgroundColor: Colors.amber[900],
+    ), backgroundColor: const Color.fromARGB(255, 255, 152, 0),
   );
 
   static final ButtonStyle addExpenseButtonStyle = ElevatedButton.styleFrom(

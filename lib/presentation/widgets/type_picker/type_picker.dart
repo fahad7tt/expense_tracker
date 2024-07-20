@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
 import '../../../core/utils/validation/form_validation.dart';
 
 class TypePicker extends StatelessWidget {
@@ -21,7 +22,7 @@ class TypePicker extends StatelessWidget {
       builder: (context, value, child) {
         return Container(
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
+            border: Border.all(color: darkColor),
             borderRadius: BorderRadius.circular(8.0),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 12.0),

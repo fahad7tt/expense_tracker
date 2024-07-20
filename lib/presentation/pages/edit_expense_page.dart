@@ -35,7 +35,8 @@ class EditExpensePage extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Edit Expense')),
+      appBar: AppBar(title: const Text('Edit Expense'),
+      centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(

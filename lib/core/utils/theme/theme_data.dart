@@ -5,19 +5,19 @@ import '../constants/constants.dart';
 final ThemeData lightTheme = ThemeData(
   colorScheme: const ColorScheme.light(
     primary: deepBlue,
-    secondary: softBlue,
+    secondary: Color.fromARGB(255, 9, 155, 14),
     surface: lightGray,
     error: errorColor,
-    onPrimary: Colors.white,
-    onSecondary: Colors.black,
-    onSurface: darkGray,
-    onError: Colors.white,
+    onPrimary: lightColor,
+    onSecondary: darkColor,
+    onSurface: darkColor,
+    onError: lightColor,
   ),
   appBarTheme: const AppBarTheme(
     color: deepBlue,
     titleTextStyle: TextStyle(
-      color: Colors.white,
-      fontSize: 20,
+      color: lightColor,
+      fontSize: 22,
       fontWeight: FontWeight.w400,
     ),
     iconTheme: IconThemeData(
@@ -28,7 +28,7 @@ final ThemeData lightTheme = ThemeData(
     color: cardColor,
   ),
   dialogTheme: const DialogTheme(
-    backgroundColor: Colors.white,
+    backgroundColor: lightColor,
   ),
   textTheme: const TextTheme(
     headlineLarge: TextStyle(
@@ -41,14 +41,16 @@ final ThemeData lightTheme = ThemeData(
       fontSize: 28,
       fontWeight: FontWeight.bold,
     ),
+    // delete text
     headlineSmall: TextStyle(
       color: darkGray,
       fontSize: 24,
       fontWeight: FontWeight.normal,
     ),
+    // type name text
     titleLarge: TextStyle(
-      color: darkGray,
-      fontSize: 22,
+      color: Colors.black,
+      fontSize: 20,
       fontWeight: FontWeight.bold,
     ),
     titleMedium: TextStyle(
@@ -56,30 +58,35 @@ final ThemeData lightTheme = ThemeData(
       fontSize: 20,
       fontWeight: FontWeight.normal,
     ),
+    
     titleSmall: TextStyle(
       color: darkGray,
       fontSize: 18,
       fontWeight: FontWeight.normal,
     ),
+    // edit textfields
     bodyLarge: TextStyle(
       color: darkGray,
       fontSize: 16,
       fontWeight: FontWeight.normal,
     ),
+    // calendar dates
     bodyMedium: TextStyle(
+      color: deepBlue,
+      fontSize: 15,
+      fontWeight: FontWeight.bold,
+    ),
+    // calendar save button
+    labelLarge: TextStyle(
+      color: lightColor,
+      fontSize: 16,
+      fontWeight: FontWeight.bold,
+    ),
+    // date text
+    bodySmall: TextStyle(
       color: lightGrayText,
       fontSize: 14,
       fontWeight: FontWeight.bold,
-    ),
-    labelLarge: TextStyle(
-      color: Colors.white,
-      fontSize: 16,
-      fontWeight: FontWeight.w400,
-    ),
-    bodySmall: TextStyle(
-      color: lightGrayText,
-      fontSize: 12,
-      fontWeight: FontWeight.normal,
     ),
     labelSmall: TextStyle(
       color: lightGrayText,
@@ -88,13 +95,11 @@ final ThemeData lightTheme = ThemeData(
     ),
   ),
   inputDecorationTheme: const InputDecorationTheme(
-  //   filled: true,
-  //   fillColor: lightGray,
     border: OutlineInputBorder(
       borderSide: BorderSide(color: lightGrayText),
     ),
   ),
-  scaffoldBackgroundColor: Colors.white, 
+  scaffoldBackgroundColor: lightColor, 
   bottomAppBarTheme: const BottomAppBarTheme(color: deepBlue),
 );
 
@@ -103,18 +108,18 @@ final ThemeData lightTheme = ThemeData(
 final ThemeData darkTheme = ThemeData(
   colorScheme: const ColorScheme.dark(
     primary: deepBlue,
-    secondary: softBlue,
+    secondary: Colors.green,
     surface: darkGray,
     error: errorColor,
-    onPrimary: Colors.white,
-    onSecondary: Colors.black,
-    onSurface: Colors.white,
-    onError: Colors.white,
+    onPrimary: lightColor,
+    onSecondary: darkColor,
+    onSurface: lightColor,
+    onError: lightColor,
   ),
   appBarTheme: const AppBarTheme(
     color: deepBlue,
     titleTextStyle: TextStyle(
-      color: Colors.white,
+      color: lightColor,
       fontSize: 20,
       fontWeight: FontWeight.bold,
     ),
@@ -127,37 +132,37 @@ final ThemeData darkTheme = ThemeData(
   ),
   textTheme: const TextTheme(
     headlineLarge: TextStyle(
-      color: Colors.white,
+      color: lightColor,
       fontSize: 32,
       fontWeight: FontWeight.bold,
     ),
     headlineMedium: TextStyle(
-      color: Colors.white,
+      color: lightColor,
       fontSize: 28,
       fontWeight: FontWeight.bold,
     ),
     headlineSmall: TextStyle(
-      color: Colors.white,
+      color: lightColor,
       fontSize: 24,
       fontWeight: FontWeight.normal,
     ),
     titleLarge: TextStyle(
-      color: Colors.white,
+      color: lightColor,
       fontSize: 22,
       fontWeight: FontWeight.bold,
     ),
     titleMedium: TextStyle(
-      color: Colors.white,
+      color: lightColor,
       fontSize: 20,
       fontWeight: FontWeight.normal,
     ),
     titleSmall: TextStyle(
-      color: Colors.white,
+      color: lightColor,
       fontSize: 18,
       fontWeight: FontWeight.normal,
     ),
     bodyLarge: TextStyle(
-      color: Colors.white,
+      color: lightColor,
       fontSize: 16,
       fontWeight: FontWeight.normal,
     ),
@@ -167,7 +172,7 @@ final ThemeData darkTheme = ThemeData(
       fontWeight: FontWeight.normal,
     ),
     labelLarge: TextStyle(
-      color: Colors.white,
+      color: lightColor,
       fontSize: 16,
       fontWeight: FontWeight.bold,
     ),
@@ -183,8 +188,6 @@ final ThemeData darkTheme = ThemeData(
     ),
   ),
   inputDecorationTheme: const InputDecorationTheme(
-    filled: true,
-    fillColor: darkGray,
     border: OutlineInputBorder(
       borderSide: BorderSide(color: lightGrayText),
     ),

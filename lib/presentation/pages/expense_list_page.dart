@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
 import 'package:provider/provider.dart';
 import '../../core/utils/theme/button_theme.dart';
 import '../providers/expense_provider.dart';
@@ -21,7 +22,7 @@ class ExpenseListPage extends StatelessWidget {
     return Scaffold(
       key: _navigatorKey,
       appBar: AppBar(
-        title: const Text('Expense List'),
+        title: const Text('Expenses'),
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.primary,
         actions: [
@@ -53,11 +54,26 @@ class ExpenseListPage extends StatelessWidget {
                   style: ButtonThemes.sortFilterButtonStyle,
                   child: Consumer<ExpenseProvider>(
                     builder: (context, provider, child) {
-                      return Text(
-                        provider.isAscending
-                            ? 'Sort Descending'
-                            : 'Sort Ascending',
-                        style: ButtonThemes.elevatedButtonTextStyle,
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            'Sort by Date',
+                            style: ButtonThemes.elevatedButtonTextStyle,
+                          ),
+                          const SizedBox(
+                              width: 5.0), // Space between the text and icon
+                          Icon(
+                            provider.isAscending
+                                ? Icons.keyboard_double_arrow_up_sharp
+                                : Icons.keyboard_double_arrow_down_sharp,
+                            color: provider.isAscending
+                                ? Theme.of(context)
+                                    .colorScheme
+                                    .secondary // Green
+                                : Theme.of(context).colorScheme.error, // Red
+                          ),
+                        ],
                       );
                     },
                   ),
@@ -93,50 +109,53 @@ class ExpenseListPage extends StatelessWidget {
                   itemCount: expenses.length,
                   itemBuilder: (context, index) {
                     final expense = expenses[index];
-                    return Slidable(
-                      key: ValueKey(expense.id),
-                      startActionPane: ActionPane(
-                        motion: const ScrollMotion(),
-                        children: [
-                          SlidableAction(
-                            onPressed: (context) {
-                              // Edit action
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      EditExpensePage(expense: expense),
-                                ),
-                              );
-                            },
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            foregroundColor: Colors.white,
-                            icon: Icons.edit,
-                            label: 'Edit',
-                          ),
-                          SlidableAction(
-                            onPressed: (context) {
-                              // Delete action
-                              _showDeleteDialog(expense.id);
-                            },
-                            backgroundColor:
-                                Theme.of(context).colorScheme.error,
-                            foregroundColor: Colors.white,
-                            icon: Icons.delete,
-                            label: 'Delete',
-                          ),
-                        ],
-                      ),
-                      child: Card(
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 16),
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(6), // Curved border
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                      child: Slidable(
+                        key: ValueKey(expense.id),
+                        startActionPane: ActionPane(
+                          motion: const ScrollMotion(),
+                          children: [
+                            SlidableAction(
+                              onPressed: (context) {
+                                // Edit action
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        EditExpensePage(expense: expense),
+                                  ),
+                                );
+                              },
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.primary,
+                              foregroundColor: lightColor,
+                              icon: Icons.edit,
+                            ),
+                            SlidableAction(
+                              onPressed: (context) {
+                                // Delete action
+                                _showDeleteDialog(expense.id);
+                              },
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.error,
+                              foregroundColor: lightColor,
+                              icon: Icons.delete,
+                              borderRadius: const BorderRadius.only(
+                                topRight: Radius.circular(8), bottomRight: Radius.circular(8)
+                              ),
+                            ),
+                          ],
                         ),
-                        clipBehavior: Clip.antiAlias,
-                        child: ExpenseListItem(expense: expense),
+                        child: Card(
+                          margin: const EdgeInsets.symmetric(horizontal: 14),
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(8), 
+                          ),
+                          clipBehavior: Clip.antiAlias,
+                          child: ExpenseListItem(expense: expense),
+                        ),
                       ),
                     );
                   },
@@ -156,7 +175,7 @@ class ExpenseListPage extends StatelessWidget {
                     ),
                   );
                 },
-                 style: ButtonThemes.addExpenseButtonStyle,
+                style: ButtonThemes.addExpenseButtonStyle,
                 child: const Text(
                   'Add Expense',
                   style: ButtonThemes.elevatedButtonTextStyle,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
 
 class DatePickerWidget extends StatelessWidget {
   final ValueNotifier<DateTime> selectedDate;
@@ -15,7 +16,7 @@ class DatePickerWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
+        border: Border.all(color: darkColor),
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: ValueListenableBuilder<DateTime>(

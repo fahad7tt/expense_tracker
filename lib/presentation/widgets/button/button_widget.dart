@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../core/utils/theme/button_theme.dart';
 import '../../../domain/entities/expense.dart';
 import '../../providers/expense_provider.dart';
 
@@ -57,14 +58,10 @@ class ButtonWidget extends StatelessWidget {
           Navigator.of(context).pop();
         }
       },
-      style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-      ),
+      style: ButtonThemes.addExpenseButtonStyle,
       child: Text(
-        isEdit ? 'Save Changes' : 'Add Expense',
-        style: TextStyle(color: Colors.grey[800]),
+        isEdit ? 'Save Changes' : 'Save Expense',
+        style: ButtonThemes.elevatedButtonTextStyle,
       ),
     );
   }
