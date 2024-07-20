@@ -16,11 +16,15 @@ class ExpenseModel {
   @HiveField(3)
   final String description;
 
+  @HiveField(4)
+  final String? type;
+
   ExpenseModel({
     required this.id,
     required this.amount,
     required this.date,
     required this.description,
+    this.type,
   });
 
   factory ExpenseModel.fromEntity(Expense expense) {
@@ -29,6 +33,7 @@ class ExpenseModel {
       amount: expense.amount,
       date: expense.date,
       description: expense.description,
+      type: expense.type,
     );
   }
 
@@ -38,6 +43,7 @@ class ExpenseModel {
       amount: amount,
       date: date,
       description: description,
+      type: type,
     );
   }
 
@@ -46,12 +52,14 @@ class ExpenseModel {
     double? amount,
     DateTime? date,
     String? description,
+    String? type,
   }) {
     return ExpenseModel(
       id: id ?? this.id,
       amount: amount ?? this.amount,
       date: date ?? this.date,
       description: description ?? this.description,
+      type: type ?? this.type,
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:personal_expense_tracker/presentation/widgets/type_picker/type_picker.dart';
 import '../../core/utils/validation/form_validation.dart';
 import '../../domain/entities/expense.dart';
 import '../widgets/button/button_widget.dart';
@@ -15,7 +16,8 @@ class EditExpensePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextEditingController amountController = TextEditingController(text: expense.amount.toString());
     final TextEditingController descriptionController = TextEditingController(text: expense.description);
-    final ValueNotifier<DateTime> selectedDate = ValueNotifier(expense.date);
+    final ValueNotifier<DateTime> selectedDate = ValueNotifier<DateTime>(expense.date);
+    final ValueNotifier<String> selectedType = ValueNotifier<String>(expense.type!);
     final DateFormat dateFormat = DateFormat('dd-MM-yyyy');
 
     final formKey = GlobalKey<FormState>(); // GlobalKey for Form
@@ -28,6 +30,8 @@ class EditExpensePage extends StatelessWidget {
           key: formKey,
           child: Column(
             children: [
+              TypePicker(selectedType: selectedType),
+              const SizedBox(height: 22.0),
               FormFieldWidget(
                 controller: amountController,
                 labelText: 'Amount',
@@ -52,6 +56,7 @@ class EditExpensePage extends StatelessWidget {
                 amountController: amountController,
                 descriptionController: descriptionController,
                 selectedDate: selectedDate,
+                selectedType: selectedType,
                 isEdit: true,
                 expense: expense,
               ),

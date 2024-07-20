@@ -8,6 +8,7 @@ class ButtonWidget extends StatelessWidget {
   final TextEditingController amountController;
   final TextEditingController descriptionController;
   final ValueNotifier<DateTime> selectedDate;
+  final ValueNotifier<String?> selectedType;
   final bool isEdit;
   final Expense? expense;
 
@@ -16,6 +17,7 @@ class ButtonWidget extends StatelessWidget {
     required this.amountController,
     required this.descriptionController,
     required this.selectedDate,
+    required this.selectedType,
     this.isEdit = false,
     this.expense,
   });
@@ -28,12 +30,15 @@ class ButtonWidget extends StatelessWidget {
         if (isValid) {
           final amount = double.parse(amountController.text);
           final description = descriptionController.text;
+          final date = selectedDate.value;
+          final type = selectedType.value;
 
           if (isEdit && expense != null) {
             final updatedExpense = Expense(
               id: expense!.id,
               amount: amount,
-              date: selectedDate.value,
+              date: date,
+              type: type,
               description: description,
             );
             await Provider.of<ExpenseProvider>(context, listen: false).modifyExpense(updatedExpense);
@@ -41,7 +46,8 @@ class ButtonWidget extends StatelessWidget {
             final newExpense = Expense(
               id: DateTime.now().millisecondsSinceEpoch,
               amount: amount,
-              date: selectedDate.value,
+              date: date,
+              type: type,
               description: description,
             );
             await Provider.of<ExpenseProvider>(context, listen: false).addExpense(newExpense);
