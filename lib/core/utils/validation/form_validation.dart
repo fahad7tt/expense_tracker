@@ -15,3 +15,10 @@ String? validateDescription(String? value) {
   }
   return null;
 }
+
+String? validateCustomType(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'This field cannot be empty';
+  }
+  return null;
+}

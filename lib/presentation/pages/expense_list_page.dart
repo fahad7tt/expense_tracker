@@ -21,7 +21,7 @@ class ExpenseListPage extends StatelessWidget {
     return Scaffold(
       key: _navigatorKey,
       appBar: AppBar(
-        title: const Text('Expense List'),
+        title: const Text('Expense List'), 
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6),

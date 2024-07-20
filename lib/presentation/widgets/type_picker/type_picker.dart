@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/utils/validation/form_validation.dart';
 
 class TypePicker extends StatelessWidget {
   final ValueNotifier<String?> selectedType;
@@ -56,15 +57,21 @@ class TypePicker extends StatelessWidget {
 
   Future<void> _showCustomTypeDialog(BuildContext context) async {
     final TextEditingController customTypeController = TextEditingController();
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Enter Custom Type'),
-          content: TextField(
+          content: Form(
+          key: formKey,
+          child: TextFormField(
             controller: customTypeController,
             decoration: const InputDecoration(hintText: 'Custom Type'),
+            validator: (value) => validateCustomType(value),
           ),
+        ),
           actions: <Widget>[
             TextButton(
               child: const Text('CANCEL'),
@@ -75,11 +82,11 @@ class TypePicker extends StatelessWidget {
             TextButton(
               child: const Text('OK'),
               onPressed: () {
+                if (formKey.currentState?.validate() ?? false) {
                 final customType = customTypeController.text;
-                if (customType.isNotEmpty) {
-                  Navigator.of(context).pop();
-                  selectedType.value = customType;
-                }
+                Navigator.of(context).pop();
+                selectedType.value = customType;
+              }
               },
             ),
           ],
