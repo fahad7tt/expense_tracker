@@ -14,9 +14,13 @@ import 'presentation/providers/expense_provider.dart';
 final sl = GetIt.instance;
 
 Future<void> init() async {
-  // Hive box
+  // Hive box for expenses
   final expenseBox = await Hive.openBox<ExpenseModel>('expenses');
   sl.registerLazySingleton<Box<ExpenseModel>>(() => expenseBox);
+
+  // Hive box for custom types
+  final typesBox = await Hive.openBox<String>('custom_types');
+  sl.registerLazySingleton<Box<String>>(() => typesBox);
 
   // Data sources
   sl.registerLazySingleton<ExpenseLocalDataSource>(

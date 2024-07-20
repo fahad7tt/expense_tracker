@@ -19,11 +19,13 @@ class ExpenseProvider with ChangeNotifier {
   });
 
   List<Expense> _expenses = [];
+  List<String> _customTypes = [];
   bool _isAscending = true;
   DateTime? _startDate;
   DateTime? _endDate;
 
   List<Expense> get expenses => _expenses;
+  List<String> get customTypes => _customTypes;
 
   Future<void> fetchAllExpenses() async {
     _expenses = await getAllExpenses();
@@ -43,6 +45,13 @@ class ExpenseProvider with ChangeNotifier {
   Future<void> removeExpense(int id) async {
     await deleteExpense(id);
     fetchAllExpenses();
+  }
+
+  void addCustomType(String type) {
+    if (!_customTypes.contains(type)) {
+      _customTypes.add(type);
+      notifyListeners();
+    }
   }
 
   void sortExpensesByDate() {

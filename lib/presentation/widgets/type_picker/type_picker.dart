@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import '../../../core/utils/validation/form_validation.dart';
 
 class TypePicker extends StatelessWidget {
   final ValueNotifier<String?> selectedType;
+  final ValueNotifier<List<String>> typesNotifier;
+  final Box<String> typesBox;
 
-  const TypePicker({required this.selectedType, super.key});
+  const TypePicker({
+    required this.selectedType,
+    required this.typesNotifier,
+    required this.typesBox,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -42,20 +50,24 @@ class TypePicker extends StatelessWidget {
     return showModalBottomSheet<String>(
       context: context,
       builder: (BuildContext context) {
-        final List<String> types = ['Food', 'Drink', 'Sports', 'Others'];
-        return ListView.builder(
-          itemCount: types.length,
-          itemBuilder: (context, index) {
-            final type = types[index];
-            return ListTile(
-              title: Text(type),
-              onTap: () {
-                if (type == 'Others') {
-                  Navigator.pop(context);
-                  _showCustomTypeDialog(context);
-                } else {
-                  Navigator.pop(context, type);
-                }
+        return ValueListenableBuilder<List<String>>(
+          valueListenable: typesNotifier,
+          builder: (context, types, child) {
+            return ListView.builder(
+              itemCount: types.length,
+              itemBuilder: (context, index) {
+                final type = types[index];
+                return ListTile(
+                  title: Text(type),
+                  onTap: () {
+                    if (type == 'Others') {
+                      Navigator.pop(context);
+                      _showCustomTypeDialog(context);
+                    } else {
+                      Navigator.pop(context, type);
+                    }
+                  },
+                );
               },
             );
           },
@@ -74,13 +86,13 @@ class TypePicker extends StatelessWidget {
         return AlertDialog(
           title: const Text('Enter Custom Type'),
           content: Form(
-          key: formKey,
-          child: TextFormField(
-            controller: customTypeController,
-            decoration: const InputDecoration(hintText: 'Custom Type'),
-            validator: (value) => validateCustomType(value),
+            key: formKey,
+            child: TextFormField(
+              controller: customTypeController,
+              decoration: const InputDecoration(hintText: 'Custom Type'),
+              validator: (value) => validateCustomType(value),
+            ),
           ),
-        ),
           actions: <Widget>[
             TextButton(
               child: const Text('CANCEL'),
@@ -92,10 +104,16 @@ class TypePicker extends StatelessWidget {
               child: const Text('OK'),
               onPressed: () {
                 if (formKey.currentState?.validate() ?? false) {
-                final customType = customTypeController.text;
-                Navigator.of(context).pop();
-                selectedType.value = customType;
-              }
+                  final customType = customTypeController.text;
+                  Navigator.of(context).pop();
+                  
+                  // Update Hive box with new custom type
+                  typesBox.add(customType);
+
+                  // Update ValueNotifier with new list
+                  typesNotifier.value = List<String>.from(typesBox.values)..add(customType);
+                  selectedType.value = customType;
+                }
               },
             ),
           ],

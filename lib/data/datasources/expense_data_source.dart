@@ -1,5 +1,4 @@
 // ignore_for_file: avoid_print
-
 import 'package:hive/hive.dart';
 import '../models/expense_model.dart';
 
