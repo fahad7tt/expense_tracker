@@ -50,7 +50,7 @@ class ButtonWidget extends StatelessWidget {
               type: type,
               description: description,
             );
-            await Provider.of<ExpenseProvider>(context, listen: false).addExpense(newExpense);
+            await Provider.of<ExpenseProvider>(context, listen: false).addNewExpense(newExpense);
           }
 
           // ignore: use_build_context_synchronously
