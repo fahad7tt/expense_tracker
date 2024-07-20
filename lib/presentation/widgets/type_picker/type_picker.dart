@@ -11,19 +11,28 @@ class TypePicker extends StatelessWidget {
     return ValueListenableBuilder<String?>(
       valueListenable: selectedType,
       builder: (context, value, child) {
-        return TextFormField(
-          readOnly: true,
-          decoration: const InputDecoration(
-            hintText: 'Select type',
-            suffixIcon: Icon(Icons.arrow_drop_down),
+        return Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(8.0),
           ),
-          onTap: () async {
-            final selected = await _showTypeBottomSheet(context);
-            if (selected != null) {
-              selectedType.value = selected;
-            }
-          },
-          controller: TextEditingController(text: value),
+          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          child: TextFormField(
+            readOnly: true,
+            decoration: const InputDecoration(
+              hintText: 'Select type',
+              suffixIcon: Icon(Icons.arrow_drop_down),
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(vertical: 16.0),
+            ),
+            onTap: () async {
+              final selected = await _showTypeBottomSheet(context);
+              if (selected != null) {
+                selectedType.value = selected;
+              }
+            },
+            controller: TextEditingController(text: value),
+          ),
         );
       },
     );
