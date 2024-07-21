@@ -28,8 +28,8 @@ class BottomNavBar extends StatelessWidget {
                     onTap: () {
                       navProvider.setIndex(0);
                       // Navigate to home page if not already there
-                      if (ModalRoute.of(context)?.settings.name != '/') {
-                        Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+                      if (ModalRoute.of(context)?.settings.name != '/home') {
+                        Navigator.of(context).pushReplacementNamed('/home');
                       }
                     },
                   ),

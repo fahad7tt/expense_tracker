@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
-import '../expense_list/expense_list_page.dart';
-
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
@@ -10,13 +8,8 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Timer(
       const Duration(seconds: 3),
-      () {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => ExpenseListPage(),
-          ),
-        );
-      },
+      () =>
+        Navigator.of(context).pushReplacementNamed('/home')
     );
 
     return Scaffold(

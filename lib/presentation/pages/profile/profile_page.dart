@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:personal_expense_tracker/presentation/widgets/bottom_navbar/bottom_navbar.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/navigation_provider.dart';
@@ -11,6 +12,7 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
+        centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -23,6 +25,7 @@ class ProfilePage extends StatelessWidget {
       body: const Center(
         child: Text('Profile Page Content'),
       ),
+      bottomNavigationBar: const BottomNavBar(),
     );
   }
 }

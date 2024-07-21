@@ -150,7 +150,6 @@ class ExpenseListPage extends StatelessWidget {
               },
             ),
           ),
-          const SizedBox(height: 10),
         ],
       ),
       bottomNavigationBar: const BottomNavBar(),

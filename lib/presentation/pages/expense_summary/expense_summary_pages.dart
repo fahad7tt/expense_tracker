@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
+import 'package:personal_expense_tracker/presentation/widgets/bottom_navbar/bottom_navbar.dart';
 import 'package:provider/provider.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:personal_expense_tracker/presentation/providers/expense_summary_provider.dart';
@@ -24,7 +25,7 @@ class ExpenseSummaryPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Expense Summary'),
+        title: const Text('Monthly Summary'),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -152,6 +153,7 @@ class ExpenseSummaryPage extends StatelessWidget {
           ),
         ],
       ),
+      bottomNavigationBar: const  BottomNavBar(),
     );
   }
 }
