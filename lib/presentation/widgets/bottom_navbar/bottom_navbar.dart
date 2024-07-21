@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
 import 'package:provider/provider.dart';
+import '../../../core/utils/constants/constants.dart';
 import '../../pages/add_expense/add_expense_page.dart';
 import '../../providers/navigation_provider.dart';
 
@@ -21,10 +21,17 @@ class BottomNavBar extends StatelessWidget {
                 children: <Widget>[
                   _buildNavItem(
                     context,
-                    icon: Icons.home_filled,
+                    icon: Icons.home_rounded,
                     label: 'Home',
                     index: 0,
                     navProvider: navProvider,
+                    onTap: () {
+                      navProvider.setIndex(0);
+                      // Navigate to home page if not already there
+                      if (ModalRoute.of(context)?.settings.name != '/') {
+                        Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+                      }
+                    },
                   ),
                   _buildNavItem(
                     context,
@@ -32,16 +39,23 @@ class BottomNavBar extends StatelessWidget {
                     label: 'Summary',
                     index: 1,
                     navProvider: navProvider,
+                    onTap: () {
+                      navProvider.setIndex(1);
+                      Navigator.pushNamed(context, '/summary');
+                    },
                   ),
-                 
                   _buildNavItem(
                     context,
                     icon: Icons.person_rounded,
                     label: 'Profile',
                     index: 2,
                     navProvider: navProvider,
+                    onTap: () {
+                      navProvider.setIndex(2);
+                      Navigator.pushNamed(context, '/profile');
+                    },
                   ),
-                   const SizedBox(width: 64), // Placeholder for the FAB
+                  const SizedBox(width: 64), // Placeholder for the FAB
                 ],
               ),
             ),
@@ -75,11 +89,10 @@ class BottomNavBar extends StatelessWidget {
     required String label,
     required int index,
     required NavigationProvider navProvider,
+    required VoidCallback onTap,
   }) {
     return GestureDetector(
-      onTap: () {
-        navProvider.setIndex(index);
-      },
+      onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.all(6.0),
         child: Column(
@@ -87,12 +100,15 @@ class BottomNavBar extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: darkColor,
-              size: iconSize,
+              color: navProvider.selectedIndex == index ? selectedIconColor : darkColor,
+              size: homeIcon,
             ),
             Text(
               label,
-              style: const TextStyle(color: deepBlue, fontSize: 11),
+              style: TextStyle(
+                color: navProvider.selectedIndex == index ? selectedIconColor : deepBlue,
+                fontSize: 11,
+              ),
             ),
           ],
         ),

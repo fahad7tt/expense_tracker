@@ -9,4 +9,9 @@ class NavigationProvider with ChangeNotifier {
     _selectedIndex = index;
     notifyListeners();
   }
+
+  void resetToHome() {
+    _selectedIndex = 0; // Set index to home
+    notifyListeners();
+  }
 }

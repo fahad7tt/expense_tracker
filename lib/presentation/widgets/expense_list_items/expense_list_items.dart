@@ -25,7 +25,7 @@ class ExpenseListItem extends StatelessWidget {
               child: Icon(
                 Icons.arrow_forward_ios_rounded, 
                 color: lightColor,
-                size: 22.0,
+                size: forwardIcon
               ),
             ),
           ),
@@ -35,7 +35,7 @@ class ExpenseListItem extends StatelessWidget {
           leading: const Icon(
             Icons.wallet,
             color: darkColor,
-            size: iconSize,
+            size: homeIcon,
           ),
           title: Text(
             expense.type!,
