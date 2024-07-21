@@ -35,8 +35,7 @@ class AddExpensePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgColor,
-      appBar: AppBar(title: const Text('Add Expense'),
-      centerTitle: true),
+      appBar: AppBar(title: const Text('Add Expense'), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
@@ -68,6 +67,8 @@ class AddExpensePage extends StatelessWidget {
                 DatePickerWidget(
                   selectedDate: selectedDate,
                   dateFormat: dateFormat,
+                  minDate: DateTime(2000),
+                  maxDate: DateTime.now(),
                 ),
                 const SizedBox(height: 28.0),
                 ButtonWidget(
@@ -75,7 +76,7 @@ class AddExpensePage extends StatelessWidget {
                   amountController: amountController,
                   descriptionController: descriptionController,
                   selectedDate: selectedDate,
-                  selectedType: selectedType
+                  selectedType: selectedType,
                 ),
               ],
             ),

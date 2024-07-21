@@ -37,8 +37,7 @@ class EditExpensePage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: bgColor,
-      appBar: AppBar(title: const Text('Edit Expense'),
-      centerTitle: true),
+      appBar: AppBar(title: const Text('Edit Expense'), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -68,6 +67,8 @@ class EditExpensePage extends StatelessWidget {
               DatePickerWidget(
                 selectedDate: selectedDate,
                 dateFormat: dateFormat,
+                minDate: DateTime(2000),
+                maxDate: DateTime.now(),
               ),
               const SizedBox(height: 28.0),
               ButtonWidget(

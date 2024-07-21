@@ -70,7 +70,7 @@ class ExpenseListPage extends StatelessWidget {
                     final DateTimeRange? picked = await showDateRangePicker(
                       context: context,
                       firstDate: DateTime(2000),
-                      lastDate: DateTime(2101),
+                      lastDate: DateTime.now(),
                     );
                     if (picked != null) {
                       // ignore: use_build_context_synchronously

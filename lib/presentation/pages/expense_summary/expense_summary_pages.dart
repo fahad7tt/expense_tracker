@@ -59,7 +59,8 @@ class ExpenseSummaryPage extends StatelessWidget {
                   context: context,
                   initialDate: selectedMonth,
                   firstDate: DateTime(DateTime.now().year - 5, 1),
-                  lastDate: DateTime(DateTime.now().year + 5, 12),
+                  lastDate: DateTime(DateTime.now().year, DateTime.now().month),
+                  
                 );
                 if (picked != null && picked != selectedMonth) {
                   Provider.of<ExpenseSummaryProvider>(context, listen: false)

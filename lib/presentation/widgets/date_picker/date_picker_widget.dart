@@ -5,12 +5,17 @@ import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
 class DatePickerWidget extends StatelessWidget {
   final ValueNotifier<DateTime> selectedDate;
   final DateFormat dateFormat;
+  final DateTime minDate;
+  final DateTime maxDate;
 
-  const DatePickerWidget({
+  DatePickerWidget({
     super.key,
     required this.selectedDate,
     required this.dateFormat,
-  });
+    DateTime? minDate,
+    DateTime? maxDate,
+  })  : minDate = minDate ?? DateTime(2000),
+        maxDate = maxDate ?? DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +34,8 @@ class DatePickerWidget extends StatelessWidget {
               final DateTime? picked = await showDatePicker(
                 context: context,
                 initialDate: date,
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2101),
+                firstDate: minDate,
+                lastDate: maxDate,
               );
               if (picked != null && picked != date) {
                 selectedDate.value = picked;
