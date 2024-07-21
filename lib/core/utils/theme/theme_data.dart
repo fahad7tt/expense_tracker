@@ -99,7 +99,7 @@ final ThemeData lightTheme = ThemeData(
       borderSide: BorderSide(color: lightGrayText),
     ),
   ),
-  scaffoldBackgroundColor: lightColor, 
+  scaffoldBackgroundColor: bgColor, 
   bottomAppBarTheme: const BottomAppBarTheme(color: deepBlue),
 );
 

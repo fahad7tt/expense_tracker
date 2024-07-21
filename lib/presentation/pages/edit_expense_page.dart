@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
 import 'package:personal_expense_tracker/presentation/widgets/type_picker/type_picker.dart';
 import '../../core/utils/validation/form_validation.dart';
 import '../../domain/entities/expense.dart';
@@ -35,6 +36,7 @@ class EditExpensePage extends StatelessWidget {
     }
 
     return Scaffold(
+      backgroundColor: bgColor,
       appBar: AppBar(title: const Text('Edit Expense'),
       centerTitle: true),
       body: Padding(

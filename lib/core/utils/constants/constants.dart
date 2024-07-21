@@ -15,6 +15,8 @@ const Color cardColor = Color.fromARGB(255, 243, 243, 243);
 const Color lightColor = Colors.white;
 const Color darkColor = Colors.black;
 const Color buttonColor = Color.fromARGB(255, 255, 152, 0);
+const Color bgColor = Color.fromARGB(255, 228, 228, 228);
+const Color navbarColor = Color.fromARGB(255, 124, 142, 165);
 
 // icon Size
-const double iconSize = 30.0;
+const double iconSize = 28.0;

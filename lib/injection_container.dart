@@ -6,10 +6,13 @@ import 'data/models/expense_model.dart';
 import 'data/repositories/expense_repository_impl.dart';
 import 'domain/repositories/expense_repository.dart';
 import 'domain/usecases/add_expense.dart';
+import 'domain/usecases/fetch_summary_by_type.dart';
 import 'domain/usecases/get_all_expenses.dart';
 import 'domain/usecases/update_expense.dart';
 import 'domain/usecases/delete_expense.dart';
 import 'presentation/providers/expense_provider.dart';
+import 'presentation/providers/expense_summary_provider.dart';
+import 'presentation/providers/navigation_provider.dart';
 
 final sl = GetIt.instance;
 
@@ -37,6 +40,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetAllExpenses(sl()));
   sl.registerLazySingleton(() => UpdateExpense(sl()));
   sl.registerLazySingleton(() => DeleteExpense(sl()));
+  sl.registerLazySingleton(() => FetchExpenseSummaryByType(sl()));
 
   // Providers
   sl.registerFactory(
@@ -46,5 +50,13 @@ Future<void> init() async {
       updateExpense: sl(),
       deleteExpense: sl(),
     ),
+  );
+  sl.registerFactory(
+    () => ExpenseSummaryProvider(
+      fetchSummary: sl(),
+    ),
+  );
+  sl.registerFactory(
+    () => NavigationProvider(),
   );
 }

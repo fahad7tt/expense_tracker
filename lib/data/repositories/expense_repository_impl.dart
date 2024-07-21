@@ -1,4 +1,5 @@
 import '../../domain/entities/expense.dart';
+import '../../domain/entities/expense_summary.dart';
 import '../../domain/repositories/expense_repository.dart';
 import '../datasources/expense_data_source.dart';
 import '../models/expense_model.dart';
@@ -29,4 +30,31 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
   Future<void> deleteExpense(int id) async {
     return localDataSource.deleteExpense(id);
   }
+
+  Future<List<ExpenseSummary>> getExpenseSummaryByType(DateTime startDate, DateTime endDate) async {
+    final expenses = await getAllExpenses();
+    final summaries = _calculateSummaries(expenses, startDate, endDate);
+    return summaries;
+  }
+
+  List<ExpenseSummary> _calculateSummaries(List<Expense> expenses, DateTime startDate, DateTime endDate) {
+    final filteredExpenses = expenses
+        .where((expense) => expense.date.isAfter(startDate) && expense.date.isBefore(endDate))
+        .toList();
+
+    final Map<String, List<Expense>> groupedByType = {};
+    for (var expense in filteredExpenses) {
+      groupedByType.putIfAbsent(expense.type!, () => []).add(expense);
+    }
+
+    return groupedByType.entries.map((entry) {
+      final totalAmount = entry.value.fold(0.0, (sum, expense) => sum + expense.amount);
+      return ExpenseSummary(
+        type: entry.key,
+        totalAmount: totalAmount,
+        count: entry.value.length,
+      );
+    }).toList();
+  }
+
 }

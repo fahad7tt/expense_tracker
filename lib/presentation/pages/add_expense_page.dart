@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
 import '../../core/utils/validation/form_validation.dart';
 import '../widgets/button/button_widget.dart';
 import '../widgets/date_picker/date_picker_widget.dart';
@@ -33,6 +34,7 @@ class AddExpensePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: bgColor,
       appBar: AppBar(title: const Text('Add Expense'),
       centerTitle: true),
       body: Padding(

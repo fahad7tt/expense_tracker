@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
+import 'package:personal_expense_tracker/presentation/widgets/bottom_navbar/bottom_navbar.dart';
 import 'package:provider/provider.dart';
 import '../../core/utils/theme/button_theme.dart';
 import '../providers/expense_provider.dart';
 import '../widgets/confirm_dialog/confirm_dialog.dart';
 import '../widgets/expense_list_item.dart';
-import 'add_expense_page.dart';
 import 'edit_expense_page.dart';
 
 class ExpenseListPage extends StatelessWidget {
@@ -25,19 +25,6 @@ class ExpenseListPage extends StatelessWidget {
         title: const Text('Expenses'),
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.primary,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: IconButton(
-              onPressed: () {
-                Provider.of<ExpenseProvider>(context, listen: false)
-                    .clearFilters();
-              },
-              icon: const Icon(Icons.restore_sharp),
-              tooltip: 'Reset Filters',
-            ),
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -163,28 +150,10 @@ class ExpenseListPage extends StatelessWidget {
               },
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(25.0),
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => AddExpensePage(),
-                    ),
-                  );
-                },
-                style: ButtonThemes.addExpenseButtonStyle,
-                child: const Text(
-                  'Add Expense',
-                  style: ButtonThemes.elevatedButtonTextStyle,
-                ),
-              ),
-            ),
-          ),
+          const SizedBox(height: 10),
         ],
       ),
+      bottomNavigationBar: const BottomNavBar(),
     );
   }
 

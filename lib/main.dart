@@ -6,6 +6,7 @@ import 'core/utils/theme/theme_data.dart';
 import 'injection_container.dart' as di;
 import 'presentation/providers/expense_provider.dart';
 import 'presentation/pages/expense_list_page.dart';
+import 'presentation/providers/navigation_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +30,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<ExpenseProvider>(
           create: (_) => di.sl<ExpenseProvider>(),
+        ),
+        ChangeNotifierProvider<NavigationProvider>(
+          create: (_) => di.sl<NavigationProvider>(),
         ),
         // Provider<NotificationInitialization>(
         //   create: (_) => NotificationInitialization(),

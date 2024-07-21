@@ -60,7 +60,7 @@ class ButtonWidget extends StatelessWidget {
       },
       style: ButtonThemes.addExpenseButtonStyle,
       child: Text(
-        isEdit ? 'Save Changes' : 'Save Expense',
+        isEdit ? 'Save Changes' : 'Add Expense',
         style: ButtonThemes.elevatedButtonTextStyle,
       ),
     );
