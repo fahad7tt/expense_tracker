@@ -3,11 +3,11 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
 import 'package:personal_expense_tracker/presentation/widgets/bottom_navbar/bottom_navbar.dart';
 import 'package:provider/provider.dart';
-import '../../core/utils/theme/button_theme.dart';
-import '../providers/expense_provider.dart';
-import '../widgets/confirm_dialog/confirm_dialog.dart';
-import '../widgets/expense_list_item.dart';
-import 'edit_expense_page.dart';
+import '../../../core/utils/theme/button_theme.dart';
+import '../../providers/expense_provider.dart';
+import '../../widgets/confirm_dialog/confirm_dialog.dart';
+import '../../widgets/expense_list_items/expense_list_items.dart';
+import '../edit_expense/edit_expense_page.dart';
 
 class ExpenseListPage extends StatelessWidget {
   ExpenseListPage({super.key});

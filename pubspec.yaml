@@ -10,6 +10,9 @@ dependencies:
   flutter:
     sdk: flutter
 
+  #splash screen
+  flutter_splash_screen: ^3.0.0  
+
   #state management
   provider: ^6.1.2
 

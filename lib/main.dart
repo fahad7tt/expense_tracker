@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:personal_expense_tracker/data/models/expense_model.dart';
+import 'package:personal_expense_tracker/presentation/pages/splash_screen/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'core/utils/theme/theme_data.dart';
 import 'injection_container.dart' as di;
 import 'presentation/providers/expense_provider.dart';
-import 'presentation/pages/expense_list_page.dart';
 import 'presentation/providers/navigation_provider.dart';
 
 void main() async {
@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
         theme: lightTheme,
         darkTheme: darkTheme,
         themeMode: ThemeMode.system,
-        home: ExpenseListPage(),
+        home: const SplashScreen(),
         debugShowCheckedModeBanner: false,
       ),
     );

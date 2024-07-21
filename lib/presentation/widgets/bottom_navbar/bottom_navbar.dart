@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
 import 'package:provider/provider.dart';
-import '../../pages/add_expense_page.dart';
+import '../../pages/add_expense/add_expense_page.dart';
 import '../../providers/navigation_provider.dart';
 
 class BottomNavBar extends StatelessWidget {

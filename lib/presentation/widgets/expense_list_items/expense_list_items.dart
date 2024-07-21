@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_expense_tracker/core/utils/theme/theme_data.dart';
-import '../../core/utils/constants/constants.dart';
-import '../../domain/entities/expense.dart';
+import '../../../core/utils/constants/constants.dart';
+import '../../../domain/entities/expense.dart';
 
 class ExpenseListItem extends StatelessWidget {
   final Expense expense;
