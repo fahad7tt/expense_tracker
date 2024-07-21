@@ -61,7 +61,6 @@ class ExpenseSummaryPage extends StatelessWidget {
                   initialDate: selectedMonth,
                   firstDate: DateTime(DateTime.now().year - 5, 1),
                   lastDate: DateTime(DateTime.now().year, DateTime.now().month),
-                  
                 );
                 if (picked != null && picked != selectedMonth) {
                   Provider.of<ExpenseSummaryProvider>(context, listen: false)
@@ -85,77 +84,80 @@ class ExpenseSummaryPage extends StatelessWidget {
             ),
           ),
           Expanded(
-  child: Consumer<ExpenseSummaryProvider>(
-    builder: (context, provider, child) {
-      final summaries = provider.summaries;
-      if (summaries.isEmpty) {
-        return Center(
-          child: Text('No summaries available for this period.'),
-        );
-      }
-      return ListView.builder(
-        itemCount: summaries.length,
-        itemBuilder: (context, index) {
-          final summary = summaries[index];
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 14.0),
-            child: Card(
-              elevation: 2.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              child: ListTile(
-                contentPadding: const EdgeInsets.all(12.0),
-                leading: const Icon(
-                  Icons.wallet,
-                  color: darkColor,
-                  size: homeIcon,
-                ),
-                title: Text(
-                  summary.type,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                subtitle: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(height: 35),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .secondary
-                            .withOpacity(0.12),
-                        borderRadius: BorderRadius.circular(8.0),
+            child: Consumer<ExpenseSummaryProvider>(
+              builder: (context, provider, child) {
+                final summaries = provider.summaries;
+                if (summaries.isEmpty) {
+                  return Center(
+                    child: Text('No summaries available for this period.'),
+                  );
+                }
+                return ListView.builder(
+                  itemCount: summaries.length,
+                  itemBuilder: (context, index) {
+                    final summary = summaries[index];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 14.0),
+                      child: Card(
+                        elevation: 2.0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(12.0),
+                          leading: const Icon(
+                            Icons.wallet,
+                            color: darkColor,
+                            size: homeIcon,
+                          ),
+                          title: Text(
+                            summary.type,
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                          subtitle: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const SizedBox(height: 35),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0, vertical: 4.0),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .secondary
+                                      .withOpacity(0.12),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Text(
+                                  '₹${summary.totalAmount}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                      ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          trailing: Text(
+                            'Total entries: ${summary.count}',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ),
                       ),
-                      child: Text(
-                        '₹${summary.totalAmount}',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.copyWith(
-                              color: Theme.of(context).colorScheme.secondary,
-                            ),
-                      ),
-                    ),
-                  ],
-                ),
-                trailing: Text(
-                  'Total entries: ${summary.count}',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              ),
+                    );
+                  },
+                );
+              },
             ),
-          );
-        },
-      );
-    },
-  ),
-)
-  
+          )
         ],
       ),
-      bottomNavigationBar: const  BottomNavBar(),
+      bottomNavigationBar: const BottomNavBar(),
     );
   }
 }

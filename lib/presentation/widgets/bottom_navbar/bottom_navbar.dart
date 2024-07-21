@@ -27,10 +27,9 @@ class BottomNavBar extends StatelessWidget {
                     navProvider: navProvider,
                     onTap: () {
                       navProvider.setIndex(0);
-                      // Navigate to home page if not already there
-                      if (ModalRoute.of(context)?.settings.name != '/home') {
-                        Navigator.of(context).pushReplacementNamed('/home');
-                      }
+                      // Clear the navigation stack and navigate to the home page
+                      Navigator.of(context)
+                          .pushNamedAndRemoveUntil('/home', (route) => false);
                     },
                   ),
                   _buildNavItem(
@@ -55,7 +54,7 @@ class BottomNavBar extends StatelessWidget {
                       Navigator.pushNamed(context, '/profile');
                     },
                   ),
-                  const SizedBox(width: 64), // Placeholder for the FAB
+                  const SizedBox(width: 64),
                 ],
               ),
             ),
@@ -63,7 +62,7 @@ class BottomNavBar extends StatelessWidget {
               bottom: 12,
               right: 20,
               child: Transform.scale(
-                scale: 1.0, // Scale factor for the FAB size 
+                scale: 1.0, // Scale factor for the FAB size
                 child: FloatingActionButton(
                   onPressed: () {
                     Navigator.of(context).push(
@@ -84,7 +83,8 @@ class BottomNavBar extends StatelessWidget {
     );
   }
 
-  Widget _buildNavItem(BuildContext context, {
+  Widget _buildNavItem(
+    BuildContext context, {
     required IconData icon,
     required String label,
     required int index,
@@ -100,13 +100,17 @@ class BottomNavBar extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: navProvider.selectedIndex == index ? selectedIconColor : darkColor,
+              color: navProvider.selectedIndex == index
+                  ? selectedIconColor
+                  : darkColor,
               size: homeIcon,
             ),
             Text(
               label,
               style: TextStyle(
-                color: navProvider.selectedIndex == index ? selectedIconColor : deepBlue,
+                color: navProvider.selectedIndex == index
+                    ? selectedIconColor
+                    : deepBlue,
                 fontSize: 11,
               ),
             ),
