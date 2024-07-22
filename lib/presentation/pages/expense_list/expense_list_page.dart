@@ -4,6 +4,7 @@ import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
 import 'package:personal_expense_tracker/presentation/widgets/bottom_navbar/bottom_navbar.dart';
 import 'package:provider/provider.dart';
 import '../../../core/utils/theme/button_theme.dart';
+import '../../../data/services/notification_initialize.dart';
 import '../../providers/expense_provider.dart';
 import '../../widgets/confirm_dialog/confirm_dialog.dart';
 import '../../widgets/expense_list_items/expense_list_items.dart';
@@ -18,6 +19,11 @@ class ExpenseListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Fetch expenses immediately when building the widget
     Provider.of<ExpenseProvider>(context, listen: false).fetchAllExpenses();
+
+    // Inside the ExpenseListPage class, add this method:
+    void _showTestNotification() {
+      NotificationService().showNotification();
+    }
 
     return Scaffold(
       key: _navigatorKey,
@@ -128,8 +134,8 @@ class ExpenseListPage extends StatelessWidget {
                               foregroundColor: lightColor,
                               icon: Icons.delete,
                               borderRadius: const BorderRadius.only(
-                                topRight: Radius.circular(8), bottomRight: Radius.circular(8)
-                              ),
+                                  topRight: Radius.circular(8),
+                                  bottomRight: Radius.circular(8)),
                             ),
                           ],
                         ),
@@ -137,8 +143,7 @@ class ExpenseListPage extends StatelessWidget {
                           margin: const EdgeInsets.symmetric(horizontal: 14),
                           elevation: 2,
                           shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(8), 
+                            borderRadius: BorderRadius.circular(8),
                           ),
                           clipBehavior: Clip.antiAlias,
                           child: ExpenseListItem(expense: expense),
