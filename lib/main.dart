@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:personal_expense_tracker/app.dart';
 import 'package:personal_expense_tracker/data/models/expense_model.dart';
-import 'package:personal_expense_tracker/data/services/notification_helper.dart';
 import 'package:personal_expense_tracker/injection_container.dart' as di;
+import 'core/utils/helper/notification_helper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
