@@ -31,6 +31,7 @@ class ExpenseSummaryProvider with ChangeNotifier {
       _summaries = await fetchSummary.execute(startDate, endDate);
     } catch (e) {
       // Handle exceptions and possibly notify listeners of an error
+      // ignore: avoid_print
       print('Error loading summaries: $e');
     }
     notifyListeners();

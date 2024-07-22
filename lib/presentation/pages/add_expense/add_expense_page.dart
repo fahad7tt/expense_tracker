@@ -35,7 +35,10 @@ class AddExpensePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgColor,
-      appBar: AppBar(title: const Text('Add Expense'), centerTitle: true),
+      appBar: AppBar(
+      title: const Text('Add Expense'),
+      centerTitle: true
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(

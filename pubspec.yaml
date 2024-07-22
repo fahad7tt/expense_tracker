@@ -20,10 +20,6 @@ dependencies:
   #month picker
   month_picker_dialog: ^4.0.1
 
-  #firebase
-  # firebase_core: ^3.2.0
-  # firebase_auth: ^5.1.2
-
   #local notifications
   flutter_local_notifications: ^17.2.1+2
 
@@ -40,6 +36,7 @@ dependencies:
 
   #service locator
   get_it: ^7.7.0
+  permission_handler: ^11.3.1
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,4 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
 import 'package:personal_expense_tracker/presentation/widgets/bottom_navbar/bottom_navbar.dart';
@@ -8,7 +7,6 @@ import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:personal_expense_tracker/presentation/providers/expense_summary_provider.dart';
 import 'package:intl/intl.dart';
 import '../../../core/utils/theme/button_theme.dart';
-import '../../providers/navigation_provider.dart';
 
 class ExpenseSummaryPage extends StatelessWidget {
   const ExpenseSummaryPage({super.key});
@@ -27,14 +25,7 @@ class ExpenseSummaryPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Monthly Summary'),
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Provider.of<NavigationProvider>(context, listen: false)
-                .resetToHome();
-            Navigator.pop(context);
-          },
-        ),
+        automaticallyImplyLeading: false,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,7 +79,7 @@ class ExpenseSummaryPage extends StatelessWidget {
               builder: (context, provider, child) {
                 final summaries = provider.summaries;
                 if (summaries.isEmpty) {
-                  return Center(
+                  return const Center(
                     child: Text('No summaries available for this period.'),
                   );
                 }

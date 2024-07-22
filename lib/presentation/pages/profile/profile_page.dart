@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:personal_expense_tracker/presentation/widgets/bottom_navbar/bottom_navbar.dart';
-import 'package:provider/provider.dart';
-import '../../providers/navigation_provider.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -12,14 +10,7 @@ class ProfilePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Profile'),
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Provider.of<NavigationProvider>(context, listen: false)
-                .resetToHome();
-            Navigator.pop(context);
-          },
-        ),
+        automaticallyImplyLeading: false,
       ),
       body: ListView(
         padding: const EdgeInsets.all(20.0),
