@@ -15,7 +15,7 @@ class BottomNavBar extends StatelessWidget {
           clipBehavior: Clip.none,
           children: [
             BottomAppBar(
-              color: navbarColor,
+              color: lightColor,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
