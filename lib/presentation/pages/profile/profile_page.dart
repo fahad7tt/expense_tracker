@@ -17,8 +17,8 @@ class ProfilePage extends StatelessWidget {
         children: [
           _buildListTile(
             context,
-            'User Manual',
-            Icons.book,
+            'App Info',
+            Icons.info,
             Icons.arrow_forward_ios,
             onTap: () {
               // Add navigation or action
