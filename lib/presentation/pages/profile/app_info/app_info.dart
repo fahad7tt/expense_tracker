@@ -30,7 +30,7 @@ class AppInfo extends StatelessWidget {
           child: Align(
             alignment: Alignment.topLeft,
             child: Padding(
-              padding: EdgeInsets.all(22.0),
+              padding: EdgeInsets.all(21.0),
               child: Text(
                 '''MyExpense is a mobile application designed to help users track and manage their personal expenses efficiently. The app provides features to:
 
