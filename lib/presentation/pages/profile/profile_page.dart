@@ -20,36 +20,21 @@ class ProfilePage extends StatelessWidget {
             'App Info',
             Icons.info,
             Icons.arrow_forward_ios,
-            onTap: () {
-              // Add navigation or action
-            },
+            onTap: () => Navigator.pushNamed(context, '/appInfo'),
           ),
           _buildListTile(
             context,
             'Terms and Conditions',
             Icons.description,
             Icons.arrow_forward_ios,
-            onTap: () {
-              // Add navigation or action
-            },
+            onTap: () => Navigator.pushNamed(context, '/termsAndConditions'),
           ),
           _buildListTile(
             context,
             'Privacy Policy',
             Icons.lock,
             Icons.arrow_forward_ios,
-            onTap: () {
-              // Add navigation or action
-            },
-          ),
-          _buildListTile(
-            context,
-            'Sign Out',
-            Icons.exit_to_app,
-            Icons.arrow_forward_ios,
-            onTap: () {
-              // Add sign out logic
-            },
+            onTap: () => Navigator.pushNamed(context, 'privacyPolicy'),
           ),
         ],
       ),
@@ -65,8 +50,8 @@ class ProfilePage extends StatelessWidget {
     required VoidCallback onTap,
   }) {
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      elevation: 2,
+      margin: const EdgeInsets.symmetric(vertical: 12.0),
+      elevation: 3,
       child: ListTile(
         contentPadding: const EdgeInsets.all(16.0),
         leading: Icon(

@@ -19,8 +19,13 @@ const Color bgColor = Color.fromARGB(255, 228, 228, 228);
 const Color navbarColor = Color.fromARGB(255, 143, 162, 185);
 const Color selectedIconColor = Color.fromARGB(255, 19, 120, 202);
 
-// icon Size
+// icon size
 const double homeIcon = 28.0;
 const double dateIcon = 14.0;
 const double normalIcon = 18.0;
 const double forwardIcon = 22.0;
+
+//font size
+const textSize = TextStyle(
+  fontSize: 17,
+);
