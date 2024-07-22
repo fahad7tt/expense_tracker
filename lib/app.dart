@@ -42,8 +42,8 @@ class MyApp extends StatelessWidget {
           '/summary': (context) => const ExpenseSummaryPage(),
           '/profile': (context) => const ProfilePage(),
           '/appInfo': (context) => const AppInfo(),
-          'termsAndConditions': (context) => const TermsAndConditions(),
-          'privacyPolicy': (context) => const PrivacyPolicy()
+          '/termsAndConditions': (context) => const TermsAndConditions(),
+          '/privacyPolicy': (context) => const PrivacyPolicy()
         },
       ),
     );
