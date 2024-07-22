@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:personal_expense_tracker/presentation/pages/profile/profile_page.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class TermsAndConditions extends StatefulWidget {
@@ -35,7 +34,7 @@ class _TermsState extends State<TermsAndConditions> {
           },
         ),
       )
-      ..loadRequest(Uri.parse('https://www.freeprivacypolicy.com/live/6cc831e2-3af6-4eca-b699-45fc33779e86'));
+      ..loadRequest(Uri.parse('https://www.freeprivacypolicy.com/live/4e1e426b-ab32-4197-ad6c-4d66735666d9'));
   }
 
   @override
@@ -43,13 +42,11 @@ class _TermsState extends State<TermsAndConditions> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Terms and Conditions'),
+        centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const ProfilePage()),
-            );
+            Navigator.pushNamed(context, '/profile');
           },
         ),
       ),

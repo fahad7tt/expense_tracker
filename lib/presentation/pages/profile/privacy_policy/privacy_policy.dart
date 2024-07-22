@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:personal_expense_tracker/presentation/pages/profile/profile_page.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class PrivacyPolicy extends StatefulWidget {
@@ -36,7 +35,7 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
         ),
       )
       ..loadRequest(Uri.parse(
-          'https://www.freeprivacypolicy.com/live/713a75e0-b605-4e97-ab53-29654d8d78f1'));
+          'https://www.freeprivacypolicy.com/live/9f1ae24f-49df-475e-904f-9b6004e7fe1f'));
   }
 
   @override
@@ -44,13 +43,11 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Privacy Policy'),
+        centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const ProfilePage()),
-            );
+            Navigator.pushNamed(context, '/profile');
           },
         ),
       ),

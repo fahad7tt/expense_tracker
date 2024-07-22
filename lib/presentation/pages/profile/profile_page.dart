@@ -34,7 +34,7 @@ class ProfilePage extends StatelessWidget {
             'Privacy Policy',
             Icons.lock,
             Icons.arrow_forward_ios,
-            onTap: () => Navigator.pushNamed(context, 'privacyPolicy'),
+            onTap: () => Navigator.pushNamed(context, '/privacyPolicy'),
           ),
         ],
       ),
