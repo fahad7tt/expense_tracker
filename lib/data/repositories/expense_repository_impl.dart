@@ -31,15 +31,18 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
     return localDataSource.deleteExpense(id);
   }
 
-  Future<List<ExpenseSummary>> getExpenseSummaryByType(DateTime startDate, DateTime endDate) async {
+  Future<List<ExpenseSummary>> getExpenseSummaryByType(
+      DateTime startDate, DateTime endDate) async {
     final expenses = await getAllExpenses();
     final summaries = _calculateSummaries(expenses, startDate, endDate);
     return summaries;
   }
 
-  List<ExpenseSummary> _calculateSummaries(List<Expense> expenses, DateTime startDate, DateTime endDate) {
+  List<ExpenseSummary> _calculateSummaries(
+      List<Expense> expenses, DateTime startDate, DateTime endDate) {
     final filteredExpenses = expenses
-        .where((expense) => expense.date.isAfter(startDate) && expense.date.isBefore(endDate))
+        .where((expense) =>
+            expense.date.isAfter(startDate) && expense.date.isBefore(endDate))
         .toList();
 
     final Map<String, List<Expense>> groupedByType = {};
@@ -48,7 +51,8 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
     }
 
     return groupedByType.entries.map((entry) {
-      final totalAmount = entry.value.fold(0.0, (sum, expense) => sum + expense.amount);
+      final totalAmount =
+          entry.value.fold(0.0, (sum, expense) => sum + expense.amount);
       return ExpenseSummary(
         type: entry.key,
         totalAmount: totalAmount,
@@ -56,5 +60,4 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
       );
     }).toList();
   }
-
 }
