@@ -24,6 +24,9 @@ void main() {
       type: 'Food',
     );
 
+    // Configuring the mock to return a completed future
+    when(mockExpenseRepository.addExpense(expense)).thenAnswer((_) async {});
+
     await addExpense.call(expense);
 
     verify(mockExpenseRepository.addExpense(expense)).called(1);

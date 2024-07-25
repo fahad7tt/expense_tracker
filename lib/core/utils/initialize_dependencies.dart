@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:personal_expense_tracker/data/models/expense_model.dart';
-import 'package:personal_expense_tracker/core/utils/helper/notification_helper.dart';
 import 'package:personal_expense_tracker/injection_container.dart' as di;
+
+import '../helpers/notification_helper.dart';
 
 Future<void> initializeDependencies() async {
   // Initialize Hive
