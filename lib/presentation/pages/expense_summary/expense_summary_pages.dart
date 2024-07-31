@@ -54,11 +54,14 @@ class ExpenseSummaryPage extends StatelessWidget {
                   lastDate: DateTime(DateTime.now().year, DateTime.now().month),
                 );
                 if (picked != null && picked != selectedMonth) {
+                  final DateTime startDate =
+                      DateTime(picked.year, picked.month, 1);
+                  final DateTime endDate =
+                      DateTime(picked.year, picked.month + 1, 0);
                   Provider.of<ExpenseSummaryProvider>(context, listen: false)
                       .setSelectedMonth(picked);
                   Provider.of<ExpenseSummaryProvider>(context, listen: false)
-                      .loadSummaries(DateTime(picked.year, picked.month, 1),
-                          DateTime(picked.year, picked.month + 1, 0));
+                      .loadSummaries(startDate, endDate);
                 }
               },
               style: ElevatedButton.styleFrom(

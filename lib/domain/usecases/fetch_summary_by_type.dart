@@ -2,6 +2,16 @@ import 'package:personal_expense_tracker/domain/entities/expense.dart';
 import 'package:personal_expense_tracker/domain/entities/expense_summary.dart';
 import 'package:personal_expense_tracker/domain/repositories/expense_repository.dart';
 
+extension DateTimeComparison on DateTime {
+  bool isAtOrAfter(DateTime other) {
+    return isAfter(other) || isAtSameMomentAs(other);
+  }
+
+  bool isAtOrBefore(DateTime other) {
+    return isBefore(other) || isAtSameMomentAs(other);
+  }
+}
+
 class FetchExpenseSummaryByType {
   final ExpenseRepository repository;
 
@@ -14,7 +24,7 @@ class FetchExpenseSummaryByType {
 
   List<ExpenseSummary> _calculateSummaries(List<Expense> expenses, DateTime startDate, DateTime endDate) {
     final filteredExpenses = expenses
-        .where((expense) => expense.date.isAfter(startDate) && expense.date.isBefore(endDate))
+        .where((expense) => expense.date.isAtOrAfter(startDate) && expense.date.isAtOrBefore(endDate))
         .toList();
 
     final Map<String, List<Expense>> groupedByType = {};
