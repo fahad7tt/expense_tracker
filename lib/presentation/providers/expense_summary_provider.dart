@@ -8,7 +8,7 @@ class ExpenseSummaryProvider with ChangeNotifier {
   DateTime? _selectedMonth;
 
   ExpenseSummaryProvider({required this.fetchSummary}) {
-    // Optionally load summaries when provider is initialized
+    // To optionally load summaries when the provider is initialized
     _loadInitialSummaries();
   }
 

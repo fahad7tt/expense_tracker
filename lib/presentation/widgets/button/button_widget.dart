@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../core/utils/theme/button_theme.dart';
 import '../../../domain/entities/expense.dart';
 import '../../providers/expense_provider.dart';
+import '../../providers/expense_summary_provider.dart';
 
 class ButtonWidget extends StatelessWidget {
   final GlobalKey<FormState> formKey;
@@ -54,6 +55,13 @@ class ButtonWidget extends StatelessWidget {
             await Provider.of<ExpenseProvider>(context, listen: false).addNewExpense(newExpense);
           }
 
+          // Refresh the summary provider
+          // ignore: use_build_context_synchronously
+          await Provider.of<ExpenseSummaryProvider>(context, listen: false).loadSummaries(
+            DateTime(DateTime.now().year, DateTime.now().month, 1),
+            DateTime(DateTime.now().year, DateTime.now().month + 1, 0),
+          );
+          
           // ignore: use_build_context_synchronously
           Navigator.of(context).pop();
         }
