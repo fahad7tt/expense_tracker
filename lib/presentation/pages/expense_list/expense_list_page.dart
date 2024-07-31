@@ -92,6 +92,14 @@ class ExpenseListPage extends StatelessWidget {
               builder: (context, provider, child) {
                 final expenses = provider.expenses;
 
+                if (expenses.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      "Tap the '+' button to add expense",
+                    ),
+                  );
+                }
+
                 return ListView.builder(
                   itemCount: expenses.length,
                   itemBuilder: (context, index) {
