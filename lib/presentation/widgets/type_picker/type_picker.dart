@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
 import '../../../core/utils/validation/form_validation.dart';
 
@@ -54,7 +54,7 @@ class TypePicker extends StatelessWidget {
       return ValueListenableBuilder<List<String>>(
         valueListenable: typesNotifier,
         builder: (context, types, child) {
-          // Sort the list with 'Others' at the end
+          // Sorting the list with 'Others' at the end
           final sortedTypes = List<String>.from(types)..sort((a, b) {
             if (a == 'Others') return 1;
             if (b == 'Others') return -1;
