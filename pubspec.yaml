@@ -53,20 +53,18 @@ dev_dependencies:
   #launcher icon
   flutter_launcher_icons: ^0.13.1
 
-flutter_icons:
+flutter_launcher_icons:
   android: true 
   remove_alpha_ios: true
   ios: true
-  image_path: "assets/images/app_logo.jpeg"
-  adaptive_icon_background: "#ffffff"
-  adaptive_icon_foreground: "assets/images/app_logo.jpeg"
+  image_path: "assets/images/app_icon.jpeg"
 
 #flutter assets
 flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/ 
+    - assets/images/
 
 #hive configuration
 hive:
