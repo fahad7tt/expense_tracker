@@ -1,5 +1,5 @@
 // ignore_for_file: avoid_print
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import '../models/expense_model.dart';
 
 abstract class ExpenseLocalDataSource {
