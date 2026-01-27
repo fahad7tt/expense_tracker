@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
 import 'package:personal_expense_tracker/presentation/widgets/type_picker/type_picker.dart';
@@ -17,23 +15,17 @@ class EditExpensePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController amountController = TextEditingController(text: expense.amount.toString());
-    final TextEditingController descriptionController = TextEditingController(text: expense.description);
-    final ValueNotifier<DateTime> selectedDate = ValueNotifier<DateTime>(expense.date);
-    final ValueNotifier<String> selectedType = ValueNotifier<String>(expense.type!);
-    late final ValueNotifier<List<String>> typesNotifier;
-    final Box<String> typesBox = GetIt.instance<Box<String>>();
+    final TextEditingController amountController =
+        TextEditingController(text: expense.amount.toString());
+    final TextEditingController descriptionController =
+        TextEditingController(text: expense.description);
+    final ValueNotifier<DateTime> selectedDate =
+        ValueNotifier<DateTime>(expense.date);
+    final ValueNotifier<String?> selectedType =
+        ValueNotifier<String?>(expense.type);
     final DateFormat dateFormat = DateFormat('dd-MM-yyyy');
 
     final formKey = GlobalKey<FormState>(); // GlobalKey for Form
-
-    // Initialize typesNotifier with data from Hive
-    typesNotifier = ValueNotifier<List<String>>(typesBox.values.toList());
-
-    if (typesBox.isEmpty) {
-      typesBox.addAll(['Food', 'Drink', 'Sports', 'Others']);
-      typesNotifier.value = typesBox.values.toList();
-    }
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -46,8 +38,6 @@ class EditExpensePage extends StatelessWidget {
             children: [
               TypePicker(
                 selectedType: selectedType,
-                typesNotifier: typesNotifier,
-                typesBox: typesBox,
               ),
               const SizedBox(height: 22.0),
               FormFieldWidget(

@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
 import '../../../core/utils/validation/form_validation.dart';
 
 class TypePicker extends StatelessWidget {
   final ValueNotifier<String?> selectedType;
-  final ValueNotifier<List<String>> typesNotifier;
-  final Box<String> typesBox;
 
   const TypePicker({
     required this.selectedType,
-    required this.typesNotifier,
-    required this.typesBox,
     super.key,
   });
 
@@ -20,6 +15,8 @@ class TypePicker extends StatelessWidget {
     return ValueListenableBuilder<String?>(
       valueListenable: selectedType,
       builder: (context, value, child) {
+        final TextEditingController controller =
+            TextEditingController(text: value);
         return Container(
           decoration: BoxDecoration(
             border: Border.all(color: darkColor),
@@ -27,20 +24,20 @@ class TypePicker extends StatelessWidget {
           ),
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: TextFormField(
+            controller: controller,
             readOnly: true,
             decoration: const InputDecoration(
-              labelText: 'Select type',
-              suffixIcon: Icon(Icons.arrow_drop_down),
+              labelText: 'Category',
               border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(vertical: 10.0),
+              suffixIcon: Icon(Icons.keyboard_arrow_down_rounded),
             ),
+            validator: validateType,
             onTap: () async {
               final selected = await _showTypeBottomSheet(context);
               if (selected != null) {
                 selectedType.value = selected;
               }
             },
-            controller: TextEditingController(text: value),
           ),
         );
       },
@@ -48,88 +45,107 @@ class TypePicker extends StatelessWidget {
   }
 
   Future<String?> _showTypeBottomSheet(BuildContext context) async {
-  return showModalBottomSheet<String>(
-    context: context,
-    builder: (BuildContext context) {
-      return ValueListenableBuilder<List<String>>(
-        valueListenable: typesNotifier,
-        builder: (context, types, child) {
-          // Sorting the list with 'Others' at the end
-          final sortedTypes = List<String>.from(types)..sort((a, b) {
-            if (a == 'Others') return 1;
-            if (b == 'Others') return -1;
-            return a.compareTo(b);
-          });
-
-          return ListView.builder(
-            itemCount: sortedTypes.length,
-            itemBuilder: (context, index) {
-              final type = sortedTypes[index];
-              return ListTile(
-                title: Text(type),
-                onTap: () {
-                  if (type == 'Others') {
-                    Navigator.pop(context);
-                    _showCustomTypeDialog(context);
-                  } else {
-                    Navigator.pop(context, type);
-                  }
-                },
-              );
-            },
-          );
-        },
-      );
-    },
-  );
-}
-
-  Future<void> _showCustomTypeDialog(BuildContext context) async {
-    final TextEditingController customTypeController = TextEditingController();
-    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
-    return showDialog<void>(
+    return showModalBottomSheet<String>(
       context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Enter Custom Type'),
-          content: Form(
-            key: formKey,
-            child: TextFormField(
-              controller: customTypeController,
-              decoration: const InputDecoration(hintText: 'Custom Type'),
-              validator: (value) => validateCustomType(value),
-            ),
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.8,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('CANCEL'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-            child: const Text('OK'),
-            onPressed: () {
-              if (formKey.currentState?.validate() ?? false) {
-                final customType = customTypeController.text;
+          padding: const EdgeInsets.only(top: 12, bottom: 24),
+          child: Column(
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: Text(
+                  'Select Category',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: groupedCategories.length,
+                  itemBuilder: (context, groupIndex) {
+                    final groupName =
+                        groupedCategories.keys.elementAt(groupIndex);
+                    final categories = groupedCategories[groupName]!;
 
-                // Ensure the custom type isn't already present
-                if (!typesBox.values.contains(customType)) {
-                  // Update Hive box with new custom type
-                  typesBox.add(customType);
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (groupName != 'Others')
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                top: 24, bottom: 8, left: 8),
+                            child: Text(
+                              groupName.toUpperCase(),
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey.shade500,
+                                letterSpacing: 1.2,
+                              ),
+                            ),
+                          ),
+                        ...categories.map((type) {
+                          final bool isSelected = selectedType.value == type;
+                          final IconData icon =
+                              typeIcons[type] ?? Icons.category;
 
-                  // Update ValueNotifier with new list
-                  typesNotifier.value = typesBox.values.toList();
-                }
-                
-                // Update selectedType and close dialog
-                selectedType.value = customType;
-                Navigator.of(context).pop();
-              }
-            },
+                          return ListTile(
+                            leading: Icon(
+                              icon,
+                              color: isSelected
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Colors.grey.shade600,
+                            ),
+                            title: Text(
+                              type,
+                              style: TextStyle(
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                color: isSelected
+                                    ? Theme.of(context).colorScheme.primary
+                                    : null,
+                              ),
+                            ),
+                            trailing: isSelected
+                                ? Icon(Icons.check_circle,
+                                    color:
+                                        Theme.of(context).colorScheme.primary)
+                                : null,
+                            onTap: () {
+                              Navigator.pop(context, type);
+                            },
+                          );
+                        }).toList(),
+                        if (groupIndex < groupedCategories.length - 1)
+                          const Divider(height: 1, thickness: 0.5),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
-          ],
         );
       },
     );

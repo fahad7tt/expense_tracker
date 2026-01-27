@@ -47,7 +47,7 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
 
     final Map<String, List<Expense>> groupedByType = {};
     for (var expense in filteredExpenses) {
-      groupedByType.putIfAbsent(expense.type!, () => []).add(expense);
+      groupedByType.putIfAbsent(expense.type ?? 'Other', () => []).add(expense);
     }
 
     return groupedByType.entries.map((entry) {

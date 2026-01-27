@@ -16,6 +16,13 @@ String? validateDescription(String? value) {
   return null;
 }
 
+String? validateType(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Please select a type';
+  }
+  return null;
+}
+
 String? validateCustomType(String? value) {
   if (value == null || value.isEmpty) {
     return 'This field cannot be empty';

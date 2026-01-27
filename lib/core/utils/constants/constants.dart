@@ -26,6 +26,97 @@ const double normalIcon = 18.0;
 const double forwardIcon = 22.0;
 
 //font size
+final Map<String, List<String>> groupedCategories = {
+  'Essential & Daily': [
+    'Food',
+    'Groceries',
+    'Drink',
+    'Transport',
+    'Fuel',
+  ],
+  'Living & Utilities': [
+    'Rent',
+    'Electricity',
+    'Water',
+    'Internet',
+    'Phone',
+  ],
+  'Lifestyle & Entertainment': [
+    'Entertainment',
+    'Dining Out',
+    'Shopping',
+    'Sports',
+    'Leisure',
+    'Travel',
+  ],
+  'Health & Personal': [
+    'Health',
+    'Medicine',
+    'Gym',
+    'Beauty',
+  ],
+  'Education & Work': [
+    'Education',
+    'Books',
+    'Office',
+  ],
+  'Financial': [
+    'Investment',
+    'Insurance',
+    'Tax',
+    'Gift',
+    'Donation',
+  ],
+  'Others': [
+    'Others',
+  ],
+};
+
+final Map<String, IconData> typeIcons = {
+  // Essential & Daily
+  'Food': Icons.restaurant,
+  'Groceries': Icons.shopping_basket,
+  'Drink': Icons.local_drink,
+  'Transport': Icons.directions_bus,
+  'Fuel': Icons.local_gas_station,
+
+  // Living & Utilities
+  'Rent': Icons.home,
+  'Electricity': Icons.electric_bolt,
+  'Water': Icons.water_drop,
+  'Internet': Icons.wifi,
+  'Phone': Icons.phone_android,
+
+  // Lifestyle & Entertainment
+  'Entertainment': Icons.movie,
+  'Dining Out': Icons.dining,
+  'Shopping': Icons.shopping_bag,
+  'Sports': Icons.sports_basketball,
+  'Leisure': Icons.beach_access,
+  'Travel': Icons.flight,
+
+  // Health & Personal
+  'Health': Icons.medical_services,
+  'Medicine': Icons.medication,
+  'Gym': Icons.fitness_center,
+  'Beauty': Icons.face,
+
+  // Education & Work
+  'Education': Icons.school,
+  'Books': Icons.book,
+  'Office': Icons.work,
+
+  // Financial
+  'Investment': Icons.trending_up,
+  'Insurance': Icons.security,
+  'Tax': Icons.receipt_long,
+  'Gift': Icons.card_giftcard,
+  'Donation': Icons.volunteer_activism,
+
+  // Others
+  'Others': Icons.more_horiz,
+};
+
 const textSize = TextStyle(
   fontSize: 17,
 );
