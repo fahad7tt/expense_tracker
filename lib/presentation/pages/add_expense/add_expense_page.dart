@@ -6,12 +6,15 @@ import '../../widgets/button/button_widget.dart';
 import '../../widgets/date_picker/date_picker_widget.dart';
 import '../../widgets/form_field/form_field_widget.dart';
 import '../../widgets/type_picker/type_picker.dart';
+import '../../widgets/currency_picker/currency_picker.dart';
 
 class AddExpensePage extends StatelessWidget {
   final TextEditingController amountController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final ValueNotifier<DateTime> selectedDate = ValueNotifier(DateTime.now());
   final ValueNotifier<String?> selectedType = ValueNotifier<String?>(null);
+  final ValueNotifier<String> selectedCurrency =
+      ValueNotifier<String>(currencies.first);
   final DateFormat dateFormat = DateFormat('dd-MM-yyyy'); // Date format
 
   final _formKey = GlobalKey<FormState>(); // GlobalKey for Form
@@ -35,11 +38,20 @@ class AddExpensePage extends StatelessWidget {
                   selectedType: selectedType,
                 ),
                 const SizedBox(height: 24.0),
-                FormFieldWidget(
-                  controller: amountController,
-                  labelText: 'Amount',
-                  keyboardType: TextInputType.number,
-                  validator: validateAmount,
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CurrencyPicker(selectedCurrency: selectedCurrency),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: FormFieldWidget(
+                        controller: amountController,
+                        labelText: 'Amount',
+                        keyboardType: TextInputType.number,
+                        validator: validateAmount,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 24.0),
                 FormFieldWidget(
@@ -62,6 +74,7 @@ class AddExpensePage extends StatelessWidget {
                   descriptionController: descriptionController,
                   selectedDate: selectedDate,
                   selectedType: selectedType,
+                  selectedCurrency: selectedCurrency,
                 ),
               ],
             ),

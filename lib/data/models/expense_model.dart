@@ -19,12 +19,16 @@ class ExpenseModel {
   @HiveField(4)
   final String? type;
 
+  @HiveField(5)
+  final String? currency;
+
   ExpenseModel({
     required this.id,
     required this.amount,
     required this.date,
     required this.description,
     this.type,
+    this.currency,
   });
 
   factory ExpenseModel.fromEntity(Expense expense) {
@@ -34,6 +38,7 @@ class ExpenseModel {
       date: expense.date,
       description: expense.description,
       type: expense.type,
+      currency: expense.currency,
     );
   }
 
@@ -44,6 +49,7 @@ class ExpenseModel {
       date: date,
       description: description,
       type: type,
+      currency: currency,
     );
   }
 
@@ -53,6 +59,7 @@ class ExpenseModel {
     DateTime? date,
     String? description,
     String? type,
+    String? currency,
   }) {
     return ExpenseModel(
       id: id ?? this.id,
@@ -60,6 +67,7 @@ class ExpenseModel {
       date: date ?? this.date,
       description: description ?? this.description,
       type: type ?? this.type,
+      currency: currency ?? this.currency,
     );
   }
 }

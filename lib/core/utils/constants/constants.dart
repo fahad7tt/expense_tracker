@@ -72,6 +72,27 @@ final Map<String, List<String>> groupedCategories = {
   ],
 };
 
+final List<String> currencies = [
+  '\u20B9', // ₹
+  '\u0024', // $
+  '\u20AC', // €
+  '\u00A3', // £
+  '\u00A5', // ¥
+  '\u20A3', // ₣
+  '\u0E3F', // ฿
+  '\u20AB', // ₫
+  '\u20A9', // ₩
+  '\u20AA', // ₪
+  '\u20B1', // ₱
+  '\u20BA', // ₺
+  '\u20BD', // ₽
+  '\u20BF', // ₿
+  'AED',
+  'KWD',
+  'BHD',
+  'JOD',
+];
+
 final Map<String, IconData> typeIcons = {
   // Essential & Daily
   'Food': Icons.restaurant,

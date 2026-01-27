@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:personal_expense_tracker/presentation/providers/expense_summary_provider.dart';
 import 'package:intl/intl.dart';
+import 'package:personal_expense_tracker/core/utils/formatters/amount_formatter.dart';
 import '../../../core/utils/theme/button_theme.dart';
 
 class ExpenseSummaryPage extends StatelessWidget {
@@ -100,10 +101,15 @@ class ExpenseSummaryPage extends StatelessWidget {
                         ),
                         child: ListTile(
                           contentPadding: const EdgeInsets.all(12.0),
-                          leading: const Icon(
-                            Icons.wallet,
-                            color: darkColor,
-                            size: homeIcon,
+                          leading: CircleAvatar(
+                            backgroundColor: Theme.of(context)
+                                .primaryColor
+                                .withOpacity(0.12),
+                            child: Icon(
+                              typeIcons[summary.type] ?? Icons.category,
+                              color: Theme.of(context).primaryColor,
+                              size: normalIcon,
+                            ),
                           ),
                           title: Text(
                             summary.type,
@@ -124,7 +130,7 @@ class ExpenseSummaryPage extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
                                 child: Text(
-                                  '₹${summary.totalAmount}',
+                                  '₹${formatAmount(summary.totalAmount)}',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyMedium

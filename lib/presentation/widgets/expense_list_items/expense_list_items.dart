@@ -1,8 +1,10 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_expense_tracker/core/utils/theme/theme_data.dart';
+import 'package:personal_expense_tracker/core/utils/formatters/amount_formatter.dart';
 import '../../../core/utils/constants/constants.dart';
 import '../../../domain/entities/expense.dart';
 
@@ -15,57 +17,93 @@ class ExpenseListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // Background container that covers a portion of the card
+        GestureDetector(
+          onTap: () {
+            Slidable.of(context)?.close();
+          },
+          onHorizontalDragStart: (_) {},
+          behavior: HitTestBehavior.translucent,
+          child: ListTile(
+            contentPadding:
+                const EdgeInsets.only(left: 48, top: 12, right: 10, bottom: 12),
+            leading: CircleAvatar(
+              backgroundColor: lightTheme.colorScheme.primary.withOpacity(0.12),
+              child: Icon(
+                typeIcons[expense.type] ?? Icons.category,
+                color: lightTheme.colorScheme.primary,
+                size: normalIcon,
+              ),
+            ),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    expense.type ?? 'Other',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleLarge
+                        ?.copyWith(fontSize: 18),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  DateFormat.yMMMd().format(expense.date),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall
+                      ?.copyWith(fontSize: 13),
+                ),
+              ],
+            ),
+            subtitle: Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8.0, vertical: 4.0),
+                  decoration: BoxDecoration(
+                    color: buttonColor.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Text(
+                    '${expense.currency ?? currencies.first} ${formatAmount(expense.amount)}',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: buttonColor,
+                        ),
+                  ),
+                ),
+              ),
+            ),
+            tileColor: Theme.of(context).cardTheme.color,
+          ),
+        ),
         Positioned(
           left: 0,
           top: 0,
-          child: Container(
-            width: 34.0,
-            height: 100.0,
-            color: lightTheme.colorScheme.primary,
-            child: const Center(
-              child: Icon(Icons.arrow_forward_ios_rounded,
-                  color: lightColor, size: forwardIcon),
+          child: GestureDetector(
+            onTap: () {
+              final slidable = Slidable.of(context);
+              if (slidable != null) {
+                if (slidable.actionPaneType.value == ActionPaneType.none) {
+                  slidable.openStartActionPane();
+                } else {
+                  slidable.close();
+                }
+              }
+            },
+            child: Container(
+              width: 34.0,
+              height: 104.0,
+              color: lightTheme.colorScheme.primary,
+              child: const Center(
+                child: Icon(Icons.arrow_forward_ios_rounded,
+                    color: lightColor, size: forwardIcon),
+              ),
             ),
           ),
-        ),
-        ListTile(
-          contentPadding:
-              const EdgeInsets.only(left: 72, top: 12, right: 10, bottom: 12),
-          leading: const Icon(
-            Icons.wallet,
-            color: darkColor,
-            size: homeIcon,
-          ),
-          title: Text(
-            expense.type ?? 'Other',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          subtitle: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 35),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                decoration: BoxDecoration(
-                  color: buttonColor.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Text(
-                  '₹${expense.amount}',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: buttonColor,
-                      ),
-                ),
-              ),
-            ],
-          ),
-          trailing: Text(
-            DateFormat.yMMMd().format(expense.date),
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          tileColor: Theme.of(context).cardTheme.color,
         ),
       ],
     );

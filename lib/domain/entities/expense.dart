@@ -4,6 +4,7 @@ class Expense {
   final DateTime date;
   final String description;
   final String? type;
+  final String? currency;
 
   Expense({
     required this.id,
@@ -11,6 +12,7 @@ class Expense {
     required this.date,
     required this.description,
     this.type,
+    this.currency,
   });
 
   Expense copyWith({
@@ -19,6 +21,7 @@ class Expense {
     DateTime? date,
     String? description,
     String? type,
+    String? currency,
   }) {
     return Expense(
       id: id ?? this.id,
@@ -26,6 +29,7 @@ class Expense {
       date: date ?? this.date,
       description: description ?? this.description,
       type: type ?? this.type,
+      currency: currency ?? this.currency,
     );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
 import 'package:personal_expense_tracker/presentation/widgets/bottom_navbar/bottom_navbar.dart';
 import 'package:provider/provider.dart';
 import '../../../core/utils/theme/button_theme.dart';
@@ -48,8 +47,7 @@ class ExpenseListPage extends StatelessWidget {
                             'Sort by Date',
                             style: ButtonThemes.elevatedButtonTextStyle,
                           ),
-                          const SizedBox(
-                              width: 5.0), 
+                          const SizedBox(width: 5.0),
                           Icon(
                             provider.isAscending
                                 ? Icons.keyboard_double_arrow_up_sharp
@@ -111,7 +109,7 @@ class ExpenseListPage extends StatelessWidget {
                         startActionPane: ActionPane(
                           motion: const ScrollMotion(),
                           children: [
-                            SlidableAction(
+                            CustomSlidableAction(
                               onPressed: (context) {
                                 // Edit action
                                 Navigator.of(context).push(
@@ -123,21 +121,27 @@ class ExpenseListPage extends StatelessWidget {
                               },
                               backgroundColor:
                                   Theme.of(context).colorScheme.primary,
-                              foregroundColor: lightColor,
-                              icon: Icons.edit,
+                              child: const Icon(
+                                Icons.edit,
+                                color: Colors.white,
+                                size: 22,
+                              ),
                             ),
-                            SlidableAction(
+                            CustomSlidableAction(
                               onPressed: (context) {
                                 // Delete action
                                 _showDeleteDialog(expense.id);
                               },
                               backgroundColor:
                                   Theme.of(context).colorScheme.error,
-                              foregroundColor: lightColor,
-                              icon: Icons.delete,
                               borderRadius: const BorderRadius.only(
                                   topRight: Radius.circular(8),
                                   bottomRight: Radius.circular(8)),
+                              child: const Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                                size: 22,
+                              ),
                             ),
                           ],
                         ),

@@ -11,15 +11,18 @@ class ButtonWidget extends StatelessWidget {
   final TextEditingController descriptionController;
   final ValueNotifier<DateTime> selectedDate;
   final ValueNotifier<String?> selectedType;
+  final ValueNotifier<String> selectedCurrency;
   final bool isEdit;
   final Expense? expense;
 
-  const ButtonWidget({super.key, 
+  const ButtonWidget({
+    super.key,
     required this.formKey,
     required this.amountController,
     required this.descriptionController,
     required this.selectedDate,
     required this.selectedType,
+    required this.selectedCurrency,
     this.isEdit = false,
     this.expense,
   });
@@ -34,6 +37,7 @@ class ButtonWidget extends StatelessWidget {
           final description = descriptionController.text;
           final date = selectedDate.value;
           final type = selectedType.value;
+          final currency = selectedCurrency.value;
 
           if (isEdit && expense != null) {
             final updatedExpense = Expense(
@@ -42,8 +46,10 @@ class ButtonWidget extends StatelessWidget {
               date: date,
               type: type,
               description: description,
+              currency: currency,
             );
-            await Provider.of<ExpenseProvider>(context, listen: false).modifyExpense(updatedExpense);
+            await Provider.of<ExpenseProvider>(context, listen: false)
+                .modifyExpense(updatedExpense);
           } else {
             final newExpense = Expense(
               id: DateTime.now().millisecondsSinceEpoch,
@@ -51,17 +57,20 @@ class ButtonWidget extends StatelessWidget {
               date: date,
               type: type,
               description: description,
+              currency: currency,
             );
-            await Provider.of<ExpenseProvider>(context, listen: false).addNewExpense(newExpense);
+            await Provider.of<ExpenseProvider>(context, listen: false)
+                .addNewExpense(newExpense);
           }
 
           // Refresh the summary provider
           // ignore: use_build_context_synchronously
-          await Provider.of<ExpenseSummaryProvider>(context, listen: false).loadSummaries(
+          await Provider.of<ExpenseSummaryProvider>(context, listen: false)
+              .loadSummaries(
             DateTime(DateTime.now().year, DateTime.now().month, 1),
             DateTime(DateTime.now().year, DateTime.now().month + 1, 0),
           );
-          
+
           // ignore: use_build_context_synchronously
           Navigator.of(context).pop();
         }
