@@ -38,53 +38,55 @@ class EditExpensePage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: formKey,
-          child: Column(
-            children: [
-              TypePicker(
-                selectedType: selectedType,
-              ),
-              const SizedBox(height: 22.0),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CurrencyPicker(selectedCurrency: selectedCurrency),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: FormFieldWidget(
-                      controller: amountController,
-                      labelText: 'Amount',
-                      keyboardType: TextInputType.number,
-                      validator: validateAmount,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                TypePicker(
+                  selectedType: selectedType,
+                ),
+                const SizedBox(height: 22.0),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CurrencyPicker(selectedCurrency: selectedCurrency),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: FormFieldWidget(
+                        controller: amountController,
+                        labelText: 'Amount',
+                        keyboardType: TextInputType.number,
+                        validator: validateAmount,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 22.0),
-              FormFieldWidget(
-                controller: descriptionController,
-                labelText: 'Description',
-                maxLines: 3,
-                validator: validateDescription,
-              ),
-              const SizedBox(height: 22.0),
-              DatePickerWidget(
-                selectedDate: selectedDate,
-                dateFormat: dateFormat,
-                minDate: DateTime(2000),
-                maxDate: DateTime.now(),
-              ),
-              const SizedBox(height: 28.0),
-              ButtonWidget(
-                formKey: formKey,
-                amountController: amountController,
-                descriptionController: descriptionController,
-                selectedDate: selectedDate,
-                selectedType: selectedType,
-                selectedCurrency: selectedCurrency,
-                isEdit: true,
-                expense: expense,
-              ),
-            ],
+                  ],
+                ),
+                const SizedBox(height: 22.0),
+                FormFieldWidget(
+                  controller: descriptionController,
+                  labelText: 'Description',
+                  maxLines: 3,
+                  validator: validateDescription,
+                ),
+                const SizedBox(height: 22.0),
+                DatePickerWidget(
+                  selectedDate: selectedDate,
+                  dateFormat: dateFormat,
+                  minDate: DateTime(2000),
+                  maxDate: DateTime.now(),
+                ),
+                const SizedBox(height: 28.0),
+                ButtonWidget(
+                  formKey: formKey,
+                  amountController: amountController,
+                  descriptionController: descriptionController,
+                  selectedDate: selectedDate,
+                  selectedType: selectedType,
+                  selectedCurrency: selectedCurrency,
+                  isEdit: true,
+                  expense: expense,
+                ),
+              ],
+            ),
           ),
         ),
       ),

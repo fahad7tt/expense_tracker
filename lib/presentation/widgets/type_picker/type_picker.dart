@@ -136,7 +136,7 @@ class TypePicker extends StatelessWidget {
                               Navigator.pop(context, type);
                             },
                           );
-                        }).toList(),
+                        }),
                         if (groupIndex < groupedCategories.length - 1)
                           const Divider(height: 1, thickness: 0.5),
                       ],
