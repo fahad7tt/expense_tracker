@@ -41,10 +41,11 @@ class ExpenseSummaryPage extends StatelessWidget {
                   Text(
                     formattedMonth,
                     style: ButtonThemes.elevatedButtonTextStyle
-                        .copyWith(fontSize: dateIcon),
+                        .copyWith(fontSize: dateIcon, color: deepBlue),
                   ),
                   const SizedBox(width: 4.0),
-                  const Icon(Icons.arrow_drop_down, size: normalIcon),
+                  const Icon(Icons.arrow_drop_down,
+                      size: normalIcon),
                 ],
               ),
               onPressed: () async {
@@ -53,6 +54,10 @@ class ExpenseSummaryPage extends StatelessWidget {
                   initialDate: selectedMonth,
                   firstDate: DateTime(DateTime.now().year - 5, 1),
                   lastDate: DateTime(DateTime.now().year, DateTime.now().month),
+                  selectedMonthBackgroundColor: selectedIconColor,
+                  selectedMonthTextColor: lightColor,
+                  hideHeaderRow: true,
+                  yearFirst: true,
                 );
                 if (picked != null && picked != selectedMonth) {
                   final DateTime startDate =
@@ -113,7 +118,10 @@ class ExpenseSummaryPage extends StatelessWidget {
                           ),
                           title: Text(
                             summary.type,
-                            style: Theme.of(context).textTheme.titleLarge,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(fontSize: 18),
                           ),
                           subtitle: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -130,7 +138,7 @@ class ExpenseSummaryPage extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
                                 child: Text(
-                                  '₹${formatAmount(summary.totalAmount)}',
+                                  '${summary.currency} ${formatAmount(summary.totalAmount)}',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyMedium

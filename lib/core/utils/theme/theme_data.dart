@@ -17,7 +17,7 @@ final ThemeData lightTheme = ThemeData(
     color: deepBlue,
     titleTextStyle: TextStyle(
       color: lightColor,
-      fontSize: 22,
+      fontSize: 20,
       fontWeight: FontWeight.w400,
     ),
     iconTheme: IconThemeData(
@@ -121,7 +121,7 @@ final ThemeData darkTheme = ThemeData(
     titleTextStyle: TextStyle(
       color: lightColor,
       fontSize: 20,
-      fontWeight: FontWeight.bold,
+      fontWeight: FontWeight.w400,
     ),
   ),
   cardTheme: const CardTheme(

@@ -3,6 +3,7 @@ import '../../domain/entities/expense_summary.dart';
 import '../../domain/repositories/expense_repository.dart';
 import '../datasources/expense_data_source.dart';
 import '../models/expense_model.dart';
+import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
 
 class ExpenseRepositoryImpl implements ExpenseRepository {
   final ExpenseLocalDataSource localDataSource;
@@ -45,18 +46,22 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
             expense.date.isAfter(startDate) && expense.date.isBefore(endDate))
         .toList();
 
-    final Map<String, List<Expense>> groupedByType = {};
+    final Map<String, List<Expense>> grouped = {};
     for (var expense in filteredExpenses) {
-      groupedByType.putIfAbsent(expense.type ?? 'Other', () => []).add(expense);
+      final key =
+          '${expense.type ?? 'Other'}|${expense.currency ?? currencies.first}';
+      grouped.putIfAbsent(key, () => []).add(expense);
     }
 
-    return groupedByType.entries.map((entry) {
+    return grouped.entries.map((entry) {
       final totalAmount =
           entry.value.fold(0.0, (sum, expense) => sum + expense.amount);
+      final firstExpense = entry.value.first;
       return ExpenseSummary(
-        type: entry.key,
+        type: firstExpense.type ?? 'Other',
         totalAmount: totalAmount,
         count: entry.value.length,
+        currency: firstExpense.currency ?? currencies.first,
       );
     }).toList();
   }

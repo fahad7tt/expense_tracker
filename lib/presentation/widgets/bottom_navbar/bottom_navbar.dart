@@ -27,7 +27,7 @@ class BottomNavBar extends StatelessWidget {
                     navProvider: navProvider,
                     onTap: () {
                       navProvider.setIndex(0);
-                      // Clear the navigation stack and navigate to the home page
+                      // Clears the navigation stack and navigates to the home page
                       Navigator.of(context)
                           .pushNamedAndRemoveUntil('/home', (route) => false);
                     },

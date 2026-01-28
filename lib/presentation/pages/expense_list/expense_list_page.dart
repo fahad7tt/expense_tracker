@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
 import 'package:personal_expense_tracker/presentation/widgets/bottom_navbar/bottom_navbar.dart';
 import 'package:provider/provider.dart';
 import '../../../core/utils/theme/button_theme.dart';
@@ -43,20 +44,15 @@ class ExpenseListPage extends StatelessWidget {
                       return Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text(
-                            'Sort by Date',
-                            style: ButtonThemes.elevatedButtonTextStyle,
-                          ),
+                          Text('Sort by Date',
+                              style: ButtonThemes.elevatedButtonTextStyle
+                                  .copyWith(color: deepBlue)),
                           const SizedBox(width: 5.0),
                           Icon(
                             provider.isAscending
                                 ? Icons.keyboard_double_arrow_up_sharp
                                 : Icons.keyboard_double_arrow_down_sharp,
-                            color: provider.isAscending
-                                ? Theme.of(context)
-                                    .colorScheme
-                                    .secondary // Green
-                                : Theme.of(context).colorScheme.error, // Red
+                            color: deepBlue,
                           ),
                         ],
                       );
@@ -77,9 +73,10 @@ class ExpenseListPage extends StatelessWidget {
                     }
                   },
                   style: ButtonThemes.sortFilterButtonStyle,
-                  child: const Text(
+                  child: Text(
                     'Filter by Date',
-                    style: ButtonThemes.elevatedButtonTextStyle,
+                    style: ButtonThemes.elevatedButtonTextStyle
+                    .copyWith(color: deepBlue)
                   ),
                 ),
               ],
@@ -93,7 +90,7 @@ class ExpenseListPage extends StatelessWidget {
                 if (expenses.isEmpty) {
                   return const Center(
                     child: Text(
-                      "Tap the '+' button to add expense",
+                      "Tap the '+' button to add your expenses",
                     ),
                   );
                 }
@@ -123,7 +120,7 @@ class ExpenseListPage extends StatelessWidget {
                                   Theme.of(context).colorScheme.primary,
                               child: const Icon(
                                 Icons.edit,
-                                color: Colors.white,
+                                color: lightColor,
                                 size: 22,
                               ),
                             ),
@@ -139,7 +136,7 @@ class ExpenseListPage extends StatelessWidget {
                                   bottomRight: Radius.circular(8)),
                               child: const Icon(
                                 Icons.delete,
-                                color: Colors.white,
+                                color: lightColor,
                                 size: 22,
                               ),
                             ),

@@ -31,30 +31,36 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
     return localDataSource.deleteExpense(id);
   }
 
-  Future<List<ExpenseSummary>> getExpenseSummaryByType(DateTime startDate, DateTime endDate) async {
+  Future<List<ExpenseSummary>> getExpenseSummaryByType(
+      DateTime startDate, DateTime endDate) async {
     final expenses = await getAllExpenses();
     final summaries = _calculateSummaries(expenses, startDate, endDate);
     return summaries;
   }
 
-  List<ExpenseSummary> _calculateSummaries(List<Expense> expenses, DateTime startDate, DateTime endDate) {
+  List<ExpenseSummary> _calculateSummaries(
+      List<Expense> expenses, DateTime startDate, DateTime endDate) {
     final filteredExpenses = expenses
-        .where((expense) => expense.date.isAfter(startDate) && expense.date.isBefore(endDate))
+        .where((expense) =>
+            expense.date.isAfter(startDate) && expense.date.isBefore(endDate))
         .toList();
 
-    final Map<String, List<Expense>> groupedByType = {};
+    final Map<String, List<Expense>> grouped = {};
     for (var expense in filteredExpenses) {
-      groupedByType.putIfAbsent(expense.type!, () => []).add(expense);
+      final key = '${expense.type ?? 'Other'}|${expense.currency ?? '₹'}';
+      grouped.putIfAbsent(key, () => []).add(expense);
     }
 
-    return groupedByType.entries.map((entry) {
-      final totalAmount = entry.value.fold(0.0, (sum, expense) => sum + expense.amount);
+    return grouped.entries.map((entry) {
+      final totalAmount =
+          entry.value.fold(0.0, (sum, expense) => sum + expense.amount);
+      final firstExpense = entry.value.first;
       return ExpenseSummary(
-        type: entry.key,
+        type: firstExpense.type ?? 'Other',
         totalAmount: totalAmount,
         count: entry.value.length,
+        currency: firstExpense.currency ?? '₹',
       );
     }).toList();
   }
-
 }

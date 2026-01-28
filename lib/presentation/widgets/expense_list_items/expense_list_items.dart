@@ -44,7 +44,6 @@ class ExpenseListItem extends StatelessWidget {
                         .textTheme
                         .titleLarge
                         ?.copyWith(fontSize: 18),
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 const SizedBox(width: 8),
