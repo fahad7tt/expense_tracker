@@ -32,7 +32,6 @@ class EditExpensePage extends StatelessWidget {
     final formKey = GlobalKey<FormState>(); // GlobalKey for Form
 
     return Scaffold(
-      backgroundColor: bgColor,
       appBar: AppBar(title: const Text('Edit Expense'), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

@@ -20,7 +20,7 @@ dependencies:
   hive_flutter: ^1.1.0
 
   #month picker
-  month_picker_dialog: ^4.0.1
+  month_picker_dialog: ^6.5.0
 
   #local notifications
   flutter_local_notifications: ^17.2.1+2
@@ -28,7 +28,7 @@ dependencies:
   #internationalization
   flutter_localizations:
     sdk: flutter
-  intl: ^0.19.0
+  intl: 0.20.2
 
   #timezone
   timezone: ^0.9.4
@@ -39,6 +39,9 @@ dependencies:
   #service locator
   get_it: ^7.7.0
   permission_handler: ^11.3.1
+
+  #app info
+  package_info_plus: ^8.0.0
 
 dev_dependencies:
   flutter_test:

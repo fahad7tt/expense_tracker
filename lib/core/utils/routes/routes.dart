@@ -18,3 +18,22 @@ Map<String, WidgetBuilder> get appRoutes {
     '/privacyPolicy': (context) => const PrivacyPolicy(),
   };
 }
+
+Route<dynamic>? generateRoute(RouteSettings settings) {
+  final routes = appRoutes;
+  final builder = routes[settings.name];
+
+  if (builder == null) return null;
+
+  return PageRouteBuilder(
+    settings: settings,
+    pageBuilder: (context, animation, secondaryAnimation) => builder(context),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(
+        opacity: animation,
+        child: child,
+      );
+    },
+    transitionDuration: const Duration(milliseconds: 300),
+  );
+}

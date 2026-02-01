@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, deprecated_member_use
+// ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
 import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
 import 'package:personal_expense_tracker/presentation/widgets/bottom_navbar/bottom_navbar.dart';
@@ -8,6 +8,7 @@ import 'package:personal_expense_tracker/presentation/providers/expense_summary_
 import 'package:intl/intl.dart';
 import 'package:personal_expense_tracker/core/utils/formatters/amount_formatter.dart';
 import '../../../core/utils/theme/button_theme.dart';
+import 'package:personal_expense_tracker/core/utils/theme/system_theme.dart';
 
 class ExpenseSummaryPage extends StatelessWidget {
   const ExpenseSummaryPage({super.key});
@@ -34,7 +35,8 @@ class ExpenseSummaryPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 19, top: 14, bottom: 4),
             child: ElevatedButton.icon(
-              icon: const Icon(Icons.calendar_today, size: normalIcon),
+              icon: const Icon(Icons.calendar_today,
+                  size: normalIcon, color: deepBlue),
               label: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -45,7 +47,7 @@ class ExpenseSummaryPage extends StatelessWidget {
                   ),
                   const SizedBox(width: 4.0),
                   const Icon(Icons.arrow_drop_down,
-                      size: normalIcon),
+                      size: normalIcon, color: deepBlue),
                 ],
               ),
               onPressed: () async {
@@ -54,11 +56,17 @@ class ExpenseSummaryPage extends StatelessWidget {
                   initialDate: selectedMonth,
                   firstDate: DateTime(DateTime.now().year - 5, 1),
                   lastDate: DateTime(DateTime.now().year, DateTime.now().month),
-                  selectedMonthBackgroundColor: selectedIconColor,
-                  selectedMonthTextColor: lightColor,
-                  hideHeaderRow: true,
-                  yearFirst: true,
+                  monthPickerDialogSettings: const MonthPickerDialogSettings(
+                    headerSettings: PickerHeaderSettings(
+                      headerBackgroundColor: deepBlue,
+                      headerCurrentPageTextStyle: TextStyle(color: lightColor),
+                    ),
+                    dialogSettings: PickerDialogSettings(
+                      dialogBackgroundColor: Colors.white,
+                    ),
+                  ),
                 );
+
                 if (picked != null && picked != selectedMonth) {
                   final DateTime startDate =
                       DateTime(picked.year, picked.month, 1);
@@ -107,12 +115,16 @@ class ExpenseSummaryPage extends StatelessWidget {
                         child: ListTile(
                           contentPadding: const EdgeInsets.all(12.0),
                           leading: CircleAvatar(
-                            backgroundColor: Theme.of(context)
-                                .primaryColor
-                                .withOpacity(0.12),
+                            backgroundColor: context.isDarkMode
+                                ? Colors.white.withOpacity(0.1)
+                                : Theme.of(context)
+                                    .primaryColor
+                                    .withOpacity(0.12),
                             child: Icon(
                               typeIcons[summary.type] ?? Icons.category,
-                              color: Theme.of(context).primaryColor,
+                              color: context.isDarkMode
+                                  ? lightColor
+                                  : Theme.of(context).primaryColor,
                               size: normalIcon,
                             ),
                           ),

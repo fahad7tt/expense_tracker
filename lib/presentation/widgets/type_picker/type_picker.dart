@@ -19,7 +19,7 @@ class TypePicker extends StatelessWidget {
             TextEditingController(text: value);
         return Container(
           decoration: BoxDecoration(
-            border: Border.all(color: darkColor),
+            border: Border.all(color: Theme.of(context).dividerColor),
             borderRadius: BorderRadius.circular(8.0),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -52,9 +52,9 @@ class TypePicker extends StatelessWidget {
       builder: (BuildContext context) {
         return Container(
           height: MediaQuery.of(context).size.height * 0.8,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           padding: const EdgeInsets.only(top: 12, bottom: 24),
           child: Column(
@@ -138,7 +138,10 @@ class TypePicker extends StatelessWidget {
                           );
                         }),
                         if (groupIndex < groupedCategories.length - 1)
-                          const Divider(height: 1, thickness: 0.5),
+                          Divider(
+                              height: 1,
+                              thickness: 0.5,
+                              color: Theme.of(context).dividerColor),
                       ],
                     );
                   },

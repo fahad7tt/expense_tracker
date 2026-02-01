@@ -9,13 +9,16 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final navTheme = theme.bottomNavigationBarTheme;
+
     return Consumer<NavigationProvider>(
       builder: (context, navProvider, child) {
         return Stack(
           clipBehavior: Clip.none,
           children: [
             BottomAppBar(
-              color: lightColor,
+              color: navTheme.backgroundColor,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -91,6 +94,10 @@ class BottomNavBar extends StatelessWidget {
     required NavigationProvider navProvider,
     required VoidCallback onTap,
   }) {
+    final theme = Theme.of(context);
+    final navTheme = theme.bottomNavigationBarTheme;
+    final isSelected = navProvider.selectedIndex == index;
+
     return GestureDetector(
       onTap: onTap,
       child: Padding(
@@ -100,17 +107,18 @@ class BottomNavBar extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: navProvider.selectedIndex == index
-                  ? selectedIconColor
-                  : darkColor,
+              color: isSelected
+                  ? navTheme.selectedItemColor
+                  : navTheme.unselectedItemColor,
               size: homeIcon,
             ),
             Text(
               label,
               style: TextStyle(
-                color: navProvider.selectedIndex == index
-                    ? selectedIconColor
-                    : deepBlue,
+                color: isSelected
+                    ? navTheme.selectedItemColor
+                    : theme.textTheme.bodySmall?.color ??
+                        navTheme.unselectedItemColor,
                 fontSize: 11,
               ),
             ),

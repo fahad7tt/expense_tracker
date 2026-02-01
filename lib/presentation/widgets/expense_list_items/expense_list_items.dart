@@ -3,18 +3,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
-import 'package:personal_expense_tracker/core/utils/theme/theme_data.dart';
 import 'package:personal_expense_tracker/core/utils/formatters/amount_formatter.dart';
+import 'package:personal_expense_tracker/core/utils/theme/system_theme.dart';
 import '../../../core/utils/constants/constants.dart';
 import '../../../domain/entities/expense.dart';
 
-class ExpenseListItem extends StatelessWidget {
+class ExpenseListItem extends StatefulWidget {
   final Expense expense;
 
   const ExpenseListItem({super.key, required this.expense});
 
   @override
+  State<ExpenseListItem> createState() => _ExpenseListItemState();
+}
+
+class _ExpenseListItemState extends State<ExpenseListItem> {
+  bool _isOpen = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Listen to slidable state changes
+    final slidable = Slidable.of(context);
+    if (slidable != null) {
+      slidable.actionPaneType.addListener(() {
+        final isCurrentlyOpen =
+            slidable.actionPaneType.value != ActionPaneType.none;
+        if (_isOpen != isCurrentlyOpen) {
+          setState(() {
+            _isOpen = isCurrentlyOpen;
+          });
+        }
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final bool isDarkMode = context.isDarkMode;
+
     return Stack(
       children: [
         GestureDetector(
@@ -27,10 +54,14 @@ class ExpenseListItem extends StatelessWidget {
             contentPadding:
                 const EdgeInsets.only(left: 48, top: 12, right: 10, bottom: 12),
             leading: CircleAvatar(
-              backgroundColor: lightTheme.colorScheme.primary.withOpacity(0.12),
+              backgroundColor: isDarkMode
+                  ? Colors.white.withOpacity(0.1)
+                  : Theme.of(context).colorScheme.primary.withOpacity(0.12),
               child: Icon(
-                typeIcons[expense.type] ?? Icons.category,
-                color: lightTheme.colorScheme.primary,
+                typeIcons[widget.expense.type] ?? Icons.category,
+                color: isDarkMode
+                    ? lightColor
+                    : Theme.of(context).colorScheme.primary,
                 size: normalIcon,
               ),
             ),
@@ -39,7 +70,7 @@ class ExpenseListItem extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    expense.type ?? 'Other',
+                    widget.expense.type ?? 'Other',
                     style: Theme.of(context)
                         .textTheme
                         .titleLarge
@@ -48,7 +79,7 @@ class ExpenseListItem extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  DateFormat.yMMMd().format(expense.date),
+                  DateFormat.yMMMd().format(widget.expense.date),
                   style: Theme.of(context)
                       .textTheme
                       .bodySmall
@@ -68,7 +99,7 @@ class ExpenseListItem extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   child: Text(
-                    '${expense.currency ?? currencies.first} ${formatAmount(expense.amount)}',
+                    '${widget.expense.currency ?? currencies.first} ${formatAmount(widget.expense.amount)}',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: buttonColor,
                         ),
@@ -88,18 +119,30 @@ class ExpenseListItem extends StatelessWidget {
               if (slidable != null) {
                 if (slidable.actionPaneType.value == ActionPaneType.none) {
                   slidable.openStartActionPane();
+                  setState(() {
+                    _isOpen = true;
+                  });
                 } else {
                   slidable.close();
+                  setState(() {
+                    _isOpen = false;
+                  });
                 }
               }
             },
             child: Container(
-              width: 34.0,
-              height: 104.0,
-              color: lightTheme.colorScheme.primary,
-              child: const Center(
-                child: Icon(Icons.arrow_forward_ios_rounded,
-                    color: lightColor, size: forwardIcon),
+              width: 32,
+              height: 104,
+              color: isDarkMode
+                  ? lightColor
+                  : Theme.of(context).colorScheme.primary,
+              child: Center(
+                child: Icon(
+                    _isOpen
+                        ? Icons.arrow_back_ios_rounded
+                        : Icons.arrow_forward_ios_rounded,
+                    color: isDarkMode ? deepBlue : lightColor,
+                    size: forwardIcon),
               ),
             ),
           ),

@@ -14,20 +14,28 @@ final ThemeData lightTheme = ThemeData(
     onError: lightColor,
   ),
   appBarTheme: const AppBarTheme(
-    color: deepBlue,
+    backgroundColor: deepBlue,
     titleTextStyle: TextStyle(
       color: lightColor,
       fontSize: 20,
       fontWeight: FontWeight.w400,
     ),
-    iconTheme: IconThemeData(
-    color: iconColor
+    iconTheme: IconThemeData(color: iconColor),
   ),
-  ),
-  cardTheme: const CardTheme(
+  cardTheme: const CardThemeData(
     color: cardColor,
+    elevation: 2,
   ),
-  dialogTheme: const DialogTheme(
+  floatingActionButtonTheme: const FloatingActionButtonThemeData(
+    backgroundColor: deepBlue,
+    foregroundColor: lightColor,
+  ),
+  bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+    backgroundColor: lightColor,
+    selectedItemColor: selectedIconColor,
+    unselectedItemColor: darkColor,
+  ),
+  dialogTheme: const DialogThemeData(
     backgroundColor: lightColor,
   ),
   textTheme: const TextTheme(
@@ -58,7 +66,7 @@ final ThemeData lightTheme = ThemeData(
       fontSize: 20,
       fontWeight: FontWeight.normal,
     ),
-    
+
     titleSmall: TextStyle(
       color: darkGray,
       fontSize: 18,
@@ -99,10 +107,9 @@ final ThemeData lightTheme = ThemeData(
       borderSide: BorderSide(color: lightGrayText),
     ),
   ),
-  scaffoldBackgroundColor: bgColor, 
-  bottomAppBarTheme: const BottomAppBarTheme(color: deepBlue),
+  scaffoldBackgroundColor: bgColor,
+  bottomAppBarTheme: const BottomAppBarThemeData(color: deepBlue),
 );
-
 
 // Dark Theme
 final ThemeData darkTheme = ThemeData(
@@ -117,17 +124,27 @@ final ThemeData darkTheme = ThemeData(
     onError: lightColor,
   ),
   appBarTheme: const AppBarTheme(
-    color: deepBlue,
+    backgroundColor: Color(0xFF1E1E1E),
     titleTextStyle: TextStyle(
       color: lightColor,
       fontSize: 20,
       fontWeight: FontWeight.w400,
     ),
   ),
-  cardTheme: const CardTheme(
-    color: darkGray,
+  cardTheme: const CardThemeData(
+    color: Color(0xFF1E1E1E), // Slightly lighter than background for depth
+    elevation: 2,
   ),
-  dialogTheme: const DialogTheme(
+  floatingActionButtonTheme: const FloatingActionButtonThemeData(
+    backgroundColor: lightColor,
+    foregroundColor: deepBlue,
+  ),
+  bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+    backgroundColor: Color(0xFF1E1E1E),
+    selectedItemColor: Color.fromARGB(255, 255, 152, 0),
+    unselectedItemColor: Color(0xFFCCCCCC),
+  ),
+  dialogTheme: const DialogThemeData(
     backgroundColor: darkGray,
   ),
   textTheme: const TextTheme(
@@ -192,6 +209,6 @@ final ThemeData darkTheme = ThemeData(
       borderSide: BorderSide(color: lightGrayText),
     ),
   ),
-  scaffoldBackgroundColor: darkGray, 
-  bottomAppBarTheme: const BottomAppBarTheme(color: deepBlue),
+  scaffoldBackgroundColor: darkGray,
+  bottomAppBarTheme: const BottomAppBarThemeData(color: deepBlue),
 );

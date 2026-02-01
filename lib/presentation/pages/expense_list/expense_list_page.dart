@@ -24,7 +24,6 @@ class ExpenseListPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Expenses'),
         centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: Column(
         children: [
@@ -73,11 +72,9 @@ class ExpenseListPage extends StatelessWidget {
                     }
                   },
                   style: ButtonThemes.sortFilterButtonStyle,
-                  child: Text(
-                    'Filter by Date',
-                    style: ButtonThemes.elevatedButtonTextStyle
-                    .copyWith(color: deepBlue)
-                  ),
+                  child: Text('Filter by Date',
+                      style: ButtonThemes.elevatedButtonTextStyle
+                          .copyWith(color: deepBlue)),
                 ),
               ],
             ),
