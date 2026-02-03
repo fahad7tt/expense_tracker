@@ -74,7 +74,6 @@ class BottomNavBar extends StatelessWidget {
                       ),
                     );
                   },
-                  splashColor: navbarColor,
                   tooltip: 'Add Expense',
                   child: const Icon(Icons.add),
                 ),
