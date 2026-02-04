@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: appProviders,
       child: MaterialApp(
-        title: 'Personal Expense Tracker',
+        title: 'MyExpense',
         theme: lightTheme,
         darkTheme: darkTheme,
         themeMode: ThemeMode.system,

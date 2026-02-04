@@ -4,7 +4,7 @@ publish_to: 'none'
 version: 0.1.0
 
 environment:
-  sdk: '>=3.5.0-180.3.beta <4.0.0'
+  sdk: ^3.10.8
 
 dependencies:
   flutter:
@@ -56,11 +56,26 @@ dev_dependencies:
   #launcher icon
   flutter_launcher_icons: ^0.13.1
 
+  # splash screen
+  flutter_native_splash: ^2.4.4
+
 flutter_launcher_icons:
   android: true 
   remove_alpha_ios: true
   ios: true
-  image_path: "assets/images/app_icon.jpeg"
+  image_path: "assets/images/app_icon.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/app_icon.png"
+
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: "assets/images/app_icon.png"
+  android: true
+  ios: true
+  
+  android_12:
+    color: "#FFFFFF"
+    image: "assets/images/app_icon.png"
 
 #flutter assets
 flutter:
