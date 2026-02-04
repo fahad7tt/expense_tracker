@@ -93,7 +93,7 @@ class CurrencyPicker extends StatelessWidget {
                           currency,
                           style: TextStyle(
                             fontSize: 18,
-                            color: isSelected ? Colors.white : Colors.black,
+                            color: isSelected ? lightColor : darkColor,
                           ),
                         ),
                         selected: isSelected,

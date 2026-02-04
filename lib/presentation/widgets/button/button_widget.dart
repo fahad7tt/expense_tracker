@@ -85,7 +85,7 @@ class ButtonWidget extends StatelessWidget {
       child: Text(
         isEdit ? 'Save Changes' : 'Add Expense',
         style: ButtonThemes.elevatedButtonTextStyle.copyWith(
-          color: context.isDarkMode ? Colors.black : Colors.white,
+          color: context.isDarkMode ? darkColor : lightColor,
         ),
       ),
     );
