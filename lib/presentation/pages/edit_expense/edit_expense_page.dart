@@ -9,6 +9,7 @@ import '../../widgets/date_picker/date_picker_widget.dart';
 import '../../widgets/form_field/form_field_widget.dart';
 import '../../widgets/currency_picker/currency_picker.dart';
 import 'package:personal_expense_tracker/core/utils/formatters/amount_formatter.dart';
+import '../../../core/utils/formatters/currency_input_formatter.dart';
 
 class EditExpensePage extends StatelessWidget {
   final Expense expense;
@@ -53,7 +54,9 @@ class EditExpensePage extends StatelessWidget {
                       child: FormFieldWidget(
                         controller: amountController,
                         labelText: 'Amount',
-                        keyboardType: TextInputType.number,
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
+                        inputFormatters: [CurrencyInputFormatter()],
                         validator: validateAmount,
                       ),
                     ),

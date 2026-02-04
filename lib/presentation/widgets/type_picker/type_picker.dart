@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
 import '../../../core/utils/validation/form_validation.dart';
+import '../../../../core/utils/theme/system_theme.dart';
 
 class TypePicker extends StatelessWidget {
   final ValueNotifier<String?> selectedType;
@@ -26,10 +27,16 @@ class TypePicker extends StatelessWidget {
           child: TextFormField(
             controller: controller,
             readOnly: true,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Category',
+              labelStyle: TextStyle(
+                color: context.isDarkMode ? lightGray : null,
+              ),
               border: InputBorder.none,
-              suffixIcon: Icon(Icons.keyboard_arrow_down_rounded),
+              suffixIcon: Icon(
+                Icons.keyboard_arrow_down_rounded,
+                color: context.isDarkMode ? lightGray : null,
+              ),
             ),
             validator: validateType,
             onTap: () async {
@@ -113,7 +120,7 @@ class TypePicker extends StatelessWidget {
                             leading: Icon(
                               icon,
                               color: isSelected
-                                  ? Theme.of(context).colorScheme.primary
+                                  ? buttonColor
                                   : Colors.grey.shade600,
                             ),
                             title: Text(
@@ -122,15 +129,11 @@ class TypePicker extends StatelessWidget {
                                 fontWeight: isSelected
                                     ? FontWeight.bold
                                     : FontWeight.normal,
-                                color: isSelected
-                                    ? Theme.of(context).colorScheme.primary
-                                    : null,
+                                color: isSelected ? buttonColor : null,
                               ),
                             ),
                             trailing: isSelected
-                                ? Icon(Icons.check_circle,
-                                    color:
-                                        Theme.of(context).colorScheme.primary)
+                                ? const Icon(Icons.check_circle, color: buttonColor)
                                 : null,
                             onTap: () {
                               Navigator.pop(context, type);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
+import '../../../../core/utils/theme/system_theme.dart';
 
 class CurrencyPicker extends StatelessWidget {
   final ValueNotifier<String> selectedCurrency;
@@ -21,7 +22,7 @@ class CurrencyPicker extends StatelessWidget {
             height: 56, // Fixed height to match FormFieldWidget
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
-              border: Border.all(color: darkColor),
+              border: Border.all(color: context.isDarkMode ? lightGray : darkColor),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
@@ -29,9 +30,10 @@ class CurrencyPicker extends StatelessWidget {
               children: [
                 Text(
                   value,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
+                    color: context.isDarkMode ? lightGray : darkColor,
                   ),
                 ),
                 const Icon(Icons.arrow_drop_down),

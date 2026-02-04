@@ -132,12 +132,12 @@ final ThemeData darkTheme = ThemeData(
     ),
   ),
   cardTheme: const CardThemeData(
-    color: Color(0xFF1E1E1E), // Slightly lighter than background for depth
+    color: Color(0xFF1E1E1E),
     elevation: 2,
   ),
   floatingActionButtonTheme: const FloatingActionButtonThemeData(
     backgroundColor: lightColor,
-    foregroundColor: deepBlue,
+    foregroundColor: darkColor,
   ),
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
     backgroundColor: Color(0xFF1E1E1E),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
+import 'package:personal_expense_tracker/core/utils/theme/system_theme.dart';
 import 'package:personal_expense_tracker/presentation/widgets/bottom_navbar/bottom_navbar.dart';
 import 'package:provider/provider.dart';
 import '../../../core/utils/theme/button_theme.dart';
@@ -28,7 +29,7 @@ class ExpenseListPage extends StatelessWidget {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(10.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -45,13 +46,16 @@ class ExpenseListPage extends StatelessWidget {
                         children: [
                           Text('Sort by Date',
                               style: ButtonThemes.elevatedButtonTextStyle
-                                  .copyWith(color: deepBlue)),
+                                  .copyWith(
+                                      color: context.isDarkMode
+                                          ? darkColor
+                                          : deepBlue)),
                           const SizedBox(width: 5.0),
                           Icon(
                             provider.isAscending
                                 ? Icons.keyboard_double_arrow_up_sharp
                                 : Icons.keyboard_double_arrow_down_sharp,
-                            color: deepBlue,
+                            color: context.isDarkMode ? darkColor : deepBlue,
                           ),
                         ],
                       );
@@ -64,6 +68,39 @@ class ExpenseListPage extends StatelessWidget {
                       context: context,
                       firstDate: DateTime(2000),
                       lastDate: DateTime.now(),
+                      initialEntryMode: DatePickerEntryMode.calendarOnly,
+                      builder: (context, child) {
+                        if (context.isDarkMode) {
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                              colorScheme: const ColorScheme.dark(
+                                primary: buttonColor, // Start/End circle BG
+                                onPrimary: lightColor, // Start/End text
+                                surface: darkGray, // Dialog BG
+                                onSurface: lightColor, // General text
+                                secondary: buttonColor,
+                              ),
+                              datePickerTheme: DatePickerThemeData(
+                                rangeSelectionBackgroundColor:
+                                    lightColor, // Range middle BG
+                                confirmButtonStyle: TextButton.styleFrom(
+                                  backgroundColor: buttonColor,
+                                  foregroundColor: lightColor,
+                                ),
+                              ),
+                            ),
+                            child: child!,
+                          );
+                        }
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                            datePickerTheme: const DatePickerThemeData(
+                              rangeSelectionBackgroundColor: buttonColor,
+                            ),
+                          ),
+                          child: child!,
+                        );
+                      },
                     );
                     if (picked != null) {
                       // ignore: use_build_context_synchronously
@@ -73,8 +110,8 @@ class ExpenseListPage extends StatelessWidget {
                   },
                   style: ButtonThemes.sortFilterButtonStyle,
                   child: Text('Filter by Date',
-                      style: ButtonThemes.elevatedButtonTextStyle
-                          .copyWith(color: deepBlue)),
+                      style: ButtonThemes.elevatedButtonTextStyle.copyWith(
+                          color: context.isDarkMode ? darkColor : deepBlue)),
                 ),
               ],
             ),
@@ -113,8 +150,9 @@ class ExpenseListPage extends StatelessWidget {
                                   ),
                                 );
                               },
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.primary,
+                              backgroundColor: context.isDarkMode
+                                  ? Colors.grey.shade700
+                                  : deepBlue,
                               child: const Icon(
                                 Icons.edit,
                                 color: lightColor,

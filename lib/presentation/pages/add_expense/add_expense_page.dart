@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
+import 'package:personal_expense_tracker/core/utils/theme/system_theme.dart';
 import '../../../core/utils/validation/form_validation.dart';
 import '../../widgets/button/button_widget.dart';
 import '../../widgets/date_picker/date_picker_widget.dart';
 import '../../widgets/form_field/form_field_widget.dart';
 import '../../widgets/type_picker/type_picker.dart';
 import '../../widgets/currency_picker/currency_picker.dart';
+import '../../../core/utils/formatters/currency_input_formatter.dart';
 
 class AddExpensePage extends StatelessWidget {
   final TextEditingController amountController = TextEditingController();
@@ -46,7 +48,13 @@ class AddExpensePage extends StatelessWidget {
                       child: FormFieldWidget(
                         controller: amountController,
                         labelText: 'Amount',
-                        keyboardType: TextInputType.number,
+                        labelStyle: TextStyle(
+                          color: context.isDarkMode ? lightGray : null,
+                        ),
+                        cursorColor: context.isDarkMode ? lightGray : null,
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
+                        inputFormatters: [CurrencyInputFormatter()],
                         validator: validateAmount,
                       ),
                     ),
@@ -56,6 +64,9 @@ class AddExpensePage extends StatelessWidget {
                 FormFieldWidget(
                   controller: descriptionController,
                   labelText: 'Description',
+                  labelStyle:
+                      TextStyle(color: context.isDarkMode ? lightGray : null),
+                  cursorColor: context.isDarkMode ? lightGray : null,
                   maxLines: 3,
                   validator: validateDescription,
                 ),

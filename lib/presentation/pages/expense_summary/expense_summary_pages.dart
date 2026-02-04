@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
 import 'package:personal_expense_tracker/presentation/widgets/bottom_navbar/bottom_navbar.dart';
@@ -35,19 +35,22 @@ class ExpenseSummaryPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 19, top: 14, bottom: 4),
             child: ElevatedButton.icon(
-              icon: const Icon(Icons.calendar_today,
-                  size: normalIcon, color: deepBlue),
+              icon: Icon(Icons.calendar_today,
+                  size: normalIcon,
+                  color: context.isDarkMode ? darkColor : deepBlue),
               label: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     formattedMonth,
-                    style: ButtonThemes.elevatedButtonTextStyle
-                        .copyWith(fontSize: dateIcon, color: deepBlue),
+                    style: ButtonThemes.elevatedButtonTextStyle.copyWith(
+                        fontSize: dateIcon,
+                        color: context.isDarkMode ? darkColor : deepBlue),
                   ),
                   const SizedBox(width: 4.0),
-                  const Icon(Icons.arrow_drop_down,
-                      size: normalIcon, color: deepBlue),
+                  Icon(Icons.arrow_drop_down,
+                      size: normalIcon,
+                      color: context.isDarkMode ? darkColor : deepBlue),
                 ],
               ),
               onPressed: () async {
@@ -56,13 +59,27 @@ class ExpenseSummaryPage extends StatelessWidget {
                   initialDate: selectedMonth,
                   firstDate: DateTime(DateTime.now().year - 5, 1),
                   lastDate: DateTime(DateTime.now().year, DateTime.now().month),
-                  monthPickerDialogSettings: const MonthPickerDialogSettings(
+                  monthPickerDialogSettings: MonthPickerDialogSettings(
                     headerSettings: PickerHeaderSettings(
-                      headerBackgroundColor: deepBlue,
-                      headerCurrentPageTextStyle: TextStyle(color: lightColor),
+                      headerBackgroundColor:
+                          context.isDarkMode ? darkGray : deepBlue,
+                      headerCurrentPageTextStyle:
+                          const TextStyle(color: lightColor),
                     ),
-                    dialogSettings: PickerDialogSettings(
-                      dialogBackgroundColor: Colors.white,
+                    dialogSettings: const PickerDialogSettings(
+                      dialogBackgroundColor: lightColor,
+                    ),
+                    dateButtonsSettings: const PickerDateButtonsSettings(
+                      selectedMonthBackgroundColor: buttonColor,
+                      selectedMonthTextColor: lightColor,
+                      unselectedMonthsTextColor: darkColor,
+                      currentMonthTextColor: darkColor,
+                    ),
+                    actionBarSettings: const PickerActionBarSettings(
+                      confirmWidget:
+                          Text('OK', style: TextStyle(color: Colors.green)),
+                      cancelWidget:
+                          Text('Cancel', style: TextStyle(color: errorColor)),
                     ),
                   ),
                 );

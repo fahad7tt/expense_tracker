@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:personal_expense_tracker/core/utils/theme/system_theme.dart';
 import 'package:provider/provider.dart';
 import '../../../core/utils/theme/button_theme.dart';
 import '../../../domain/entities/expense.dart';
 import '../../providers/expense_provider.dart';
 import '../../providers/expense_summary_provider.dart';
+import '../../../core/utils/constants/constants.dart';
 
 class ButtonWidget extends StatelessWidget {
   final GlobalKey<FormState> formKey;
@@ -33,7 +35,8 @@ class ButtonWidget extends StatelessWidget {
       onPressed: () async {
         final isValid = formKey.currentState!.validate();
         if (isValid) {
-          final amount = double.parse(amountController.text);
+          final amount =
+              double.parse(amountController.text.replaceAll(',', ''));
           final description = descriptionController.text;
           final date = selectedDate.value;
           final type = selectedType.value;
@@ -75,10 +78,15 @@ class ButtonWidget extends StatelessWidget {
           Navigator.of(context).pop();
         }
       },
-      style: ButtonThemes.addExpenseButtonStyle,
+      style: context.isDarkMode
+          ? ButtonThemes.addExpenseButtonStyle
+              .copyWith(backgroundColor: WidgetStateProperty.all(buttonColor))
+          : ButtonThemes.addExpenseButtonStyle,
       child: Text(
         isEdit ? 'Save Changes' : 'Add Expense',
-        style: ButtonThemes.elevatedButtonTextStyle,
+        style: ButtonThemes.elevatedButtonTextStyle.copyWith(
+          color: context.isDarkMode ? Colors.black : Colors.white,
+        ),
       ),
     );
   }
