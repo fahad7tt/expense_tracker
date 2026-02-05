@@ -16,7 +16,19 @@ class NotificationHelper {
     tz.initializeTimeZones();
   }
 
-  static Future<void> scheduleDailyNotification(String title, String body, TimeOfDay time) async {
+  static Future<void> requestPermissions() async {
+    await _notification
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.requestNotificationsPermission();
+  }
+
+  static Future<void> scheduleDailyNotification(
+    String title,
+    String body,
+    TimeOfDay time,
+  ) async {
     var androidDetails = const AndroidNotificationDetails(
       'daily_notifications',
       'DailyNotifications',
@@ -51,43 +63,48 @@ class NotificationHelper {
       body,
       scheduledDate,
       notificationDetails,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
     );
   }
 
-  static Future<void> scheduleTestNotification(String title, String body, Duration delay) async {
-  var androidDetails = const AndroidNotificationDetails(
-    'test_notifications',
-    'TestNotifications',
-    importance: Importance.max,
-    priority: Priority.high,
-  );
+  static Future<void> scheduleTestNotification(
+    String title,
+    String body,
+    Duration delay,
+  ) async {
+    var androidDetails = const AndroidNotificationDetails(
+      'test_notifications',
+      'TestNotifications',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
 
-  var iosDetails = const DarwinNotificationDetails();
+    var iosDetails = const DarwinNotificationDetails();
 
-  var notificationDetails = NotificationDetails(
-    android: androidDetails,
-    iOS: iosDetails,
-  );
+    var notificationDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
 
-  final now = tz.TZDateTime.now(tz.local);
-  tz.TZDateTime scheduledDate = now.add(delay);
+    final now = tz.TZDateTime.now(tz.local);
+    tz.TZDateTime scheduledDate = now.add(delay);
 
-  // ignore: avoid_print
-  print('Scheduling test notification for: $scheduledDate');
+    // ignore: avoid_print
+    print('Scheduling test notification for: $scheduledDate');
 
-  await _notification.zonedSchedule(
-    0,
-    title,
-    body,
-    scheduledDate,
-    notificationDetails,
-    androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-    uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
-    matchDateTimeComponents: DateTimeComponents.time,
-  );
-}
-
+    await _notification.zonedSchedule(
+      0,
+      title,
+      body,
+      scheduledDate,
+      notificationDetails,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time,
+    );
+  }
 }

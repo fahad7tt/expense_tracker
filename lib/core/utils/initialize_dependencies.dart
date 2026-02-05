@@ -15,14 +15,15 @@ Future<void> initializeDependencies() async {
 
   // Initialize Notifications
   NotificationHelper.init();
+  await NotificationHelper.requestPermissions();
   NotificationHelper.scheduleDailyNotification(
     'Expense Reminder',
     'Don\'t forget to record your expenses for today!',
     const TimeOfDay(hour: 8, minute: 0),
   );
-  NotificationHelper.scheduleTestNotification(
-    'Test Notification',
-    'This notification was scheduled to test functionality.',
-    const Duration(seconds: 10),
-  );
+  // NotificationHelper.scheduleTestNotification(
+  //   'Test Notification',
+  //   'This notification was scheduled to test functionality.',
+  //   const Duration(seconds: 10),
+  // );
 }
