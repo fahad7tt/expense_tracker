@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="app.in.personal_expense_tracker" xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Permissions should be declared here, at the root level -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
