@@ -2,6 +2,7 @@
     package="app.in.personal_expense_tracker" xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Permissions should be declared here, at the root level -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
