@@ -1,66 +1,21 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:personal_expense_tracker/data/datasources/expense_data_source.dart';
 import 'package:personal_expense_tracker/data/models/expense_model.dart';
-import 'package:personal_expense_tracker/domain/entities/expense.dart';
-import 'package:personal_expense_tracker/domain/entities/expense_summary.dart';
-import 'package:personal_expense_tracker/domain/repositories/expense_repository.dart';
 
-class ExpenseRepositoryImpl implements ExpenseRepository {
-  final ExpenseLocalDataSource localDataSource;
+class MockBox extends Mock implements Box<ExpenseModel> {}
 
-  ExpenseRepositoryImpl(this.localDataSource);
+void main() {
+  late ExpenseLocalDataSourceImpl dataSource;
+  late MockBox mockBox;
 
-  @override
-  Future<void> addExpense(Expense expense) async {
-    return localDataSource.addExpense(ExpenseModel.fromEntity(expense));
-  }
+  setUp(() {
+    mockBox = MockBox();
+    dataSource = ExpenseLocalDataSourceImpl(mockBox);
+  });
 
-  @override
-  Future<List<Expense>> getAllExpenses() async {
-    return (await localDataSource.getAllExpenses())
-        .map((model) => model.toEntity())
-        .toList();
-  }
-
-  @override
-  Future<void> updateExpense(Expense expense) async {
-    return localDataSource.updateExpense(ExpenseModel.fromEntity(expense));
-  }
-
-  @override
-  Future<void> deleteExpense(int id) async {
-    return localDataSource.deleteExpense(id);
-  }
-
-  Future<List<ExpenseSummary>> getExpenseSummaryByType(
-      DateTime startDate, DateTime endDate) async {
-    final expenses = await getAllExpenses();
-    final summaries = _calculateSummaries(expenses, startDate, endDate);
-    return summaries;
-  }
-
-  List<ExpenseSummary> _calculateSummaries(
-      List<Expense> expenses, DateTime startDate, DateTime endDate) {
-    final filteredExpenses = expenses
-        .where((expense) =>
-            expense.date.isAfter(startDate) && expense.date.isBefore(endDate))
-        .toList();
-
-    final Map<String, List<Expense>> grouped = {};
-    for (var expense in filteredExpenses) {
-      final key = '${expense.type ?? 'Other'}|${expense.currency ?? '₹'}';
-      grouped.putIfAbsent(key, () => []).add(expense);
-    }
-
-    return grouped.entries.map((entry) {
-      final totalAmount =
-          entry.value.fold(0.0, (sum, expense) => sum + expense.amount);
-      final firstExpense = entry.value.first;
-      return ExpenseSummary(
-        type: firstExpense.type ?? 'Other',
-        totalAmount: totalAmount,
-        count: entry.value.length,
-        currency: firstExpense.currency ?? '₹',
-      );
-    }).toList();
-  }
+  test('ExpenseLocalDataSourceImpl initialized', () {
+    expect(dataSource, isNotNull);
+  });
 }

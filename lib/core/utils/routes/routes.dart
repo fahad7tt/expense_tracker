@@ -8,8 +8,8 @@ import 'package:personal_expense_tracker/presentation/pages/profile/profile_page
 
 Map<String, WidgetBuilder> get appRoutes {
   return {
-    '/': (context) => ExpenseListPage(),
-    '/home': (context) => ExpenseListPage(),
+    '/': (context) => const ExpenseListPage(),
+    '/home': (context) => const ExpenseListPage(),
     '/summary': (context) => const ExpenseSummaryPage(),
     '/profile': (context) => const ProfilePage(),
     '/appInfo': (context) => const AppInfo(),

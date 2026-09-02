@@ -7,6 +7,7 @@ import 'package:personal_expense_tracker/core/utils/formatters/amount_formatter.
 import 'package:personal_expense_tracker/core/utils/theme/system_theme.dart';
 import '../../../core/utils/constants/constants.dart';
 import '../../../domain/entities/expense.dart';
+import '../expense_detail_bottom_sheet/expense_detail_bottom_sheet.dart';
 
 class ExpenseListItem extends StatefulWidget {
   final Expense expense;
@@ -41,12 +42,15 @@ class _ExpenseListItemState extends State<ExpenseListItem> {
   @override
   Widget build(BuildContext context) {
     final bool isDarkMode = context.isDarkMode;
+    final bool isProfit = widget.expense.isProfit;
+    final Color itemColor = isProfit ? profitColor : buttonColor;
 
     return Stack(
       children: [
         GestureDetector(
           onTap: () {
             Slidable.of(context)?.close();
+            showExpenseDetailBottomSheet(context, widget.expense);
           },
           onHorizontalDragStart: (_) {},
           behavior: HitTestBehavior.translucent,
@@ -55,13 +59,11 @@ class _ExpenseListItemState extends State<ExpenseListItem> {
                 const EdgeInsets.only(left: 48, top: 12, right: 10, bottom: 12),
             leading: CircleAvatar(
               backgroundColor: isDarkMode
-                  ? Colors.white.withOpacity(0.1)
-                  : Theme.of(context).colorScheme.primary.withOpacity(0.12),
+                  ? itemColor.withOpacity(0.2)
+                  : itemColor.withOpacity(0.12),
               child: Icon(
-                typeIcons[widget.expense.type] ?? Icons.category,
-                color: isDarkMode
-                    ? lightColor
-                    : Theme.of(context).colorScheme.primary,
+                typeIcons[widget.expense.type] ?? (isProfit ? Icons.trending_up : Icons.category),
+                color: isDarkMode ? lightColor : itemColor,
                 size: normalIcon,
               ),
             ),
@@ -95,13 +97,14 @@ class _ExpenseListItemState extends State<ExpenseListItem> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 8.0, vertical: 4.0),
                   decoration: BoxDecoration(
-                    color: buttonColor.withOpacity(0.12),
+                    color: itemColor.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   child: Text(
-                    '${widget.expense.currency ?? currencies.first} ${formatAmount(widget.expense.amount)}',
+                    '${isProfit ? '+' : '-'} ${widget.expense.currency ?? currencies.first} ${formatAmount(widget.expense.amount)}',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: buttonColor,
+                          color: itemColor,
+                          fontWeight: FontWeight.bold,
                         ),
                   ),
                 ),

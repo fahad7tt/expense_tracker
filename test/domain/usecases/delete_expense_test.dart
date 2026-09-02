@@ -3,7 +3,13 @@ import 'package:mockito/mockito.dart';
 import 'package:personal_expense_tracker/domain/repositories/expense_repository.dart';
 import 'package:personal_expense_tracker/domain/usecases/delete_expense.dart';
 
-class MockExpenseRepository extends Mock implements ExpenseRepository {}
+class MockExpenseRepository extends Mock implements ExpenseRepository {
+  @override
+  Future<void> deleteExpense(int? id) =>
+      super.noSuchMethod(Invocation.method(#deleteExpense, [id]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as Future<void>;
+}
 
 void main() {
   late DeleteExpense deleteExpense;

@@ -10,26 +10,56 @@ import '../../widgets/confirm_dialog/confirm_dialog.dart';
 import '../../widgets/expense_list_items/expense_list_items.dart';
 import '../edit_expense/edit_expense_page.dart';
 
-class ExpenseListPage extends StatelessWidget {
-  ExpenseListPage({super.key});
+class ExpenseListPage extends StatefulWidget {
+  const ExpenseListPage({super.key});
 
+  @override
+  State<ExpenseListPage> createState() => _ExpenseListPageState();
+}
+
+class _ExpenseListPageState extends State<ExpenseListPage> {
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  int _selectedFilterIndex = 0; // 0: All, 1: Expenses, 2: Profits
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ExpenseProvider>(context, listen: false).fetchAllExpenses();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Fetch expenses immediately when building the widget
-    Provider.of<ExpenseProvider>(context, listen: false).fetchAllExpenses();
-
     return Scaffold(
       key: _navigatorKey,
       appBar: AppBar(
-        title: const Text('Expenses'),
+        title: const Text('Transactions'),
         centerTitle: true,
       ),
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: context.isDarkMode
+                    ? Colors.grey.shade900
+                    : Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.all(4),
+              child: Row(
+                children: [
+                  _buildFilterTab(0, 'All'),
+                  _buildFilterTab(1, 'Expenses'),
+                  _buildFilterTab(2, 'Profits'),
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -74,15 +104,14 @@ class ExpenseListPage extends StatelessWidget {
                           return Theme(
                             data: Theme.of(context).copyWith(
                               colorScheme: const ColorScheme.dark(
-                                primary: buttonColor, // Start/End circle BG
-                                onPrimary: lightColor, // Start/End text
-                                surface: darkGray, // Dialog BG
-                                onSurface: lightColor, // General text
+                                primary: buttonColor,
+                                onPrimary: lightColor,
+                                surface: darkGray,
+                                onSurface: lightColor,
                                 secondary: buttonColor,
                               ),
                               datePickerTheme: DatePickerThemeData(
-                                rangeSelectionBackgroundColor:
-                                    lightColor, // Range middle BG
+                                rangeSelectionBackgroundColor: lightColor,
                                 confirmButtonStyle: TextButton.styleFrom(
                                   backgroundColor: buttonColor,
                                   foregroundColor: lightColor,
@@ -119,12 +148,18 @@ class ExpenseListPage extends StatelessWidget {
           Expanded(
             child: Consumer<ExpenseProvider>(
               builder: (context, provider, child) {
-                final expenses = provider.expenses;
+                var expenses = provider.expenses;
+
+                if (_selectedFilterIndex == 1) {
+                  expenses = expenses.where((e) => !e.isProfit).toList();
+                } else if (_selectedFilterIndex == 2) {
+                  expenses = expenses.where((e) => e.isProfit).toList();
+                }
 
                 if (expenses.isEmpty) {
                   return const Center(
                     child: Text(
-                      "Tap the '+' button to add your expenses",
+                      "Tap the '+' button to add transactions",
                     ),
                   );
                 }
@@ -142,7 +177,6 @@ class ExpenseListPage extends StatelessWidget {
                           children: [
                             CustomSlidableAction(
                               onPressed: (context) {
-                                // Edit action
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (_) =>
@@ -161,7 +195,6 @@ class ExpenseListPage extends StatelessWidget {
                             ),
                             CustomSlidableAction(
                               onPressed: (context) {
-                                // Delete action
                                 _showDeleteDialog(expense.id);
                               },
                               backgroundColor:
@@ -196,6 +229,47 @@ class ExpenseListPage extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: const BottomNavBar(),
+    );
+  }
+
+  Widget _buildFilterTab(int index, String label) {
+    final bool isSelected = _selectedFilterIndex == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            _selectedFilterIndex = index;
+          });
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? (context.isDarkMode ? darkGray : lightColor)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 4,
+                    )
+                  ]
+                : [],
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            label,
+            style: TextStyle(
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              color: isSelected
+                  ? (context.isDarkMode ? lightColor : deepBlue)
+                  : (context.isDarkMode ? lightGrayText : darkGray),
+            ),
+          ),
+        ),
+      ),
     );
   }
 

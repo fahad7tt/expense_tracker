@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import '../../domain/entities/expense_summary.dart';
 import '../../domain/usecases/fetch_summary_by_type.dart';
 
@@ -6,19 +7,49 @@ class ExpenseSummaryProvider with ChangeNotifier {
   final FetchExpenseSummaryByType fetchSummary;
   List<ExpenseSummary> _summaries = [];
   DateTime? _selectedMonth;
+  double _initialBankBalance = 0.0;
 
   ExpenseSummaryProvider({required this.fetchSummary}) {
-    // To optionally load summaries when the provider is initialized
-    _loadInitialSummaries();
+    _loadInitialData();
   }
 
   List<ExpenseSummary> get summaries => _summaries;
   DateTime? get selectedMonth => _selectedMonth;
+  double get initialBankBalance => _initialBankBalance;
 
-  Future<void> _loadInitialSummaries() async {
+  Future<void> _loadInitialData() async {
+    await loadBankBalance();
     final now = DateTime.now();
     await loadSummaries(DateTime(now.year, now.month, 1),
         DateTime(now.year, now.month + 1, 0));
+  }
+
+  Future<void> loadBankBalance() async {
+    try {
+      final box = await Hive.openBox('settings');
+      final val = box.get('initial_bank_balance', defaultValue: 0.0);
+      if (val is int) {
+        _initialBankBalance = val.toDouble();
+      } else if (val is double) {
+        _initialBankBalance = val;
+      } else {
+        _initialBankBalance = 0.0;
+      }
+      notifyListeners();
+    } catch (e) {
+      // Handle exception silently
+    }
+  }
+
+  Future<void> setInitialBankBalance(double balance) async {
+    _initialBankBalance = balance;
+    notifyListeners();
+    try {
+      final box = await Hive.openBox('settings');
+      await box.put('initial_bank_balance', balance);
+    } catch (e) {
+      // Handle exception silently
+    }
   }
 
   void setSelectedMonth(DateTime month) {
@@ -37,3 +68,4 @@ class ExpenseSummaryProvider with ChangeNotifier {
     notifyListeners();
   }
 }
+

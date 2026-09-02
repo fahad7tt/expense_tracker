@@ -35,7 +35,7 @@ class FetchExpenseSummaryByType {
     final Map<String, List<Expense>> grouped = {};
     for (var expense in filteredExpenses) {
       final key =
-          '${expense.type ?? 'Other'}|${expense.currency ?? currencies.first}';
+          '${expense.type ?? 'Other'}|${expense.currency ?? currencies.first}|${expense.isProfit}';
       grouped.putIfAbsent(key, () => []).add(expense);
     }
 
@@ -48,6 +48,7 @@ class FetchExpenseSummaryByType {
         totalAmount: totalAmount,
         count: entry.value.length,
         currency: firstExpense.currency ?? currencies.first,
+        isProfit: firstExpense.isProfit,
       );
     }).toList();
   }

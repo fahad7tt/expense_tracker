@@ -19,6 +19,9 @@ const Color bgColor = Color.fromARGB(255, 228, 228, 228);
 const Color navbarColor = Color.fromARGB(255, 143, 162, 185);
 const Color selectedIconColor = Color.fromARGB(255, 19, 120, 202);
 
+const Color profitColor = Color(0xFF2E7D32);
+const Color expenseColor = Color(0xFFD32F2F);
+
 // icon size
 const double homeIcon = 28.0;
 const double dateIcon = 14.0;
@@ -69,6 +72,27 @@ final Map<String, List<String>> groupedCategories = {
   ],
   'Others': [
     'Others',
+  ],
+};
+
+final Map<String, List<String>> groupedProfitCategories = {
+  'Income & Earnings': [
+    'Salary',
+    'Freelance',
+    'Business Profit',
+    'Bonus',
+    'Sales',
+  ],
+  'Investments & Passive': [
+    'Investment Return',
+    'Dividends',
+    'Rental Income',
+    'Interest',
+  ],
+  'Other Income': [
+    'Gift / Allowance',
+    'Refund',
+    'Other Profit',
   ],
 };
 
@@ -134,6 +158,20 @@ final Map<String, IconData> typeIcons = {
   'Gift': Icons.card_giftcard,
   'Donation': Icons.volunteer_activism,
 
+  // Profit / Income Categories
+  'Salary': Icons.account_balance_wallet,
+  'Freelance': Icons.laptop_chromebook,
+  'Business Profit': Icons.store,
+  'Bonus': Icons.card_giftcard,
+  'Sales': Icons.point_of_sale,
+  'Investment Return': Icons.show_chart,
+  'Dividends': Icons.pie_chart,
+  'Rental Income': Icons.real_estate_agent,
+  'Interest': Icons.savings,
+  'Gift / Allowance': Icons.redeem,
+  'Refund': Icons.currency_exchange,
+  'Other Profit': Icons.add_chart,
+
   // Others
   'Others': Icons.more_horiz,
 };
@@ -141,3 +179,26 @@ final Map<String, IconData> typeIcons = {
 const textSize = TextStyle(
   fontSize: 17,
 );
+
+enum BudgetBucket { living, savings, charity }
+
+BudgetBucket getBucketForCategory(String? type) {
+  if (type == null) return BudgetBucket.living;
+  final t = type.toLowerCase();
+  if (t.contains('investment') ||
+      t.contains('savings') ||
+      t.contains('dividend') ||
+      t.contains('stock') ||
+      t.contains('interest')) {
+    return BudgetBucket.savings;
+  }
+  if (t.contains('charity') ||
+      t.contains('donation') ||
+      t.contains('zakat') ||
+      t.contains('gift') ||
+      t.contains('beneficial')) {
+    return BudgetBucket.charity;
+  }
+  return BudgetBucket.living;
+}
+

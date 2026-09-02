@@ -4,7 +4,13 @@ import 'package:personal_expense_tracker/domain/entities/expense.dart';
 import 'package:personal_expense_tracker/domain/repositories/expense_repository.dart';
 import 'package:personal_expense_tracker/domain/usecases/add_expense.dart';
 
-class MockExpenseRepository extends Mock implements ExpenseRepository {}
+class MockExpenseRepository extends Mock implements ExpenseRepository {
+  @override
+  Future<void> addExpense(Expense? expense) =>
+      super.noSuchMethod(Invocation.method(#addExpense, [expense]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as Future<void>;
+}
 
 void main() {
   late AddExpense addExpense;

@@ -5,6 +5,7 @@ class Expense {
   final String description;
   final String? type;
   final String? currency;
+  final bool isProfit;
 
   Expense({
     required this.id,
@@ -13,6 +14,7 @@ class Expense {
     required this.description,
     this.type,
     this.currency,
+    this.isProfit = false,
   });
 
   Expense copyWith({
@@ -22,6 +24,7 @@ class Expense {
     String? description,
     String? type,
     String? currency,
+    bool? isProfit,
   }) {
     return Expense(
       id: id ?? this.id,
@@ -30,6 +33,7 @@ class Expense {
       description: description ?? this.description,
       type: type ?? this.type,
       currency: currency ?? this.currency,
+      isProfit: isProfit ?? this.isProfit,
     );
   }
 }

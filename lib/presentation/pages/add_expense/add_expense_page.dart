@@ -17,6 +17,7 @@ class AddExpensePage extends StatelessWidget {
   final ValueNotifier<String?> selectedType = ValueNotifier<String?>(null);
   final ValueNotifier<String> selectedCurrency =
       ValueNotifier<String>(currencies.first);
+  final ValueNotifier<bool> isProfitNotifier = ValueNotifier<bool>(false);
   final DateFormat dateFormat = DateFormat('dd-MM-yyyy'); // Date format
 
   final _formKey = GlobalKey<FormState>(); // GlobalKey for Form
@@ -25,72 +26,160 @@ class AddExpensePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Add Expense'), centerTitle: true),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                const SizedBox(height: 12.0),
-                TypePicker(
-                  selectedType: selectedType,
-                ),
-                const SizedBox(height: 24.0),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    return ValueListenableBuilder<bool>(
+      valueListenable: isProfitNotifier,
+      builder: (context, isProfit, child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(isProfit ? 'Add Profit' : 'Add Expense'),
+            centerTitle: true,
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
                   children: [
-                    CurrencyPicker(selectedCurrency: selectedCurrency),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: FormFieldWidget(
-                        controller: amountController,
-                        labelText: 'Amount',
-                        labelStyle: TextStyle(
-                          color: context.isDarkMode ? lightGray : null,
-                        ),
-                        cursorColor: context.isDarkMode ? lightGray : null,
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
-                        inputFormatters: [CurrencyInputFormatter()],
-                        validator: validateAmount,
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: context.isDarkMode
+                            ? Colors.grey.shade900
+                            : Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(12),
                       ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                if (isProfitNotifier.value != false) {
+                                  isProfitNotifier.value = false;
+                                  selectedType.value = null;
+                                }
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                decoration: BoxDecoration(
+                                  color: !isProfit
+                                      ? buttonColor
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  'Expense',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: !isProfit
+                                        ? lightColor
+                                        : (context.isDarkMode
+                                            ? lightGray
+                                            : darkGray),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                if (isProfitNotifier.value != true) {
+                                  isProfitNotifier.value = true;
+                                  selectedType.value = null;
+                                }
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                decoration: BoxDecoration(
+                                  color: isProfit
+                                      ? profitColor
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  'Profit / Income',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: isProfit
+                                        ? lightColor
+                                        : (context.isDarkMode
+                                            ? lightGray
+                                            : darkGray),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20.0),
+                    TypePicker(
+                      selectedType: selectedType,
+                      isProfit: isProfit,
+                    ),
+                    const SizedBox(height: 24.0),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CurrencyPicker(selectedCurrency: selectedCurrency),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: FormFieldWidget(
+                            controller: amountController,
+                            labelText: 'Amount',
+                            labelStyle: TextStyle(
+                              color: context.isDarkMode ? lightGray : null,
+                            ),
+                            cursorColor: context.isDarkMode ? lightGray : null,
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
+                            inputFormatters: [CurrencyInputFormatter()],
+                            validator: validateAmount,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24.0),
+                    FormFieldWidget(
+                      controller: descriptionController,
+                      labelText: 'Description',
+                      labelStyle:
+                          TextStyle(color: context.isDarkMode ? lightGray : null),
+                      cursorColor: context.isDarkMode ? lightGray : null,
+                      maxLines: 3,
+                      validator: validateDescription,
+                    ),
+                    const SizedBox(height: 24.0),
+                    DatePickerWidget(
+                      selectedDate: selectedDate,
+                      dateFormat: dateFormat,
+                      minDate: DateTime(2000),
+                      maxDate: DateTime.now(),
+                    ),
+                    const SizedBox(height: 28.0),
+                    ButtonWidget(
+                      formKey: _formKey,
+                      amountController: amountController,
+                      descriptionController: descriptionController,
+                      selectedDate: selectedDate,
+                      selectedType: selectedType,
+                      selectedCurrency: selectedCurrency,
+                      isProfitNotifier: isProfitNotifier,
                     ),
                   ],
                 ),
-                const SizedBox(height: 24.0),
-                FormFieldWidget(
-                  controller: descriptionController,
-                  labelText: 'Description',
-                  labelStyle:
-                      TextStyle(color: context.isDarkMode ? lightGray : null),
-                  cursorColor: context.isDarkMode ? lightGray : null,
-                  maxLines: 3,
-                  validator: validateDescription,
-                ),
-                const SizedBox(height: 24.0),
-                DatePickerWidget(
-                  selectedDate: selectedDate,
-                  dateFormat: dateFormat,
-                  minDate: DateTime(2000),
-                  maxDate: DateTime.now(),
-                ),
-                const SizedBox(height: 28.0),
-                ButtonWidget(
-                  formKey: _formKey,
-                  amountController: amountController,
-                  descriptionController: descriptionController,
-                  selectedDate: selectedDate,
-                  selectedType: selectedType,
-                  selectedCurrency: selectedCurrency,
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

@@ -5,14 +5,19 @@ import '../../../../core/utils/theme/system_theme.dart';
 
 class TypePicker extends StatelessWidget {
   final ValueNotifier<String?> selectedType;
+  final bool isProfit;
 
   const TypePicker({
     required this.selectedType,
+    this.isProfit = false,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
+    final categoriesMap = isProfit ? groupedProfitCategories : groupedCategories;
+    final activeColor = isProfit ? profitColor : buttonColor;
+
     return ValueListenableBuilder<String?>(
       valueListenable: selectedType,
       builder: (context, value, child) {
@@ -40,7 +45,7 @@ class TypePicker extends StatelessWidget {
             ),
             validator: validateType,
             onTap: () async {
-              final selected = await _showTypeBottomSheet(context);
+              final selected = await _showTypeBottomSheet(context, categoriesMap, activeColor);
               if (selected != null) {
                 selectedType.value = selected;
               }
@@ -51,7 +56,10 @@ class TypePicker extends StatelessWidget {
     );
   }
 
-  Future<String?> _showTypeBottomSheet(BuildContext context) async {
+  Future<String?> _showTypeBottomSheet(
+      BuildContext context,
+      Map<String, List<String>> categoriesMap,
+      Color activeColor) async {
     return showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
@@ -74,11 +82,11 @@ class TypePicker extends StatelessWidget {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Text(
-                  'Select Category',
-                  style: TextStyle(
+                  isProfit ? 'Select Profit Category' : 'Select Category',
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -88,11 +96,11 @@ class TypePicker extends StatelessWidget {
                 child: ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   physics: const BouncingScrollPhysics(),
-                  itemCount: groupedCategories.length,
+                  itemCount: categoriesMap.length,
                   itemBuilder: (context, groupIndex) {
                     final groupName =
-                        groupedCategories.keys.elementAt(groupIndex);
-                    final categories = groupedCategories[groupName]!;
+                        categoriesMap.keys.elementAt(groupIndex);
+                    final categories = categoriesMap[groupName]!;
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,7 +128,7 @@ class TypePicker extends StatelessWidget {
                             leading: Icon(
                               icon,
                               color: isSelected
-                                  ? buttonColor
+                                  ? activeColor
                                   : Colors.grey.shade600,
                             ),
                             title: Text(
@@ -129,18 +137,18 @@ class TypePicker extends StatelessWidget {
                                 fontWeight: isSelected
                                     ? FontWeight.bold
                                     : FontWeight.normal,
-                                color: isSelected ? buttonColor : null,
+                                color: isSelected ? activeColor : null,
                               ),
                             ),
                             trailing: isSelected
-                                ? const Icon(Icons.check_circle, color: buttonColor)
+                                ? Icon(Icons.check_circle, color: activeColor)
                                 : null,
                             onTap: () {
                               Navigator.pop(context, type);
                             },
                           );
                         }),
-                        if (groupIndex < groupedCategories.length - 1)
+                        if (groupIndex < categoriesMap.length - 1)
                           Divider(
                               height: 1,
                               thickness: 0.5,

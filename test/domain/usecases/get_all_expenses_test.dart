@@ -4,7 +4,14 @@ import 'package:personal_expense_tracker/domain/entities/expense.dart';
 import 'package:personal_expense_tracker/domain/repositories/expense_repository.dart';
 import 'package:personal_expense_tracker/domain/usecases/get_all_expenses.dart';
 
-class MockExpenseRepository extends Mock implements ExpenseRepository {}
+class MockExpenseRepository extends Mock implements ExpenseRepository {
+  @override
+  Future<List<Expense>> getAllExpenses() =>
+      super.noSuchMethod(Invocation.method(#getAllExpenses, []),
+              returnValue: Future<List<Expense>>.value([]),
+              returnValueForMissingStub: Future<List<Expense>>.value([]))
+          as Future<List<Expense>>;
+}
 
 void main() {
   late GetAllExpenses getAllExpenses;

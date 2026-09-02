@@ -22,6 +22,9 @@ class ExpenseModel {
   @HiveField(5)
   final String? currency;
 
+  @HiveField(6)
+  final bool? isProfit;
+
   ExpenseModel({
     required this.id,
     required this.amount,
@@ -29,6 +32,7 @@ class ExpenseModel {
     required this.description,
     this.type,
     this.currency,
+    this.isProfit,
   });
 
   factory ExpenseModel.fromEntity(Expense expense) {
@@ -39,6 +43,7 @@ class ExpenseModel {
       description: expense.description,
       type: expense.type,
       currency: expense.currency,
+      isProfit: expense.isProfit,
     );
   }
 
@@ -50,6 +55,7 @@ class ExpenseModel {
       description: description,
       type: type,
       currency: currency,
+      isProfit: isProfit ?? false,
     );
   }
 
@@ -60,6 +66,7 @@ class ExpenseModel {
     String? description,
     String? type,
     String? currency,
+    bool? isProfit,
   }) {
     return ExpenseModel(
       id: id ?? this.id,
@@ -68,6 +75,7 @@ class ExpenseModel {
       description: description ?? this.description,
       type: type ?? this.type,
       currency: currency ?? this.currency,
+      isProfit: isProfit ?? this.isProfit,
     );
   }
 }

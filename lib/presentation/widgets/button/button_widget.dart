@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:personal_expense_tracker/core/utils/theme/system_theme.dart';
 import 'package:provider/provider.dart';
 import '../../../core/utils/theme/button_theme.dart';
 import '../../../domain/entities/expense.dart';
@@ -14,6 +13,7 @@ class ButtonWidget extends StatelessWidget {
   final ValueNotifier<DateTime> selectedDate;
   final ValueNotifier<String?> selectedType;
   final ValueNotifier<String> selectedCurrency;
+  final ValueNotifier<bool>? isProfitNotifier;
   final bool isEdit;
   final Expense? expense;
 
@@ -25,12 +25,16 @@ class ButtonWidget extends StatelessWidget {
     required this.selectedDate,
     required this.selectedType,
     required this.selectedCurrency,
+    this.isProfitNotifier,
     this.isEdit = false,
     this.expense,
   });
 
   @override
   Widget build(BuildContext context) {
+    final bool isProfit = isProfitNotifier?.value ?? (expense?.isProfit ?? false);
+    final Color activeColor = isProfit ? profitColor : buttonColor;
+
     return ElevatedButton(
       onPressed: () async {
         final isValid = formKey.currentState!.validate();
@@ -41,6 +45,7 @@ class ButtonWidget extends StatelessWidget {
           final date = selectedDate.value;
           final type = selectedType.value;
           final currency = selectedCurrency.value;
+          final currentIsProfit = isProfitNotifier?.value ?? (expense?.isProfit ?? false);
 
           if (isEdit && expense != null) {
             final updatedExpense = Expense(
@@ -50,6 +55,7 @@ class ButtonWidget extends StatelessWidget {
               type: type,
               description: description,
               currency: currency,
+              isProfit: currentIsProfit,
             );
             await Provider.of<ExpenseProvider>(context, listen: false)
                 .modifyExpense(updatedExpense);
@@ -61,6 +67,7 @@ class ButtonWidget extends StatelessWidget {
               type: type,
               description: description,
               currency: currency,
+              isProfit: currentIsProfit,
             );
             await Provider.of<ExpenseProvider>(context, listen: false)
                 .addNewExpense(newExpense);
@@ -78,14 +85,15 @@ class ButtonWidget extends StatelessWidget {
           Navigator.of(context).pop();
         }
       },
-      style: context.isDarkMode
-          ? ButtonThemes.addExpenseButtonStyle
-              .copyWith(backgroundColor: WidgetStateProperty.all(buttonColor))
-          : ButtonThemes.addExpenseButtonStyle,
+      style: ButtonThemes.addExpenseButtonStyle.copyWith(
+        backgroundColor: WidgetStateProperty.all(activeColor),
+      ),
       child: Text(
-        isEdit ? 'Save Changes' : 'Add Expense',
+        isEdit
+            ? 'Save Changes'
+            : (isProfit ? 'Add Profit' : 'Add Expense'),
         style: ButtonThemes.elevatedButtonTextStyle.copyWith(
-          color: context.isDarkMode ? darkColor : lightColor,
+          color: lightColor,
         ),
       ),
     );
