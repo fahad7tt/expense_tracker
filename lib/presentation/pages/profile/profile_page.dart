@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:personal_expense_tracker/presentation/widgets/bottom_navbar/bottom_navbar.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:provider/provider.dart';
-import 'package:personal_expense_tracker/presentation/providers/expense_summary_provider.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
