@@ -10,53 +10,89 @@ class DialogService {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
+        final bool isDarkMode = context.isDarkMode;
+
         return AlertDialog(
-          backgroundColor: context.isDarkMode ? lightColor : deepBlue,
+          backgroundColor: Theme.of(context).cardTheme.color,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(
+              color: isDarkMode ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+            ),
+          ),
+          icon: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: expenseColor.withOpacity(0.12),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.delete_forever_rounded,
+              color: expenseColor,
+              size: 28,
+            ),
+          ),
           title: Text(
-            'Delete Expense',
+            'Delete Transaction',
+            textAlign: TextAlign.center,
             style: TextStyle(
-              color: context.isDarkMode ? errorColor : lightColor,
-              fontWeight: FontWeight.w500,
+              color: isDarkMode ? lightColor : deepBlue,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
             ),
           ),
           content: Text(
-            'Are you sure you want to delete?',
+            'Are you sure you want to delete this record? This action cannot be undone.',
+            textAlign: TextAlign.center,
             style: TextStyle(
-              color: context.isDarkMode ? darkColor : lightColor,
-              fontWeight: FontWeight.w600,
+              color: isDarkMode ? lightGrayText : darkGray,
+              fontSize: 14,
+              height: 1.4,
             ),
           ),
+          actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           actions: <Widget>[
             Row(
               children: [
                 Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: context.isDarkMode
-                          ? darkColor
-                          : lightColor,
-                      foregroundColor: context.isDarkMode
-                          ? lightColor
-                          : deepBlue,
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(
+                          color: isDarkMode
+                              ? const Color(0xFF334155)
+                              : const Color(0xFFCBD5E1),
+                        ),
+                      ),
+                      foregroundColor: isDarkMode ? lightGrayText : darkGray,
                     ),
-                    child: const Text('Cancel'),
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: context.isDarkMode
-                          ? errorColor
-                          : lightColor,
-                      foregroundColor: context.isDarkMode
-                          ? lightColor
-                          : errorColor,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      elevation: 0,
+                      backgroundColor: expenseColor,
+                      foregroundColor: lightColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                    child: const Text('Delete'),
+                    child: const Text(
+                      'Delete',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     onPressed: () {
                       onConfirmed();
                       Navigator.of(context).pop();

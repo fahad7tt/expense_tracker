@@ -25,25 +25,17 @@ class FormFieldWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Theme.of(context).dividerColor),
-        borderRadius: BorderRadius.circular(8.0),
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: labelText,
+        labelStyle: labelStyle,
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-      child: TextFormField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: labelText,
-          labelStyle: labelStyle,
-          border: InputBorder.none,
-        ),
-        keyboardType: keyboardType,
-        validator: validator,
-        maxLines: maxLines,
-        cursorColor: cursorColor,
-        inputFormatters: inputFormatters,
-      ),
+      keyboardType: keyboardType,
+      validator: validator,
+      maxLines: maxLines,
+      cursorColor: cursorColor,
+      inputFormatters: inputFormatters,
     );
   }
 }

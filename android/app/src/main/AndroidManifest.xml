@@ -11,6 +11,8 @@
         android:label="MyExpense"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
+        android:allowBackup="true"
+        android:fullBackupOnly="true"
         android:enableOnBackInvokedCallback="true">
         <activity
             android:name=".MainActivity"

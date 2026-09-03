@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:personal_expense_tracker/core/utils/theme/system_theme.dart';
 import 'package:provider/provider.dart';
 import '../../../core/utils/constants/constants.dart';
 import '../../pages/add_expense/add_expense_page.dart';
@@ -17,66 +18,78 @@ class BottomNavBar extends StatelessWidget {
         return Stack(
           clipBehavior: Clip.none,
           children: [
-            BottomAppBar(
-              color: navTheme.backgroundColor,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  _buildNavItem(
-                    context,
-                    icon: Icons.home_rounded,
-                    label: 'Home',
-                    index: 0,
-                    navProvider: navProvider,
-                    onTap: () {
-                      navProvider.setIndex(0);
-                      // Clears the navigation stack and navigates to the home page
-                      Navigator.of(context)
-                          .pushNamedAndRemoveUntil('/home', (route) => false);
-                    },
+            Container(
+              decoration: BoxDecoration(
+                color: navTheme.backgroundColor,
+                border: Border(
+                  top: BorderSide(
+                    color: context.isDarkMode
+                        ? const Color(0xFF334155)
+                        : const Color(0xFFE2E8F0),
+                    width: 1.0,
                   ),
-                  _buildNavItem(
-                    context,
-                    icon: Icons.summarize_rounded,
-                    label: 'Summary',
-                    index: 1,
-                    navProvider: navProvider,
-                    onTap: () {
-                      navProvider.setIndex(1);
-                      Navigator.pushNamed(context, '/summary');
-                    },
-                  ),
-                  _buildNavItem(
-                    context,
-                    icon: Icons.person_rounded,
-                    label: 'Profile',
-                    index: 2,
-                    navProvider: navProvider,
-                    onTap: () {
-                      navProvider.setIndex(2);
-                      Navigator.pushNamed(context, '/profile');
-                    },
-                  ),
-                  const SizedBox(width: 64),
-                ],
+                ),
+              ),
+              child: BottomAppBar(
+                elevation: 0,
+                color: Colors.transparent,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    _buildNavItem(
+                      context,
+                      icon: Icons.home_rounded,
+                      label: 'Home',
+                      index: 0,
+                      navProvider: navProvider,
+                      onTap: () {
+                        navProvider.setIndex(0);
+                        Navigator.of(context)
+                            .pushNamedAndRemoveUntil('/home', (route) => false);
+                      },
+                    ),
+                    _buildNavItem(
+                      context,
+                      icon: Icons.summarize_rounded,
+                      label: 'Summary',
+                      index: 1,
+                      navProvider: navProvider,
+                      onTap: () {
+                        navProvider.setIndex(1);
+                        Navigator.pushNamed(context, '/summary');
+                      },
+                    ),
+                    _buildNavItem(
+                      context,
+                      icon: Icons.person_rounded,
+                      label: 'Profile',
+                      index: 2,
+                      navProvider: navProvider,
+                      onTap: () {
+                        navProvider.setIndex(2);
+                        Navigator.pushNamed(context, '/profile');
+                      },
+                    ),
+                    const SizedBox(width: 64),
+                  ],
+                ),
               ),
             ),
             Positioned(
-              bottom: 12,
+              bottom: 14,
               right: 20,
-              child: Transform.scale(
-                scale: 1.0, // Scale factor for the FAB size
-                child: FloatingActionButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => AddExpensePage(),
-                      ),
-                    );
-                  },
-                  tooltip: 'Add Expense',
-                  child: const Icon(Icons.add),
-                ),
+              child: FloatingActionButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => AddExpensePage(),
+                    ),
+                  );
+                },
+                tooltip: 'Add Expense',
+                elevation: 4,
+                child: const Icon(Icons.add_rounded, size: 28),
               ),
             ),
           ],
@@ -99,8 +112,9 @@ class BottomNavBar extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap,
+      behavior: HitTestBehavior.opaque,
       child: Padding(
-        padding: const EdgeInsets.all(6.0),
+        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -111,15 +125,17 @@ class BottomNavBar extends StatelessWidget {
                   : navTheme.unselectedItemColor,
               size: homeIcon,
             ),
-            Text(
-              label,
+            const SizedBox(height: 2),
+            AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 150),
               style: TextStyle(
                 color: isSelected
                     ? navTheme.selectedItemColor
-                    : theme.textTheme.bodySmall?.color ??
-                        navTheme.unselectedItemColor,
+                    : navTheme.unselectedItemColor,
                 fontSize: 11,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
               ),
+              child: Text(label),
             ),
           ],
         ),

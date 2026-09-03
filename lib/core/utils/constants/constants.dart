@@ -1,34 +1,34 @@
 import 'package:flutter/material.dart';
 
-//hive box
+// Hive box
 const String hiveBox = 'expenses';
 
-//colors
-const Color deepBlue = Color(0xFF001F3F);
-const Color softBlue = Color(0xFF66CCFF);
-const Color lightGray = Color(0xFFF5F5F5);
-const Color darkGray = Color(0xFF333333);
-const Color lightGrayText = Color(0xFF888888);
-const Color errorColor = Color(0xFFB00020);
-const Color iconColor = Color(0xFFCCCCCC);
-const Color cardColor = Color.fromARGB(255, 243, 243, 243);
+// Colors - Unified Palette
+const Color deepBlue = Color(0xFF1E3A8A);
+const Color softBlue = Color(0xFF3B82F6);
+const Color lightGray = Color(0xFFF8FAFC);
+const Color darkGray = Color(0xFF0F172A);
+const Color lightGrayText = Color(0xFF64748B);
+const Color errorColor = Color(0xFFEF4444);
+const Color iconColor = Color(0xFF94A3B8);
+const Color cardColor = Colors.white;
 const Color lightColor = Colors.white;
 const Color darkColor = Colors.black;
-const Color buttonColor = Color.fromARGB(255, 255, 152, 0);
-const Color bgColor = Color.fromARGB(255, 228, 228, 228);
-const Color navbarColor = Color.fromARGB(255, 143, 162, 185);
-const Color selectedIconColor = Color.fromARGB(255, 19, 120, 202);
+const Color buttonColor = Color(0xFFEF4444);
+const Color bgColor = Color(0xFFF8FAFC);
+const Color navbarColor = Colors.white;
+const Color selectedIconColor = Color(0xFF3B82F6);
 
-const Color profitColor = Color(0xFF2E7D32);
-const Color expenseColor = Color(0xFFD32F2F);
+const Color profitColor = Color(0xFF10B981);
+const Color expenseColor = Color(0xFFEF4444);
 
-// icon size
-const double homeIcon = 28.0;
+// Icon sizes
+const double homeIcon = 24.0;
 const double dateIcon = 14.0;
 const double normalIcon = 18.0;
 const double forwardIcon = 22.0;
 
-//font size
+// Categories Definition
 final Map<String, List<String>> groupedCategories = {
   'Essential & Daily': [
     'Food',
@@ -97,108 +97,70 @@ final Map<String, List<String>> groupedProfitCategories = {
 };
 
 final List<String> currencies = [
-  '\u20B9', // ₹
-  '\u0024', // $
-  '\u20AC', // €
-  '\u00A3', // £
-  '\u00A5', // ¥
-  '\u20A3', // ₣
-  '\u0E3F', // ฿
-  '\u20AB', // ₫
-  '\u20A9', // ₩
-  '\u20AA', // ₪
-  '\u20B1', // ₱
-  '\u20BA', // ₺
-  '\u20BD', // ₽
-  '\u20BF', // ₿
-  'AED',
-  'KWD',
-  'BHD',
-  'JOD',
+  '₹',   // INR
+  '\$',  // USD
+  '€',   // EUR
+  '£',   // GBP
+  '¥',   // JPY / CNY
+  'C\$', // CAD
+  'A\$', // AUD
+  'CHF', // CHF
+  'AED', // AED
+  'SAR', // SAR
+  'S\$', // SGD
+  'HK\$',// HKD
+  '₩',   // KRW
+  '฿',   // THB
+  'RM',  // MYR
+  'R\$', // BRL
+  '₽',   // RUB
+  '₺',   // TRY
+  'R',   // ZAR
 ];
 
 final Map<String, IconData> typeIcons = {
-  // Essential & Daily
-  'Food': Icons.restaurant,
-  'Groceries': Icons.shopping_basket,
-  'Drink': Icons.local_drink,
-  'Transport': Icons.directions_bus,
-  'Fuel': Icons.local_gas_station,
+  // Expense Category Icons
+  'Food': Icons.restaurant_rounded,
+  'Groceries': Icons.shopping_basket_rounded,
+  'Drink': Icons.local_cafe_rounded,
+  'Transport': Icons.directions_bus_rounded,
+  'Fuel': Icons.local_gas_station_rounded,
+  'Rent': Icons.home_rounded,
+  'Electricity': Icons.electric_bolt_rounded,
+  'Water': Icons.water_drop_rounded,
+  'Internet': Icons.wifi_rounded,
+  'Phone': Icons.phone_android_rounded,
+  'Entertainment': Icons.movie_rounded,
+  'Dining Out': Icons.dinner_dining_rounded,
+  'Shopping': Icons.shopping_bag_rounded,
+  'Sports': Icons.sports_soccer_rounded,
+  'Leisure': Icons.attractions_rounded,
+  'Travel': Icons.flight_takeoff_rounded,
+  'Health': Icons.local_hospital_rounded,
+  'Medicine': Icons.medication_rounded,
+  'Gym': Icons.fitness_center_rounded,
+  'Beauty': Icons.content_cut_rounded,
+  'Education': Icons.school_rounded,
+  'Books': Icons.menu_book_rounded,
+  'Office': Icons.work_rounded,
+  'Investment': Icons.show_chart_rounded,
+  'Insurance': Icons.security_rounded,
+  'Tax': Icons.receipt_long_rounded,
+  'Gift': Icons.card_giftcard_rounded,
+  'Donation': Icons.volunteer_activism_rounded,
+  'Others': Icons.category_rounded,
 
-  // Living & Utilities
-  'Rent': Icons.home,
-  'Electricity': Icons.electric_bolt,
-  'Water': Icons.water_drop,
-  'Internet': Icons.wifi,
-  'Phone': Icons.phone_android,
-
-  // Lifestyle & Entertainment
-  'Entertainment': Icons.movie,
-  'Dining Out': Icons.dining,
-  'Shopping': Icons.shopping_bag,
-  'Sports': Icons.sports_basketball,
-  'Leisure': Icons.beach_access,
-  'Travel': Icons.flight,
-
-  // Health & Personal
-  'Health': Icons.medical_services,
-  'Medicine': Icons.medication,
-  'Gym': Icons.fitness_center,
-  'Beauty': Icons.face,
-
-  // Education & Work
-  'Education': Icons.school,
-  'Books': Icons.book,
-  'Office': Icons.work,
-
-  // Financial
-  'Investment': Icons.trending_up,
-  'Insurance': Icons.security,
-  'Tax': Icons.receipt_long,
-  'Gift': Icons.card_giftcard,
-  'Donation': Icons.volunteer_activism,
-
-  // Profit / Income Categories
-  'Salary': Icons.account_balance_wallet,
-  'Freelance': Icons.laptop_chromebook,
-  'Business Profit': Icons.store,
-  'Bonus': Icons.card_giftcard,
-  'Sales': Icons.point_of_sale,
-  'Investment Return': Icons.show_chart,
-  'Dividends': Icons.pie_chart,
-  'Rental Income': Icons.real_estate_agent,
-  'Interest': Icons.savings,
-  'Gift / Allowance': Icons.redeem,
-  'Refund': Icons.currency_exchange,
-  'Other Profit': Icons.add_chart,
-
-  // Others
-  'Others': Icons.more_horiz,
+  // Profit / Income Category Icons
+  'Salary': Icons.account_balance_wallet_rounded,
+  'Freelance': Icons.laptop_mac_rounded,
+  'Business Profit': Icons.storefront_rounded,
+  'Bonus': Icons.card_membership_rounded,
+  'Sales': Icons.sell_rounded,
+  'Investment Return': Icons.trending_up_rounded,
+  'Dividends': Icons.pie_chart_rounded,
+  'Rental Income': Icons.real_estate_agent_rounded,
+  'Interest': Icons.savings_rounded,
+  'Gift / Allowance': Icons.redeem_rounded,
+  'Refund': Icons.currency_exchange_rounded,
+  'Other Profit': Icons.add_chart_rounded,
 };
-
-const textSize = TextStyle(
-  fontSize: 17,
-);
-
-enum BudgetBucket { living, savings, charity }
-
-BudgetBucket getBucketForCategory(String? type) {
-  if (type == null) return BudgetBucket.living;
-  final t = type.toLowerCase();
-  if (t.contains('investment') ||
-      t.contains('savings') ||
-      t.contains('dividend') ||
-      t.contains('stock') ||
-      t.contains('interest')) {
-    return BudgetBucket.savings;
-  }
-  if (t.contains('charity') ||
-      t.contains('donation') ||
-      t.contains('zakat') ||
-      t.contains('gift') ||
-      t.contains('beneficial')) {
-    return BudgetBucket.charity;
-  }
-  return BudgetBucket.living;
-}
-

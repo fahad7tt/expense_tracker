@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:personal_expense_tracker/presentation/widgets/bottom_navbar/bottom_navbar.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:personal_expense_tracker/core/services/backup_service.dart';
+import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
+import 'package:personal_expense_tracker/core/utils/theme/system_theme.dart';
+import 'package:personal_expense_tracker/presentation/widgets/bottom_navbar/bottom_navbar.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -34,36 +37,80 @@ class _ProfilePageState extends State<ProfilePage> {
         automaticallyImplyLeading: false,
       ),
       body: ListView(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
         children: [
           _buildListTile(
             context,
+            'Export Backup Data',
+            Icons.cloud_upload_outlined,
+            subtitle: 'Save JSON backup to Drive / Files',
+            onTap: () async {
+              final success = await BackupService.exportBackup(context);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      success
+                          ? 'Backup file created & ready to share!'
+                          : 'Export failed or cancelled.',
+                    ),
+                    backgroundColor: success ? softBlue : Colors.red,
+                  ),
+                );
+              }
+            },
+          ),
+          const SizedBox(height: 10),
+          _buildListTile(
+            context,
+            'Restore Backup Data',
+            Icons.cloud_download_outlined,
+            subtitle: 'Import saved JSON backup file',
+            onTap: () async {
+              final success = await BackupService.importBackup(context);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      success
+                          ? 'Backup restored successfully!'
+                          : 'Restore cancelled or invalid file.',
+                    ),
+                    backgroundColor: success ? profitColor : Colors.red,
+                  ),
+                );
+              }
+            },
+          ),
+          const SizedBox(height: 16),
+          _buildListTile(
+            context,
             'App Info',
-            Icons.info,
-            Icons.arrow_forward_ios,
+            Icons.info_outline_rounded,
             onTap: () => Navigator.pushNamed(context, '/appInfo'),
           ),
+          const SizedBox(height: 10),
           _buildListTile(
             context,
             'Terms & Conditions',
-            Icons.description,
-            Icons.arrow_forward_ios,
+            Icons.description_outlined,
             onTap: () => Navigator.pushNamed(context, '/termsAndConditions'),
           ),
+          const SizedBox(height: 10),
           _buildListTile(
             context,
             'Privacy Policy',
-            Icons.lock,
-            Icons.arrow_forward_ios,
+            Icons.lock_outline_rounded,
             onTap: () => Navigator.pushNamed(context, '/privacyPolicy'),
           ),
-          const SizedBox(height: 22),
+          const SizedBox(height: 32),
           Center(
             child: Text(
               'Version $_version',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                fontSize: 16,
-                color: Colors.grey.shade700,
+              style: TextStyle(
+                fontSize: 13,
+                color: context.isDarkMode ? lightGrayText : Colors.grey.shade600,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),
@@ -76,18 +123,53 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _buildListTile(
     BuildContext context,
     String title,
-    IconData leadingIcon,
-    IconData trailingIcon, {
+    IconData leadingIcon, {
+    String? subtitle,
     required VoidCallback onTap,
   }) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 12.0),
-      elevation: 3,
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardTheme.color,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: context.isDarkMode
+              ? const Color(0xFF334155)
+              : const Color(0xFFE2E8F0),
+        ),
+      ),
       child: ListTile(
-        contentPadding: const EdgeInsets.all(16.0),
-        leading: Icon(leadingIcon, color: Theme.of(context).iconTheme.color),
-        title: Text(title, style: Theme.of(context).textTheme.titleMedium),
-        trailing: Icon(trailingIcon, color: Theme.of(context).iconTheme.color),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.0),
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: softBlue.withOpacity(0.12),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(leadingIcon, color: softBlue, size: 20),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        subtitle: subtitle != null
+            ? Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: context.isDarkMode
+                      ? lightGrayText
+                      : Colors.grey.shade600,
+                ),
+              )
+            : null,
+        trailing: Icon(
+          Icons.chevron_right_rounded,
+          color: context.isDarkMode ? lightGrayText : Colors.grey.shade500,
+        ),
         onTap: onTap,
       ),
     );

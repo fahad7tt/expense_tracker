@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
+import 'package:personal_expense_tracker/core/utils/theme/system_theme.dart';
 import 'package:personal_expense_tracker/presentation/widgets/type_picker/type_picker.dart';
 import '../../../core/utils/validation/form_validation.dart';
 import '../../../domain/entities/expense.dart';
@@ -32,14 +33,16 @@ class EditExpensePage extends StatelessWidget {
         ValueNotifier<bool>(expense.isProfit);
     final DateFormat dateFormat = DateFormat('dd-MM-yyyy');
 
-    final formKey = GlobalKey<FormState>(); // GlobalKey for Form
+    final formKey = GlobalKey<FormState>();
 
     return ValueListenableBuilder<bool>(
       valueListenable: isProfitNotifier,
       builder: (context, isProfit, child) {
+        final Color activeColor = isProfit ? profitColor : expenseColor;
+
         return Scaffold(
           appBar: AppBar(
-            title: Text(isProfit ? 'Edit Profit' : 'Edit Expense'),
+            title: Text(isProfit ? 'Edit Income' : 'Edit Expense'),
             centerTitle: true,
           ),
           body: Padding(
@@ -49,13 +52,15 @@ class EditExpensePage extends StatelessWidget {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
+                    // SEGMENTED TOGGLE SWITCH
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Theme.of(context).dividerColor),
+                        color: context.isDarkMode
+                            ? const Color(0xFF1E293B)
+                            : const Color(0xFFE2E8F0),
+                        borderRadius: BorderRadius.circular(30),
                       ),
                       child: Row(
                         children: [
@@ -72,9 +77,9 @@ class EditExpensePage extends StatelessWidget {
                                 padding: const EdgeInsets.symmetric(vertical: 12),
                                 decoration: BoxDecoration(
                                   color: !isProfit
-                                      ? buttonColor
+                                      ? expenseColor
                                       : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(26),
                                 ),
                                 alignment: Alignment.center,
                                 child: Text(
@@ -83,7 +88,9 @@ class EditExpensePage extends StatelessWidget {
                                     fontWeight: FontWeight.bold,
                                     color: !isProfit
                                         ? lightColor
-                                        : Colors.grey,
+                                        : (context.isDarkMode
+                                            ? lightGrayText
+                                            : darkGray),
                                   ),
                                 ),
                               ),
@@ -104,16 +111,18 @@ class EditExpensePage extends StatelessWidget {
                                   color: isProfit
                                       ? profitColor
                                       : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(26),
                                 ),
                                 alignment: Alignment.center,
                                 child: Text(
-                                  'Profit / Income',
+                                  'Income / Profit',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: isProfit
                                         ? lightColor
-                                        : Colors.grey,
+                                        : (context.isDarkMode
+                                            ? lightGrayText
+                                            : darkGray),
                                   ),
                                 ),
                               ),
@@ -123,43 +132,103 @@ class EditExpensePage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 20.0),
-                    TypePicker(
-                      selectedType: selectedType,
-                      isProfit: isProfit,
-                    ),
-                    const SizedBox(height: 22.0),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CurrencyPicker(selectedCurrency: selectedCurrency),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: FormFieldWidget(
-                            controller: amountController,
-                            labelText: 'Amount',
-                            keyboardType: const TextInputType.numberWithOptions(
-                                decimal: true),
-                            inputFormatters: [CurrencyInputFormatter()],
-                            validator: validateAmount,
-                          ),
+
+                    // AMOUNT & CURRENCY CARD
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardTheme.color,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: context.isDarkMode
+                              ? const Color(0xFF334155)
+                              : const Color(0xFFE2E8F0),
                         ),
-                      ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'ENTER AMOUNT',
+                            style: TextStyle(
+                              fontSize: 11,
+                              letterSpacing: 1.2,
+                              fontWeight: FontWeight.bold,
+                              color: activeColor,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              CurrencyPicker(selectedCurrency: selectedCurrency),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: FormFieldWidget(
+                                  controller: amountController,
+                                  labelText: 'Amount',
+                                  keyboardType: const TextInputType.numberWithOptions(
+                                      decimal: true),
+                                  inputFormatters: [CurrencyInputFormatter()],
+                                  validator: validateAmount,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 22.0),
-                    FormFieldWidget(
-                      controller: descriptionController,
-                      labelText: 'Description',
-                      maxLines: 3,
-                      validator: validateDescription,
+                    const SizedBox(height: 16.0),
+
+                    // DETAILS CARD
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardTheme.color,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: context.isDarkMode
+                              ? const Color(0xFF334155)
+                              : const Color(0xFFE2E8F0),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'TRANSACTION DETAILS',
+                            style: TextStyle(
+                              fontSize: 11,
+                              letterSpacing: 1.2,
+                              fontWeight: FontWeight.bold,
+                              color: softBlue,
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                          TypePicker(
+                            selectedType: selectedType,
+                            isProfit: isProfit,
+                          ),
+                          const SizedBox(height: 16),
+                          FormFieldWidget(
+                            controller: descriptionController,
+                            labelText: 'Description',
+                            maxLines: 2,
+                            validator: validateDescription,
+                          ),
+                          const SizedBox(height: 16),
+                          DatePickerWidget(
+                            selectedDate: selectedDate,
+                            dateFormat: dateFormat,
+                            minDate: DateTime(2000),
+                            maxDate: DateTime.now(),
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 22.0),
-                    DatePickerWidget(
-                      selectedDate: selectedDate,
-                      dateFormat: dateFormat,
-                      minDate: DateTime(2000),
-                      maxDate: DateTime.now(),
-                    ),
-                    const SizedBox(height: 28.0),
+                    const SizedBox(height: 24.0),
+
+                    // SUBMIT ACTION BUTTON
                     ButtonWidget(
                       formKey: formKey,
                       amountController: amountController,

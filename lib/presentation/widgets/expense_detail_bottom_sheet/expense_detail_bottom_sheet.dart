@@ -22,7 +22,7 @@ void showExpenseDetailBottomSheet(BuildContext context, Expense expense) {
     builder: (ctx) {
       final bool isDarkMode = ctx.isDarkMode;
       final bool isProfit = expense.isProfit;
-      final Color itemColor = isProfit ? profitColor : buttonColor;
+      final Color itemColor = isProfit ? profitColor : expenseColor;
       final String currencyStr = expense.currency ?? currencies.first;
 
       return Padding(

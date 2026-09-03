@@ -45,9 +45,9 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
         title: const Text('Privacy Policy'),
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () {
-            Navigator.pushNamed(context, '/profile');
+            Navigator.of(context).pop();
           },
         ),
       ),

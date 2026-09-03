@@ -16,41 +16,34 @@ class TypePicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final categoriesMap = isProfit ? groupedProfitCategories : groupedCategories;
-    final activeColor = isProfit ? profitColor : buttonColor;
+    final activeColor = isProfit ? profitColor : expenseColor;
 
     return ValueListenableBuilder<String?>(
       valueListenable: selectedType,
       builder: (context, value, child) {
         final TextEditingController controller =
             TextEditingController(text: value);
-        return Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Theme.of(context).dividerColor),
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          child: TextFormField(
-            controller: controller,
-            readOnly: true,
-            decoration: InputDecoration(
-              labelText: 'Category',
-              labelStyle: TextStyle(
-                color: context.isDarkMode ? lightGray : null,
-              ),
-              border: InputBorder.none,
-              suffixIcon: Icon(
-                Icons.keyboard_arrow_down_rounded,
-                color: context.isDarkMode ? lightGray : null,
-              ),
+        return TextFormField(
+          controller: controller,
+          readOnly: true,
+          decoration: InputDecoration(
+            labelText: 'Category',
+            labelStyle: TextStyle(
+              color: context.isDarkMode ? lightGrayText : null,
             ),
-            validator: validateType,
-            onTap: () async {
-              final selected = await _showTypeBottomSheet(context, categoriesMap, activeColor);
-              if (selected != null) {
-                selectedType.value = selected;
-              }
-            },
+            suffixIcon: Icon(
+              Icons.keyboard_arrow_down_rounded,
+              color: context.isDarkMode ? lightGrayText : null,
+            ),
           ),
+          validator: validateType,
+          onTap: () async {
+            final selected =
+                await _showTypeBottomSheet(context, categoriesMap, activeColor);
+            if (selected != null) {
+              selectedType.value = selected;
+            }
+          },
         );
       },
     );
@@ -65,30 +58,33 @@ class TypePicker extends StatelessWidget {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
+        final bool isDarkMode = context.isDarkMode;
+
         return Container(
-          height: MediaQuery.of(context).size.height * 0.8,
+          height: MediaQuery.of(context).size.height * 0.78,
           decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
+            color: Theme.of(context).cardTheme.color,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
-          padding: const EdgeInsets.only(top: 12, bottom: 24),
+          padding: const EdgeInsets.only(top: 12, bottom: 20),
           child: Column(
             children: [
               Container(
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
+                  color: Colors.grey.shade400,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
+                padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Text(
-                  isProfit ? 'Select Profit Category' : 'Select Category',
-                  style: const TextStyle(
-                    fontSize: 20,
+                  isProfit ? 'Select Income Category' : 'Select Expense Category',
+                  style: TextStyle(
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    color: isDarkMode ? lightColor : deepBlue,
                   ),
                 ),
               ),
@@ -98,8 +94,7 @@ class TypePicker extends StatelessWidget {
                   physics: const BouncingScrollPhysics(),
                   itemCount: categoriesMap.length,
                   itemBuilder: (context, groupIndex) {
-                    final groupName =
-                        categoriesMap.keys.elementAt(groupIndex);
+                    final groupName = categoriesMap.keys.elementAt(groupIndex);
                     final categories = categoriesMap[groupName]!;
 
                     return Column(
@@ -108,13 +103,13 @@ class TypePicker extends StatelessWidget {
                         if (groupName != 'Others')
                           Padding(
                             padding: const EdgeInsets.only(
-                                top: 24, bottom: 8, left: 8),
+                                top: 16, bottom: 8, left: 8),
                             child: Text(
                               groupName.toUpperCase(),
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 11,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.grey.shade500,
+                                color: activeColor,
                                 letterSpacing: 1.2,
                               ),
                             ),
@@ -122,37 +117,66 @@ class TypePicker extends StatelessWidget {
                         ...categories.map((type) {
                           final bool isSelected = selectedType.value == type;
                           final IconData icon =
-                              typeIcons[type] ?? Icons.category;
+                              typeIcons[type] ?? Icons.category_rounded;
 
-                          return ListTile(
-                            leading: Icon(
-                              icon,
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 3.0),
+                            child: Material(
                               color: isSelected
-                                  ? activeColor
-                                  : Colors.grey.shade600,
-                            ),
-                            title: Text(
-                              type,
-                              style: TextStyle(
-                                fontWeight: isSelected
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
-                                color: isSelected ? activeColor : null,
+                                  ? activeColor.withOpacity(0.1)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(14),
+                              child: ListTile(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                leading: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: isSelected
+                                        ? activeColor
+                                        : (isDarkMode
+                                            ? const Color(0xFF334155)
+                                            : const Color(0xFFE2E8F0)),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Icon(
+                                    icon,
+                                    color: isSelected
+                                        ? lightColor
+                                        : (isDarkMode
+                                            ? lightColor
+                                            : darkGray),
+                                    size: 20,
+                                  ),
+                                ),
+                                title: Text(
+                                  type,
+                                  style: TextStyle(
+                                    fontWeight: isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.w500,
+                                    color: isSelected
+                                        ? activeColor
+                                        : (isDarkMode
+                                            ? lightColor
+                                            : darkGray),
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                trailing: isSelected
+                                    ? Icon(Icons.check_circle_rounded,
+                                        color: activeColor, size: 22)
+                                    : null,
+                                onTap: () {
+                                  Navigator.pop(context, type);
+                                },
                               ),
                             ),
-                            trailing: isSelected
-                                ? Icon(Icons.check_circle, color: activeColor)
-                                : null,
-                            onTap: () {
-                              Navigator.pop(context, type);
-                            },
                           );
                         }),
                         if (groupIndex < categoriesMap.length - 1)
-                          Divider(
-                              height: 1,
-                              thickness: 0.5,
-                              color: Theme.of(context).dividerColor),
+                          const Divider(height: 16, thickness: 0.5),
                       ],
                     );
                   },

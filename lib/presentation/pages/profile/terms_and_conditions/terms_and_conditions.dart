@@ -44,9 +44,9 @@ class _TermsState extends State<TermsAndConditions> {
         title: const Text('Terms and Conditions'),
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () {
-            Navigator.pushNamed(context, '/profile');
+            Navigator.of(context).pop();
           },
         ),
       ),
