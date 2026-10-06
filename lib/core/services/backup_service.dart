@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:personal_expense_tracker/data/models/expense_model.dart';
+import 'package:personal_expense_tracker/data/models/fixed_item_model.dart';
 import 'package:personal_expense_tracker/presentation/providers/expense_provider.dart';
 import 'package:personal_expense_tracker/presentation/providers/expense_summary_provider.dart';
+import 'package:personal_expense_tracker/presentation/providers/fixed_item_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -15,11 +17,17 @@ class BackupService {
     try {
       final expenseBox = await Hive.openBox<ExpenseModel>('expenses');
       final settingsBox = await Hive.openBox('settings');
+      final fixedItemsBox = await Hive.openBox<FixedItemModel>('fixed_items');
 
       final double initialBankBalance =
           settingsBox.get('initial_bank_balance', defaultValue: 0.0) is num
               ? (settingsBox.get('initial_bank_balance') as num).toDouble()
               : 0.0;
+
+      final int monthlyCycleStartDay =
+          settingsBox.get('monthly_cycle_start_day', defaultValue: 5) is int
+              ? settingsBox.get('monthly_cycle_start_day') as int
+              : 5;
 
       final List<Map<String, dynamic>> expenseJsonList =
           expenseBox.values.map((model) {
@@ -34,12 +42,27 @@ class BackupService {
         };
       }).toList();
 
+      final List<Map<String, dynamic>> fixedItemsJsonList =
+          fixedItemsBox.values.map((model) {
+        return {
+          'id': model.id,
+          'title': model.title,
+          'amount': model.amount,
+          'isIncome': model.isIncome,
+          'category': model.category,
+          'currency': model.currency,
+          'isActive': model.isActive ?? true,
+        };
+      }).toList();
+
       final Map<String, dynamic> backupData = {
         'app': 'personal_expense_tracker',
-        'version': '1.0',
+        'version': '1.1',
         'exported_at': DateTime.now().toIso8601String(),
         'initial_bank_balance': initialBankBalance,
+        'monthly_cycle_start_day': monthlyCycleStartDay,
         'expenses': expenseJsonList,
+        'fixed_items': fixedItemsJsonList,
       };
 
       final String jsonString =
@@ -86,6 +109,7 @@ class BackupService {
 
       final expenseBox = await Hive.openBox<ExpenseModel>('expenses');
       final settingsBox = await Hive.openBox('settings');
+      final fixedItemsBox = await Hive.openBox<FixedItemModel>('fixed_items');
 
       await expenseBox.clear();
 
@@ -105,10 +129,34 @@ class BackupService {
         await expenseBox.put(model.id, model);
       }
 
+      if (decodedData.containsKey('fixed_items')) {
+        await fixedItemsBox.clear();
+        final List<dynamic> jsonFixed =
+            decodedData['fixed_items'] as List<dynamic>;
+        for (final item in jsonFixed) {
+          final Map<String, dynamic> fMap = item as Map<String, dynamic>;
+          final FixedItemModel model = FixedItemModel(
+            id: fMap['id'] as String,
+            title: fMap['title'] as String,
+            amount: (fMap['amount'] as num).toDouble(),
+            isIncome: fMap['isIncome'] as bool,
+            category: fMap['category'] as String?,
+            currency: fMap['currency'] as String?,
+            isActive: fMap['isActive'] as bool? ?? true,
+          );
+          await fixedItemsBox.put(model.id, model);
+        }
+      }
+
       if (decodedData.containsKey('initial_bank_balance')) {
         final double balance =
             (decodedData['initial_bank_balance'] as num).toDouble();
         await settingsBox.put('initial_bank_balance', balance);
+      }
+
+      if (decodedData.containsKey('monthly_cycle_start_day')) {
+        final int cycleDay = decodedData['monthly_cycle_start_day'] as int;
+        await settingsBox.put('monthly_cycle_start_day', cycleDay);
       }
 
       // Reload providers
@@ -117,9 +165,13 @@ class BackupService {
             Provider.of<ExpenseProvider>(context, listen: false);
         final summaryProvider =
             Provider.of<ExpenseSummaryProvider>(context, listen: false);
+        final fixedProvider =
+            Provider.of<FixedItemProvider>(context, listen: false);
 
         await expenseProvider.fetchAllExpenses();
         await summaryProvider.loadBankBalance();
+        await fixedProvider.loadFixedItems();
+
         final now = DateTime.now();
         await summaryProvider.loadSummaries(
           DateTime(now.year, now.month, 1),

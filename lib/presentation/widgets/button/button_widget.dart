@@ -11,6 +11,7 @@ class ButtonWidget extends StatelessWidget {
   final TextEditingController descriptionController;
   final ValueNotifier<DateTime> selectedDate;
   final ValueNotifier<String?> selectedType;
+  final ValueNotifier<String?>? selectedFinancialCategory;
   final ValueNotifier<String> selectedCurrency;
   final ValueNotifier<bool>? isProfitNotifier;
   final bool isEdit;
@@ -23,6 +24,7 @@ class ButtonWidget extends StatelessWidget {
     required this.descriptionController,
     required this.selectedDate,
     required this.selectedType,
+    this.selectedFinancialCategory,
     required this.selectedCurrency,
     this.isProfitNotifier,
     this.isEdit = false,
@@ -45,7 +47,11 @@ class ButtonWidget extends StatelessWidget {
                 double.parse(amountController.text.replaceAll(',', ''));
             final description = descriptionController.text;
             final date = selectedDate.value;
-            final type = selectedType.value;
+            final rawType = selectedType.value;
+            final categoryFallback = selectedFinancialCategory?.value;
+            final type = (rawType != null && rawType.isNotEmpty)
+                ? rawType
+                : categoryFallback;
             final currency = selectedCurrency.value;
             final currentIsProfit =
                 isProfitNotifier?.value ?? (expense?.isProfit ?? false);

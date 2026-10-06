@@ -73,7 +73,7 @@ class AppInfo extends StatelessWidget {
               ),
               const Divider(height: 32),
               Text(
-                'Personal Expense Tracker is a mobile application designed to help users track and manage their personal expenses efficiently.\n\nThe app provides intuitive tools to:\n  • Log new expenses and income\n  • Categorize transactions with rich icons\n  • View 33-33-33 rule budget analytics\n  • Export and filter historical date ranges\n\nTake control of your personal financial health with smart analytics!',
+                'Personal Expense Tracker is a mobile application designed to help users track and manage their personal expenses efficiently.\n\nThe app provides intuitive tools to:\n  • Log new expenses and income\n  • Categorize transactions with rich icons\n  • View personalized 24k financial structure analytics\n  • Export and filter historical date ranges\n\nTake control of your personal financial health with smart analytics!',
                 style: TextStyle(
                   fontSize: 14,
                   height: 1.6,

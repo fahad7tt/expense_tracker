@@ -1,6 +1,7 @@
 import 'package:provider/provider.dart';
 import 'package:personal_expense_tracker/presentation/providers/expense_provider.dart';
 import 'package:personal_expense_tracker/presentation/providers/expense_summary_provider.dart';
+import 'package:personal_expense_tracker/presentation/providers/fixed_item_provider.dart';
 import 'package:personal_expense_tracker/presentation/providers/navigation_provider.dart';
 import 'package:personal_expense_tracker/injection_container.dart' as di;
 
@@ -11,6 +12,9 @@ List<ChangeNotifierProvider> get appProviders {
     ),
     ChangeNotifierProvider<ExpenseSummaryProvider>(
       create: (_) => di.sl<ExpenseSummaryProvider>(),
+    ),
+    ChangeNotifierProvider<FixedItemProvider>(
+      create: (_) => di.sl<FixedItemProvider>(),
     ),
     ChangeNotifierProvider<NavigationProvider>(
       create: (_) => di.sl<NavigationProvider>(),

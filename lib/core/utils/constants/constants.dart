@@ -38,6 +38,7 @@ final Map<String, List<String>> groupedCategories = {
     'Fuel',
   ],
   'Living & Utilities': [
+    'Living & Utilities',
     'Rent',
     'Electricity',
     'Water',
@@ -59,12 +60,14 @@ final Map<String, List<String>> groupedCategories = {
     'Beauty',
   ],
   'Education & Work': [
+    'Personal Development',
     'Education',
     'Books',
     'Office',
   ],
   'Financial': [
     'Investment',
+    'Savings',
     'Insurance',
     'Tax',
     'Gift',
@@ -125,6 +128,7 @@ final Map<String, IconData> typeIcons = {
   'Drink': Icons.local_cafe_rounded,
   'Transport': Icons.directions_bus_rounded,
   'Fuel': Icons.local_gas_station_rounded,
+  'Living & Utilities': Icons.home_work_rounded,
   'Rent': Icons.home_rounded,
   'Electricity': Icons.electric_bolt_rounded,
   'Water': Icons.water_drop_rounded,
@@ -140,10 +144,12 @@ final Map<String, IconData> typeIcons = {
   'Medicine': Icons.medication_rounded,
   'Gym': Icons.fitness_center_rounded,
   'Beauty': Icons.content_cut_rounded,
+  'Personal Development': Icons.psychology_rounded,
   'Education': Icons.school_rounded,
   'Books': Icons.menu_book_rounded,
   'Office': Icons.work_rounded,
   'Investment': Icons.show_chart_rounded,
+  'Savings': Icons.savings_rounded,
   'Insurance': Icons.security_rounded,
   'Tax': Icons.receipt_long_rounded,
   'Gift': Icons.card_giftcard_rounded,
@@ -164,3 +170,26 @@ final Map<String, IconData> typeIcons = {
   'Refund': Icons.currency_exchange_rounded,
   'Other Profit': Icons.add_chart_rounded,
 };
+
+Color getCategoryThemeColor(String? type, bool isProfit) {
+  if (isProfit) return profitColor;
+  if (type == null) return softBlue;
+  final lower = type.toLowerCase();
+  if (lower.contains('investment')) return const Color(0xFF8B5CF6);
+  if (lower.contains('savings') ||
+      lower.contains('insurance') ||
+      lower.contains('tax')) return softBlue;
+  if (lower.contains('donation') ||
+      lower.contains('charity') ||
+      lower.contains('gift')) return const Color(0xFF10B981);
+  if (lower.contains('personal development') ||
+      lower.contains('education') ||
+      lower.contains('book')) return const Color(0xFFEC4899);
+  if (lower.contains('food') ||
+      lower.contains('grocery') ||
+      lower.contains('drink')) return const Color(0xFFF97316);
+  if (lower.contains('rent') ||
+      lower.contains('utility') ||
+      lower.contains('living')) return const Color(0xFFF59E0B);
+  return expenseColor;
+}

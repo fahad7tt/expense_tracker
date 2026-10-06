@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
 import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
 import 'package:personal_expense_tracker/core/utils/formatters/amount_formatter.dart';
 import 'package:personal_expense_tracker/core/utils/theme/system_theme.dart';
+import 'package:personal_expense_tracker/domain/entities/expense.dart';
 import 'package:personal_expense_tracker/presentation/widgets/bottom_navbar/bottom_navbar.dart';
 import 'package:provider/provider.dart';
 import '../../providers/expense_provider.dart';
@@ -20,7 +22,101 @@ class ExpenseListPage extends StatefulWidget {
 
 class _ExpenseListPageState extends State<ExpenseListPage> {
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
-  int _selectedFilterIndex = 0; // 0: All, 1: Expenses, 2: Profits
+  int _selectedFilterIndex = 0; // 0: All, 1: Expenses, 2: Income
+  String _selectedChipId = 'today'; // Default selected chip: 'today'
+
+  DateTime get _now => DateTime.now();
+
+  DateTime get _todayStart => DateTime(_now.year, _now.month, _now.day);
+  DateTime get _todayEnd =>
+      DateTime(_now.year, _now.month, _now.day, 23, 59, 59);
+
+  DateTime get _startOfWeek {
+    final today = _todayStart;
+    return today.subtract(Duration(days: today.weekday - 1)); // Monday 00:00
+  }
+
+  DateTime get _endOfWeek {
+    final start = _startOfWeek;
+    return DateTime(
+      start.year,
+      start.month,
+      start.day,
+      23,
+      59,
+      59,
+    ).add(const Duration(days: 6)); // Sunday 23:59:59
+  }
+
+  bool _isToday(DateTime date) {
+    return !date.isBefore(_todayStart) && !date.isAfter(_todayEnd);
+  }
+
+  bool _isThisWeek(DateTime date) {
+    return !date.isBefore(_startOfWeek) && !date.isAfter(_endOfWeek);
+  }
+
+  bool _matchesCategory(String? type, String key) {
+    if (type == null) return key == 'living';
+    final lower = type.toLowerCase();
+    if (key == 'investment') return lower.contains('investment');
+    if (key == 'savings') {
+      return lower.contains('savings') ||
+          lower.contains('insurance') ||
+          lower.contains('tax');
+    }
+    if (key == 'donation') {
+      return lower.contains('donation') ||
+          lower.contains('charity') ||
+          lower.contains('gift');
+    }
+    if (key == 'personal development') {
+      return lower.contains('personal development') ||
+          lower.contains('education') ||
+          lower.contains('book');
+    }
+    // living & utilities
+    return !lower.contains('investment') &&
+        !lower.contains('savings') &&
+        !lower.contains('insurance') &&
+        !lower.contains('tax') &&
+        !lower.contains('donation') &&
+        !lower.contains('charity') &&
+        !lower.contains('gift') &&
+        !lower.contains('personal development') &&
+        !lower.contains('education') &&
+        !lower.contains('book');
+  }
+
+  Color _getSelectedCategoryColor(String chipId) {
+    if (chipId == 'living') return const Color(0xFFF59E0B);
+    if (chipId == 'investment') return const Color(0xFF8B5CF6);
+    if (chipId == 'savings') return softBlue;
+    if (chipId == 'donation') return profitColor;
+    if (chipId == 'personal_dev') return const Color(0xFFEC4899);
+    return softBlue;
+  }
+
+  int _getChipTxnCount(List<Expense> all, String chipId) {
+    if (chipId == 'today') {
+      return all.where((e) => _isToday(e.date)).length;
+    } else if (chipId == 'this_week') {
+      return all.where((e) => _isThisWeek(e.date)).length;
+    } else if (chipId == 'living') {
+      return all.where((e) => _matchesCategory(e.type, 'living')).length;
+    } else if (chipId == 'investment') {
+      return all.where((e) => _matchesCategory(e.type, 'investment')).length;
+    } else if (chipId == 'savings') {
+      return all.where((e) => _matchesCategory(e.type, 'savings')).length;
+    } else if (chipId == 'donation') {
+      return all.where((e) => _matchesCategory(e.type, 'donation')).length;
+    } else if (chipId == 'personal_dev') {
+      return all
+          .where((e) => _matchesCategory(e.type, 'personal development'))
+          .length;
+    }
+    return all.length;
+  }
 
   @override
   void initState() {
@@ -32,407 +128,576 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.isDarkMode;
+
     return Scaffold(
       key: _navigatorKey,
-      appBar: AppBar(
-        title: const Text('Transactions'),
-        centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          // HOME CASHFLOW HERO BANNER
-          Consumer<ExpenseProvider>(
-            builder: (context, provider, child) {
-              final all = provider.expenses;
-              double totalSpent = 0;
-              double totalIncome = 0;
-              String currency = currencies.first;
+      appBar: AppBar(title: const Text('Transactions'), centerTitle: true),
+      body: Consumer<ExpenseProvider>(
+        builder: (context, provider, child) {
+          final all = provider.currentCycleExpenses;
+          double totalSpent = 0;
+          double totalIncome = 0;
+          String currency = currencies.first;
 
-              for (var e in all) {
-                if (e.currency != null && e.currency!.isNotEmpty) {
-                  currency = e.currency!;
-                }
-                if (e.isProfit) {
-                  totalIncome += e.amount;
-                } else {
-                  totalSpent += e.amount;
-                }
-              }
-              final double netTotal = totalIncome - totalSpent;
+          for (var e in all) {
+            if (e.currency != null && e.currency!.isNotEmpty) {
+              currency = e.currency!;
+            }
+            if (e.isProfit) {
+              totalIncome += e.amount;
+            } else {
+              totalSpent += e.amount;
+            }
+          }
+          final double netTotal = totalIncome - totalSpent;
 
-              return Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          // Filter expenses based on selected Chip
+          List<Expense> filteredExpenses;
+          if (_selectedChipId == 'today') {
+            filteredExpenses = all.where((e) => _isToday(e.date)).toList();
+          } else if (_selectedChipId == 'this_week') {
+            filteredExpenses = all.where((e) => _isThisWeek(e.date)).toList();
+          } else if (_selectedChipId == 'living') {
+            filteredExpenses = all
+                .where((e) => _matchesCategory(e.type, 'living'))
+                .toList();
+          } else if (_selectedChipId == 'investment') {
+            filteredExpenses = all
+                .where((e) => _matchesCategory(e.type, 'investment'))
+                .toList();
+          } else if (_selectedChipId == 'savings') {
+            filteredExpenses = all
+                .where((e) => _matchesCategory(e.type, 'savings'))
+                .toList();
+          } else if (_selectedChipId == 'donation') {
+            filteredExpenses = all
+                .where((e) => _matchesCategory(e.type, 'donation'))
+                .toList();
+          } else if (_selectedChipId == 'personal_dev') {
+            filteredExpenses = all
+                .where((e) => _matchesCategory(e.type, 'personal development'))
+                .toList();
+          } else {
+            filteredExpenses = List.from(all);
+          }
+
+          // Filter by Expense vs Income segmented tab
+          if (_selectedFilterIndex == 1) {
+            filteredExpenses = filteredExpenses
+                .where((e) => !e.isProfit)
+                .toList();
+          } else if (_selectedFilterIndex == 2) {
+            filteredExpenses = filteredExpenses
+                .where((e) => e.isProfit)
+                .toList();
+          }
+
+          // Calculate net total amount (+/-) for current filtered category chip
+          double chipNetTotal = 0;
+          for (var e in filteredExpenses) {
+            if (e.isProfit) {
+              chipNetTotal += e.amount;
+            } else {
+              chipNetTotal -= e.amount;
+            }
+          }
+
+          // Sort in chronological order
+          if (provider.isAscending) {
+            filteredExpenses.sort((a, b) => a.date.compareTo(b.date));
+          } else {
+            filteredExpenses.sort((a, b) => b.date.compareTo(a.date));
+          }
+
+          // Dynamic Title & Subtitle for Section
+          String sectionTitle = "TRANSACTIONS";
+          String sectionSubtitle = "";
+
+          if (_selectedChipId == 'today') {
+            sectionTitle = "TODAY'S TRANSACTIONS";
+            sectionSubtitle = DateFormat('dd MMMM yyyy').format(_now);
+          } else if (_selectedChipId == 'this_week') {
+            sectionTitle = "THIS WEEK'S TRANSACTIONS";
+            sectionSubtitle =
+                '${DateFormat('dd MMM').format(_startOfWeek)} – ${DateFormat('dd MMM yyyy').format(_endOfWeek)}';
+          } else if (_selectedChipId == 'living') {
+            sectionTitle = "LIVING & UTILITIES TRANSACTIONS";
+            sectionSubtitle = "Essential & daily expenses";
+          } else if (_selectedChipId == 'investment') {
+            sectionTitle = "INVESTMENT TRANSACTIONS";
+            sectionSubtitle = "Wealth building investments";
+          } else if (_selectedChipId == 'savings') {
+            sectionTitle = "SAVINGS TRANSACTIONS";
+            sectionSubtitle = "Emergency & cash reserves";
+          } else if (_selectedChipId == 'donation') {
+            sectionTitle = "DONATION & GIVING TRANSACTIONS";
+            sectionSubtitle = "Charity & social impact";
+          } else if (_selectedChipId == 'personal_dev') {
+            sectionTitle = "PERSONAL DEVELOPMENT TRANSACTIONS";
+            sectionSubtitle = "Up-skilling & growth";
+          }
+
+          return Column(
+            children: [
+              // HOME CASHFLOW HERO BANNER
+              Container(
+                margin: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF0F172A), Color(0xFF1E3A8A)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+                  color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                  borderRadius: BorderRadius.circular(22),
+                  border: Border.all(
+                    color: isDark
+                        ? softBlue.withValues(alpha: 0.25)
+                        : const Color(0xFFBFDBFE),
+                    width: 1.2,
                   ),
-                  borderRadius: BorderRadius.circular(18),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF1E3A8A).withValues(alpha: 0.25),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(21),
+                  child: Stack(
+                    children: [
+                      // Decorative background watermark icon
+                      Positioned(
+                        right: -12,
+                        bottom: -16,
+                        child: Icon(
+                          Icons.insights_rounded,
+                          size: 90,
+                          color: softBlue.withValues(alpha: 0.1),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 18,
+                          vertical: 16,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 3,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: softBlue.withValues(
+                                      alpha: isDark ? 0.18 : 0.1,
+                                    ),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.swap_vert_rounded,
+                                        size: 13,
+                                        color: isDark
+                                            ? const Color(0xFF93C5FD)
+                                            : const Color(0xFF2563EB),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        'TOTAL CASHFLOW',
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          letterSpacing: 1.1,
+                                          color: isDark
+                                              ? const Color(0xFF93C5FD)
+                                              : const Color(0xFF2563EB),
+                                          fontWeight: FontWeight.w800,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  '$currency ${formatAmount(netTotal)}',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w800,
+                                    color: isDark
+                                        ? (netTotal >= 0
+                                              ? Colors.white
+                                              : Colors.redAccent)
+                                        : (netTotal >= 0
+                                              ? const Color(0xFF0F172A)
+                                              : const Color(0xFFDC2626)),
+                                    letterSpacing: -0.5,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                _buildHeroStatPill(
+                                  label: 'Earned',
+                                  amount:
+                                      '$currency ${formatAmount(totalIncome)}',
+                                  color: profitColor,
+                                  icon: Icons.arrow_downward_rounded,
+                                  isDark: isDark,
+                                ),
+                                const SizedBox(width: 8),
+                                _buildHeroStatPill(
+                                  label: 'Spent',
+                                  amount:
+                                      '$currency ${formatAmount(totalSpent)}',
+                                  color: expenseColor,
+                                  icon: Icons.arrow_upward_rounded,
+                                  isDark: isDark,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // CATEGORY CHIPS BAR (TODAY, THIS WEEK, FINANCIAL CATEGORIES)
+              _buildCategoryChips(context, all),
+
+              // TRANSACTIONS SECTION HEADER ROW
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 6.0,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'TOTAL CASHFLOW',
-                          style: TextStyle(
-                            fontSize: 11,
-                            letterSpacing: 1.1,
-                            color: Colors.white70,
-                            fontWeight: FontWeight.w500,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                sectionTitle,
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: softBlue.withOpacity(0.12),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  '${filteredExpenses.length}',
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: softBlue,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          '$currency ${formatAmount(netTotal)}',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w600,
-                            color: netTotal >= 0 ? Colors.white : Colors.redAccent,
-                            letterSpacing: -0.3,
+                          if (sectionSubtitle.isNotEmpty) ...[
+                            const SizedBox(height: 2),
+                            Text(
+                              sectionSubtitle,
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: isDark
+                                    ? lightGrayText
+                                    : Colors.grey.shade600,
+                              ),
+                            ),
+                          ],
+                          const SizedBox(height: 6),
+                          // CATEGORY TOTAL DISPLAY IN COLORED CONTAINER MATCHING FINANCIAL CATEGORY
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: _getSelectedCategoryColor(_selectedChipId),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              chipNetTotal < 0
+                                  ? "-$currency ${formatAmount(chipNetTotal.abs())}"
+                                  : "$currency ${formatAmount(chipNetTotal)}",
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                    Row(
-                      children: [
-                        _buildHeroStatPill(
-                          label: 'Earned',
-                          amount: '$currency ${formatAmount(totalIncome)}',
-                          color: profitColor,
-                          icon: Icons.arrow_downward_rounded,
-                        ),
-                        const SizedBox(width: 8),
-                        _buildHeroStatPill(
-                          label: 'Spent',
-                          amount: '$currency ${formatAmount(totalSpent)}',
-                          color: expenseColor,
-                          icon: Icons.arrow_upward_rounded,
-                        ),
-                      ],
+                    IconButton(
+                      constraints: const BoxConstraints(),
+                      padding: const EdgeInsets.all(4),
+                      icon: Icon(
+                        provider.isAscending
+                            ? Icons.arrow_upward_rounded
+                            : Icons.arrow_downward_rounded,
+                        size: 18,
+                        color: softBlue,
+                      ),
+                      tooltip: 'Toggle Sort Order',
+                      onPressed: () {
+                        provider.sortExpensesByDate();
+                      },
                     ),
                   ],
                 ),
-              );
-            },
-          ),
-
-          // SEGMENTED FILTER TABS
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-            child: Container(
-              height: 44,
-              decoration: BoxDecoration(
-                color: context.isDarkMode
-                    ? const Color(0xFF1E293B)
-                    : const Color(0xFFE2E8F0),
-                borderRadius: BorderRadius.circular(30),
               ),
-              padding: const EdgeInsets.all(4),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final tabWidth = constraints.maxWidth / 3;
-                  final double alignX = _selectedFilterIndex == 0
-                      ? -1.0
-                      : (_selectedFilterIndex == 1 ? 0.0 : 1.0);
 
-                  return Stack(
-                    children: [
-                      AnimatedAlign(
-                        duration: const Duration(milliseconds: 250),
-                        curve: Curves.easeInOutCubic,
-                        alignment: Alignment(alignX, 0.0),
-                        child: Container(
-                          width: tabWidth,
-                          height: double.infinity,
-                          decoration: BoxDecoration(
-                            color: softBlue,
-                            borderRadius: BorderRadius.circular(26),
-                            boxShadow: [
-                              BoxShadow(
-                                color: softBlue.withOpacity(0.3),
-                                blurRadius: 6,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          _buildFilterTab(0, 'All'),
-                          _buildFilterTab(1, 'Expenses'),
-                          _buildFilterTab(2, 'Income'),
-                        ],
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ),
-
-          // ACTION BUTTONS (SORT & DATE FILTER)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Provider.of<ExpenseProvider>(context, listen: false)
-                          .sortExpensesByDate();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: context.isDarkMode
-                          ? const Color(0xFF1E293B)
-                          : Colors.white,
-                      foregroundColor: context.isDarkMode ? lightColor : deepBlue,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(
-                          color: context.isDarkMode
-                              ? const Color(0xFF334155)
-                              : const Color(0xFFCBD5E1),
-                        ),
-                      ),
-                    ),
-                    child: Consumer<ExpenseProvider>(
-                      builder: (context, provider, child) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.sort_rounded, size: 18),
-                            const SizedBox(width: 6),
-                            const Text(
-                              'Sort Date',
-                              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-                            ),
-                            const SizedBox(width: 4),
-                            Icon(
-                              provider.isAscending
-                                  ? Icons.arrow_upward_rounded
-                                  : Icons.arrow_downward_rounded,
-                              size: 14,
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      final DateTimeRange? picked = await showDateRangePicker(
-                        context: context,
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime.now(),
-                        initialEntryMode: DatePickerEntryMode.calendarOnly,
-                        builder: (context, child) {
-                          return Theme(
-                            data: Theme.of(context).copyWith(
-                              colorScheme: ColorScheme.dark(
-                                primary: softBlue,
-                                onPrimary: lightColor,
-                                surface: context.isDarkMode ? darkGray : lightColor,
-                                onSurface: context.isDarkMode ? lightColor : darkColor,
-                              ),
-                            ),
-                            child: child!,
-                          );
-                        },
-                      );
-                      if (picked != null) {
-                        // ignore: use_build_context_synchronously
-                        Provider.of<ExpenseProvider>(context, listen: false)
-                            .filterExpensesByDate(picked.start, picked.end);
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: context.isDarkMode
-                          ? const Color(0xFF1E293B)
-                          : Colors.white,
-                      foregroundColor: context.isDarkMode ? lightColor : deepBlue,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(
-                          color: context.isDarkMode
-                              ? const Color(0xFF334155)
-                              : const Color(0xFFCBD5E1),
-                        ),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Icon(Icons.date_range_rounded, size: 18),
-                        SizedBox(width: 6),
-                        Text(
-                          'Filter Date',
-                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // TRANSACTIONS LIST
-          Expanded(
-            child: Consumer<ExpenseProvider>(
-              builder: (context, provider, child) {
-                var expenses = provider.expenses;
-
-                if (_selectedFilterIndex == 1) {
-                  expenses = expenses.where((e) => !e.isProfit).toList();
-                } else if (_selectedFilterIndex == 2) {
-                  expenses = expenses.where((e) => e.isProfit).toList();
-                }
-
-                Widget content;
-                if (expenses.isEmpty) {
-                  content = Center(
-                    key: const ValueKey('empty_state'),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.receipt_long_rounded,
-                          size: 56,
-                          color: context.isDarkMode
-                              ? Colors.grey.shade700
-                              : Colors.grey.shade400,
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          "No transactions recorded",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: context.isDarkMode
-                                ? lightGrayText
-                                : Colors.grey.shade700,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          "Tap '+' to record a new transaction",
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: context.isDarkMode
-                                ? Colors.grey.shade600
-                                : Colors.grey.shade500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                } else {
-                  content = ListView.builder(
-                    key: ValueKey('list_$_selectedFilterIndex'),
-                    padding: const EdgeInsets.only(top: 4, bottom: 20),
-                    itemCount: expenses.length,
-                    itemBuilder: (context, index) {
-                      final expense = expenses[index];
-                      return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 5.0),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).cardTheme.color,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: context.isDarkMode
-                                ? const Color(0xFF334155)
-                                : const Color(0xFFE2E8F0),
-                          ),
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        child: Slidable(
-                          key: ValueKey(expense.id),
-                          startActionPane: ActionPane(
-                            motion: const ScrollMotion(),
-                            extentRatio: 0.45,
-                            children: [
-                              CustomSlidableAction(
-                                onPressed: (context) {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          EditExpensePage(expense: expense),
-                                    ),
-                                  );
-                                },
-                                backgroundColor: softBlue,
-                                child: const Icon(
-                                  Icons.edit_rounded,
-                                  color: lightColor,
-                                  size: 22,
-                                ),
-                              ),
-                              CustomSlidableAction(
-                                onPressed: (context) {
-                                  _showDeleteDialog(expense.id);
-                                },
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.error,
-                                child: const Icon(
-                                  Icons.delete_rounded,
-                                  color: lightColor,
-                                  size: 22,
-                                ),
-                              ),
-                            ],
-                          ),
-                          child: ExpenseListItem(expense: expense),
-                        ),
-                      );
-                    },
-                  );
-                }
-
-                return AnimatedSwitcher(
+              // FILTERED TRANSACTIONS LIST
+              Expanded(
+                child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 250),
-                  switchInCurve: Curves.easeOut,
-                  switchOutCurve: Curves.easeIn,
-                  transitionBuilder: (Widget child, Animation<double> animation) {
-                    return FadeTransition(
-                      opacity: animation,
-                      child: SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(0.0, 0.03),
-                          end: Offset.zero,
-                        ).animate(animation),
-                        child: child,
-                      ),
-                    );
-                  },
-                  child: content,
-                );
-              },
-            ),
-          ),
-        ],
+                  child: filteredExpenses.isEmpty
+                      ? Center(
+                          key: ValueKey('empty_state_$_selectedChipId'),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.receipt_long_rounded,
+                                size: 48,
+                                color: isDark
+                                    ? Colors.grey.shade700
+                                    : Colors.grey.shade400,
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                "No transactions found",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: isDark
+                                      ? lightGrayText
+                                      : Colors.grey.shade700,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                "Tap '+' to add a transaction",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: isDark
+                                      ? Colors.grey.shade600
+                                      : Colors.grey.shade500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : ListView.builder(
+                          key: ValueKey('list_chip_$_selectedChipId'),
+                          padding: const EdgeInsets.only(top: 2, bottom: 20),
+                          itemCount: filteredExpenses.length,
+                          itemBuilder: (context, index) {
+                            final expense = filteredExpenses[index];
+                            return Container(
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                                vertical: 4.0,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).cardTheme.color,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: isDark
+                                      ? const Color(0xFF334155).withOpacity(0.5)
+                                      : const Color(0xFFE2E8F0),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: isDark
+                                        ? Colors.black.withOpacity(0.15)
+                                        : Colors.black.withOpacity(0.03),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: Slidable(
+                                key: ValueKey(expense.id),
+                                startActionPane: ActionPane(
+                                  motion: const ScrollMotion(),
+                                  extentRatio: 0.45,
+                                  children: [
+                                    CustomSlidableAction(
+                                      onPressed: (context) {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (_) => EditExpensePage(
+                                              expense: expense,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      backgroundColor: softBlue,
+                                      child: const Icon(
+                                        Icons.edit_rounded,
+                                        color: lightColor,
+                                        size: 22,
+                                      ),
+                                    ),
+                                    CustomSlidableAction(
+                                      onPressed: (context) {
+                                        _showDeleteDialog(expense.id);
+                                      },
+                                      backgroundColor: Theme.of(
+                                        context,
+                                      ).colorScheme.error,
+                                      child: const Icon(
+                                        Icons.delete_rounded,
+                                        color: lightColor,
+                                        size: 22,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                child: ExpenseListItem(expense: expense),
+                              ),
+                            );
+                          },
+                        ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
       bottomNavigationBar: const BottomNavBar(),
+    );
+  }
+
+  Widget _buildCategoryChips(BuildContext context, List<Expense> all) {
+    final isDark = context.isDarkMode;
+
+    final chips = [
+      _ChipData(id: 'today', label: 'Today', color: softBlue),
+      _ChipData(id: 'this_week', label: 'This Week', color: softBlue),
+      _ChipData(
+        id: 'living',
+        label: 'Living & Utilities',
+        color: const Color(0xFFF59E0B),
+      ),
+      _ChipData(
+        id: 'investment',
+        label: 'Investment',
+        color: const Color(0xFF8B5CF6),
+      ),
+      _ChipData(id: 'savings', label: 'Savings', color: softBlue),
+      _ChipData(id: 'donation', label: 'Donation', color: profitColor),
+      _ChipData(
+        id: 'personal_dev',
+        label: 'Personal Development',
+        color: const Color(0xFFEC4899),
+      ),
+    ];
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+      child: Row(
+        children: chips.map((chip) {
+          final isSelected = _selectedChipId == chip.id;
+          final count = _getChipTxnCount(all, chip.id);
+
+          return Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: ChoiceChip(
+              label: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    chip.label,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.w600,
+                      color: isSelected
+                          ? Colors.white
+                          : (isDark ? lightColor : darkGray),
+                    ),
+                  ),
+                  if (count > 0) ...[
+                    const SizedBox(width: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? Colors.white.withOpacity(0.25)
+                            : chip.color.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        '$count',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: isSelected ? Colors.white : chip.color,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+              selected: isSelected,
+              selectedColor: chip.color,
+              backgroundColor: isDark
+                  ? const Color(0xFF1E293B)
+                  : const Color(0xFFF1F5F9),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+                side: BorderSide(
+                  color: isSelected
+                      ? chip.color
+                      : (isDark
+                            ? const Color(0xFF334155).withOpacity(0.6)
+                            : const Color(0xFFE2E8F0)),
+                ),
+              ),
+              elevation: isSelected ? 3 : 0,
+              pressElevation: 1,
+              shadowColor: chip.color.withOpacity(0.3),
+              onSelected: (selected) {
+                if (selected) {
+                  HapticFeedback.selectionClick();
+                  setState(() {
+                    _selectedChipId = chip.id;
+                  });
+                }
+              },
+            ),
+          );
+        }).toList(),
+      ),
     );
   }
 
@@ -441,19 +706,35 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
     required String amount,
     required Color color,
     required IconData icon,
+    bool isDark = false,
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(12),
+        color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : color.withValues(alpha: 0.25),
+          width: 1.2,
+        ),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: color.withValues(alpha: 0.08),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(4),
+            padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.25),
+              color: color.withValues(alpha: isDark ? 0.25 : 0.12),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, size: 12, color: color),
@@ -462,10 +743,24 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: const TextStyle(fontSize: 10, color: Colors.white70)),
-              Text(amount,
-                  style: const TextStyle(
-                      fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white)),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: isDark
+                      ? const Color(0xFF94A3B8)
+                      : const Color(0xFF64748B),
+                ),
+              ),
+              Text(
+                amount,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  color: isDark ? Colors.white : const Color(0xFF0F172A),
+                ),
+              ),
             ],
           ),
         ],
@@ -473,43 +768,23 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
     );
   }
 
-  Widget _buildFilterTab(int index, String label) {
-    final bool isSelected = _selectedFilterIndex == index;
-    return Expanded(
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () {
-          if (_selectedFilterIndex != index) {
-            HapticFeedback.selectionClick();
-            setState(() {
-              _selectedFilterIndex = index;
-            });
-          }
-        },
-        child: Container(
-          alignment: Alignment.center,
-          child: AnimatedDefaultTextStyle(
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeOut,
-            style: TextStyle(
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-              fontSize: 13,
-              color: isSelected
-                  ? lightColor
-                  : (context.isDarkMode ? lightGrayText : darkGray),
-            ),
-            child: Text(label),
-          ),
-        ),
-      ),
+  void _showDeleteDialog(int expenseId) {
+    DialogService.showDeleteConfirmationDialog(
+      _navigatorKey.currentContext!,
+      () {
+        Provider.of<ExpenseProvider>(
+          _navigatorKey.currentContext!,
+          listen: false,
+        ).removeExpense(expenseId);
+      },
     );
   }
+}
 
-  void _showDeleteDialog(int expenseId) {
-    DialogService.showDeleteConfirmationDialog(_navigatorKey.currentContext!,
-        () {
-      Provider.of<ExpenseProvider>(_navigatorKey.currentContext!, listen: false)
-          .removeExpense(expenseId);
-    });
-  }
+class _ChipData {
+  final String id;
+  final String label;
+  final Color color;
+
+  _ChipData({required this.id, required this.label, required this.color});
 }

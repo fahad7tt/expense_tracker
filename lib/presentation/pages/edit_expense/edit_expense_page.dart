@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_expense_tracker/core/utils/constants/constants.dart';
 import 'package:personal_expense_tracker/core/utils/theme/system_theme.dart';
+import 'package:personal_expense_tracker/presentation/widgets/financial_category_picker/financial_category_picker.dart';
 import 'package:personal_expense_tracker/presentation/widgets/type_picker/type_picker.dart';
 import '../../../core/utils/validation/form_validation.dart';
 import '../../../domain/entities/expense.dart';
@@ -27,6 +28,8 @@ class EditExpensePage extends StatelessWidget {
         ValueNotifier<DateTime>(expense.date);
     final ValueNotifier<String?> selectedType =
         ValueNotifier<String?>(expense.type);
+    final ValueNotifier<String?> selectedFinancialCategory = ValueNotifier<String?>(
+        FinancialCategoryPicker.detectCategory(expense.type, expense.isProfit));
     final ValueNotifier<String> selectedCurrency =
         ValueNotifier<String>(expense.currency ?? currencies.first);
     final ValueNotifier<bool> isProfitNotifier =
@@ -70,6 +73,9 @@ class EditExpensePage extends StatelessWidget {
                                 if (isProfitNotifier.value != false) {
                                   isProfitNotifier.value = false;
                                   selectedType.value = null;
+                                  selectedFinancialCategory.value =
+                                      FinancialCategoryPicker.detectCategory(
+                                          null, false);
                                 }
                               },
                               child: AnimatedContainer(
@@ -102,6 +108,9 @@ class EditExpensePage extends StatelessWidget {
                                 if (isProfitNotifier.value != true) {
                                   isProfitNotifier.value = true;
                                   selectedType.value = null;
+                                  selectedFinancialCategory.value =
+                                      FinancialCategoryPicker.detectCategory(
+                                          null, true);
                                 }
                               },
                               child: AnimatedContainer(
@@ -205,9 +214,22 @@ class EditExpensePage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 14),
+                          // FINANCIAL CATEGORY DROPDOWN FIELD
+                          FinancialCategoryPicker(
+                            selectedCategory: selectedFinancialCategory,
+                            isProfit: isProfit,
+                          ),
+                          const SizedBox(height: 16),
+
                           TypePicker(
                             selectedType: selectedType,
                             isProfit: isProfit,
+                            onTypeSelected: (type) {
+                              selectedType.value = type;
+                              final detected = FinancialCategoryPicker.detectCategory(
+                                  type, isProfit);
+                              selectedFinancialCategory.value = detected;
+                            },
                           ),
                           const SizedBox(height: 16),
                           FormFieldWidget(
@@ -235,6 +257,7 @@ class EditExpensePage extends StatelessWidget {
                       descriptionController: descriptionController,
                       selectedDate: selectedDate,
                       selectedType: selectedType,
+                      selectedFinancialCategory: selectedFinancialCategory,
                       selectedCurrency: selectedCurrency,
                       isProfitNotifier: isProfitNotifier,
                       isEdit: true,

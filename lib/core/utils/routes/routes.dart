@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:personal_expense_tracker/presentation/pages/expense_list/expense_list_page.dart';
+import 'package:personal_expense_tracker/presentation/pages/fixed_items/fixed_items_page.dart';
 import 'package:personal_expense_tracker/presentation/pages/profile/app_info/app_info.dart';
 import 'package:personal_expense_tracker/presentation/pages/profile/privacy_policy/privacy_policy.dart';
 import 'package:personal_expense_tracker/presentation/pages/profile/terms_and_conditions/terms_and_conditions.dart';
@@ -12,6 +13,7 @@ Map<String, WidgetBuilder> get appRoutes {
     '/home': (context) => const ExpenseListPage(),
     '/summary': (context) => const ExpenseSummaryPage(),
     '/profile': (context) => const ProfilePage(),
+    '/fixedItems': (context) => const FixedItemsPage(),
     '/appInfo': (context) => const AppInfo(),
     '/termsAndConditions': (context) => const TermsAndConditions(),
     '/privacyPolicy': (context) => const PrivacyPolicy(),

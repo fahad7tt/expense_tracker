@@ -6,10 +6,12 @@ import '../../../../core/utils/theme/system_theme.dart';
 class TypePicker extends StatelessWidget {
   final ValueNotifier<String?> selectedType;
   final bool isProfit;
+  final ValueChanged<String>? onTypeSelected;
 
   const TypePicker({
     required this.selectedType,
     this.isProfit = false,
+    this.onTypeSelected,
     super.key,
   });
 
@@ -27,7 +29,7 @@ class TypePicker extends StatelessWidget {
           controller: controller,
           readOnly: true,
           decoration: InputDecoration(
-            labelText: 'Category',
+            labelText: 'Specific Subcategory',
             labelStyle: TextStyle(
               color: context.isDarkMode ? lightGrayText : null,
             ),
@@ -42,6 +44,7 @@ class TypePicker extends StatelessWidget {
                 await _showTypeBottomSheet(context, categoriesMap, activeColor);
             if (selected != null) {
               selectedType.value = selected;
+              onTypeSelected?.call(selected);
             }
           },
         );

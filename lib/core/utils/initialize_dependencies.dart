@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:personal_expense_tracker/data/models/expense_model.dart';
+import 'package:personal_expense_tracker/data/models/fixed_item_model.dart';
 import 'package:personal_expense_tracker/injection_container.dart' as di;
 
 import '../helpers/notification_helper.dart';
@@ -9,6 +10,7 @@ Future<void> initializeDependencies() async {
   // Initialize Hive
   await Hive.initFlutter();
   Hive.registerAdapter(ExpenseModelAdapter());
+  Hive.registerAdapter(FixedItemModelAdapter());
 
   // Initialize Dependency Injection
   await di.init();
