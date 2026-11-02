@@ -5,7 +5,7 @@ import 'package:personal_expense_tracker/core/utils/theme/system_theme.dart';
 class DialogService {
   static Future<void> showDeleteConfirmationDialog(
     BuildContext context,
-    VoidCallback onConfirmed,
+    dynamic Function() onConfirmed,
   ) async {
     return showDialog<void>(
       context: context,
@@ -23,7 +23,7 @@ class DialogService {
           icon: Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: expenseColor.withOpacity(0.12),
+              color: expenseColor.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -93,9 +93,9 @@ class DialogService {
                       'Delete',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    onPressed: () {
-                      onConfirmed();
+                    onPressed: () async {
                       Navigator.of(context).pop();
+                      await onConfirmed();
                     },
                   ),
                 ),

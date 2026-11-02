@@ -85,10 +85,7 @@ class ButtonWidget extends StatelessWidget {
             // Refresh the summary provider
             // ignore: use_build_context_synchronously
             await Provider.of<ExpenseSummaryProvider>(context, listen: false)
-                .loadSummaries(
-              DateTime(DateTime.now().year, DateTime.now().month, 1),
-              DateTime(DateTime.now().year, DateTime.now().month + 1, 0),
-            );
+                .refreshCurrentMonth();
 
             // ignore: use_build_context_synchronously
             Navigator.of(context).pop();
@@ -98,7 +95,7 @@ class ButtonWidget extends StatelessWidget {
           backgroundColor: activeColor,
           foregroundColor: lightColor,
           elevation: 4,
-          shadowColor: activeColor.withOpacity(0.4),
+          shadowColor: activeColor.withValues(alpha: 0.4),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),

@@ -9,6 +9,7 @@ import 'package:personal_expense_tracker/domain/entities/expense.dart';
 import 'package:personal_expense_tracker/presentation/widgets/bottom_navbar/bottom_navbar.dart';
 import 'package:provider/provider.dart';
 import '../../providers/expense_provider.dart';
+import '../../providers/expense_summary_provider.dart';
 import '../../widgets/confirm_dialog/confirm_dialog.dart';
 import '../../widgets/expense_list_items/expense_list_items.dart';
 import '../edit_expense/edit_expense_page.dart';
@@ -21,8 +22,7 @@ class ExpenseListPage extends StatefulWidget {
 }
 
 class _ExpenseListPageState extends State<ExpenseListPage> {
-  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
-  int _selectedFilterIndex = 0; // 0: All, 1: Expenses, 2: Income
+  final int _selectedFilterIndex = 0; // 0: All, 1: Expenses, 2: Income
   String _selectedChipId = 'today'; // Default selected chip: 'today'
 
   DateTime get _now => DateTime.now();
@@ -131,7 +131,6 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
     final isDark = context.isDarkMode;
 
     return Scaffold(
-      key: _navigatorKey,
       appBar: AppBar(title: const Text('Transactions'), centerTitle: true),
       body: Consumer<ExpenseProvider>(
         builder: (context, provider, child) {
@@ -272,14 +271,15 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 18,
-                          vertical: 16,
+                          horizontal: 16,
+                          vertical: 14,
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Container(
                                   padding: const EdgeInsets.symmetric(
@@ -317,42 +317,53 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
                                     ],
                                   ),
                                 ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  '$currency ${formatAmount(netTotal)}',
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w800,
-                                    color: isDark
-                                        ? (netTotal >= 0
-                                              ? Colors.white
-                                              : Colors.redAccent)
-                                        : (netTotal >= 0
-                                              ? const Color(0xFF0F172A)
-                                              : const Color(0xFFDC2626)),
-                                    letterSpacing: -0.5,
+                                const SizedBox(width: 10),
+                                Flexible(
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                      '$currency ${formatAmount(netTotal)}',
+                                      style: TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w800,
+                                        color: isDark
+                                            ? (netTotal >= 0
+                                                ? Colors.white
+                                                : Colors.redAccent)
+                                            : (netTotal >= 0
+                                                ? const Color(0xFF0F172A)
+                                                : const Color(0xFFDC2626)),
+                                        letterSpacing: -0.5,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
+                            const SizedBox(height: 12),
                             Row(
                               children: [
-                                _buildHeroStatPill(
-                                  label: 'Earned',
-                                  amount:
-                                      '$currency ${formatAmount(totalIncome)}',
-                                  color: profitColor,
-                                  icon: Icons.arrow_downward_rounded,
-                                  isDark: isDark,
+                                Expanded(
+                                  child: _buildHeroStatPill(
+                                    label: 'Earned',
+                                    amount:
+                                        '$currency ${formatAmount(totalIncome)}',
+                                    color: profitColor,
+                                    icon: Icons.arrow_downward_rounded,
+                                    isDark: isDark,
+                                  ),
                                 ),
                                 const SizedBox(width: 8),
-                                _buildHeroStatPill(
-                                  label: 'Spent',
-                                  amount:
-                                      '$currency ${formatAmount(totalSpent)}',
-                                  color: expenseColor,
-                                  icon: Icons.arrow_upward_rounded,
-                                  isDark: isDark,
+                                Expanded(
+                                  child: _buildHeroStatPill(
+                                    label: 'Spent',
+                                    amount:
+                                        '$currency ${formatAmount(totalSpent)}',
+                                    color: expenseColor,
+                                    icon: Icons.arrow_upward_rounded,
+                                    isDark: isDark,
+                                  ),
                                 ),
                               ],
                             ),
@@ -398,7 +409,7 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: softBlue.withOpacity(0.12),
+                                  color: softBlue.withValues(alpha: 0.12),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
@@ -525,14 +536,14 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
                                 borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
                                   color: isDark
-                                      ? const Color(0xFF334155).withOpacity(0.5)
+                                      ? const Color(0xFF334155).withValues(alpha: 0.5)
                                       : const Color(0xFFE2E8F0),
                                 ),
                                 boxShadow: [
                                   BoxShadow(
                                     color: isDark
-                                        ? Colors.black.withOpacity(0.15)
-                                        : Colors.black.withOpacity(0.03),
+                                        ? Colors.black.withValues(alpha: 0.15)
+                                        : Colors.black.withValues(alpha: 0.03),
                                     blurRadius: 10,
                                     offset: const Offset(0, 3),
                                   ),
@@ -652,8 +663,8 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
                       ),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? Colors.white.withOpacity(0.25)
-                            : chip.color.withOpacity(0.15),
+                            ? Colors.white.withValues(alpha: 0.25)
+                            : chip.color.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
@@ -679,13 +690,13 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
                   color: isSelected
                       ? chip.color
                       : (isDark
-                            ? const Color(0xFF334155).withOpacity(0.6)
+                            ? const Color(0xFF334155).withValues(alpha: 0.6)
                             : const Color(0xFFE2E8F0)),
                 ),
               ),
               elevation: isSelected ? 3 : 0,
               pressElevation: 1,
-              shadowColor: chip.color.withOpacity(0.3),
+              shadowColor: chip.color.withValues(alpha: 0.3),
               onSelected: (selected) {
                 if (selected) {
                   HapticFeedback.selectionClick();
@@ -740,28 +751,37 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
             child: Icon(icon, size: 12, color: color),
           ),
           const SizedBox(width: 6),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  color: isDark
-                      ? const Color(0xFF94A3B8)
-                      : const Color(0xFF64748B),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: isDark
+                        ? const Color(0xFF94A3B8)
+                        : const Color(0xFF64748B),
+                  ),
                 ),
-              ),
-              Text(
-                amount,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? Colors.white : const Color(0xFF0F172A),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    amount,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w800,
+                      color: isDark ? Colors.white : const Color(0xFF0F172A),
+                    ),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
@@ -770,12 +790,18 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
 
   void _showDeleteDialog(int expenseId) {
     DialogService.showDeleteConfirmationDialog(
-      _navigatorKey.currentContext!,
-      () {
-        Provider.of<ExpenseProvider>(
-          _navigatorKey.currentContext!,
+      context,
+      () async {
+        await Provider.of<ExpenseProvider>(
+          context,
           listen: false,
         ).removeExpense(expenseId);
+        if (mounted) {
+          await Provider.of<ExpenseSummaryProvider>(
+            context,
+            listen: false,
+          ).refreshCurrentMonth();
+        }
       },
     );
   }

@@ -9,6 +9,7 @@ import '../../../core/utils/theme/system_theme.dart';
 import '../../../domain/entities/expense.dart';
 import '../../pages/edit_expense/edit_expense_page.dart';
 import '../../providers/expense_provider.dart';
+import '../../providers/expense_summary_provider.dart';
 import '../confirm_dialog/confirm_dialog.dart';
 
 void showExpenseDetailBottomSheet(BuildContext context, Expense expense) {
@@ -76,9 +77,13 @@ void showExpenseDetailBottomSheet(BuildContext context, Expense expense) {
                         tooltip: 'Delete',
                         onPressed: () {
                           Navigator.pop(ctx);
-                          DialogService.showDeleteConfirmationDialog(context, () {
-                            Provider.of<ExpenseProvider>(context, listen: false)
+                          DialogService.showDeleteConfirmationDialog(context, () async {
+                            await Provider.of<ExpenseProvider>(context, listen: false)
                                 .removeExpense(expense.id);
+                            if (context.mounted) {
+                              await Provider.of<ExpenseSummaryProvider>(context, listen: false)
+                                  .refreshCurrentMonth();
+                            }
                           });
                         },
                       ),

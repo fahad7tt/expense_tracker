@@ -6,12 +6,20 @@ import 'package:personal_expense_tracker/presentation/providers/navigation_provi
 import 'package:personal_expense_tracker/injection_container.dart' as di;
 
 List<ChangeNotifierProvider> get appProviders {
+  final expenseProvider = di.sl<ExpenseProvider>();
+  final summaryProvider = di.sl<ExpenseSummaryProvider>();
+
+  // Automatically refresh monthly summaries whenever an expense is added, modified, or removed
+  expenseProvider.onExpensesChanged = () {
+    summaryProvider.refreshCurrentMonth();
+  };
+
   return [
-    ChangeNotifierProvider<ExpenseProvider>(
-      create: (_) => di.sl<ExpenseProvider>(),
+    ChangeNotifierProvider<ExpenseProvider>.value(
+      value: expenseProvider,
     ),
-    ChangeNotifierProvider<ExpenseSummaryProvider>(
-      create: (_) => di.sl<ExpenseSummaryProvider>(),
+    ChangeNotifierProvider<ExpenseSummaryProvider>.value(
+      value: summaryProvider,
     ),
     ChangeNotifierProvider<FixedItemProvider>(
       create: (_) => di.sl<FixedItemProvider>(),

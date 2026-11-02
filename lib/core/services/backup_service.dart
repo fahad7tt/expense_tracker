@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:personal_expense_tracker/core/utils/helpers/monthly_cycle_helper.dart';
 import 'package:personal_expense_tracker/data/models/expense_model.dart';
 import 'package:personal_expense_tracker/data/models/fixed_item_model.dart';
 import 'package:personal_expense_tracker/presentation/providers/expense_provider.dart';
@@ -19,15 +20,19 @@ class BackupService {
       final settingsBox = await Hive.openBox('settings');
       final fixedItemsBox = await Hive.openBox<FixedItemModel>('fixed_items');
 
+      final dynamic rawBankBalance =
+          settingsBox.get('initial_bank_balance', defaultValue: 0.0);
       final double initialBankBalance =
-          settingsBox.get('initial_bank_balance', defaultValue: 0.0) is num
-              ? (settingsBox.get('initial_bank_balance') as num).toDouble()
-              : 0.0;
+          rawBankBalance is num ? rawBankBalance.toDouble() : 0.0;
 
+      final dynamic rawCycleDay = settingsBox.get(
+        MonthlyCycleHelper.cycleStartDayKey,
+        defaultValue: MonthlyCycleHelper.defaultCycleStartDay,
+      );
       final int monthlyCycleStartDay =
-          settingsBox.get('monthly_cycle_start_day', defaultValue: 5) is int
-              ? settingsBox.get('monthly_cycle_start_day') as int
-              : 5;
+          rawCycleDay is int && rawCycleDay >= 1 && rawCycleDay <= 31
+              ? rawCycleDay
+              : MonthlyCycleHelper.defaultCycleStartDay;
 
       final List<Map<String, dynamic>> expenseJsonList =
           expenseBox.values.map((model) {
@@ -55,12 +60,44 @@ class BackupService {
         };
       }).toList();
 
+      final dynamic rawTargetIncome = settingsBox.get('custom_target_income');
+      final double? customTargetIncome =
+          rawTargetIncome is num ? rawTargetIncome.toDouble() : null;
+
+      final dynamic rawWalletBalance =
+          settingsBox.get('wallet_balance', defaultValue: 0.0);
+      final double walletBalance =
+          rawWalletBalance is num ? rawWalletBalance.toDouble() : 0.0;
+
+      final dynamic rawWalletHistory = settingsBox.get('wallet_history');
+      final List<Map<String, dynamic>> walletHistory = rawWalletHistory is List
+          ? rawWalletHistory
+              .map((e) => Map<String, dynamic>.from(e as Map))
+              .toList()
+          : [];
+
+      final dynamic rawCategoryTargets = settingsBox.get('category_targets');
+      final Map<String, double> categoryTargets = rawCategoryTargets is Map
+          ? rawCategoryTargets.map(
+              (k, v) => MapEntry(k.toString(), (v as num).toDouble()))
+          : {};
+
+      final dynamic rawCategoryIsFixed = settingsBox.get('category_is_fixed');
+      final Map<String, bool> categoryIsFixed = rawCategoryIsFixed is Map
+          ? rawCategoryIsFixed.map((k, v) => MapEntry(k.toString(), v as bool))
+          : {};
+
       final Map<String, dynamic> backupData = {
         'app': 'personal_expense_tracker',
-        'version': '1.1',
+        'version': '1.2',
         'exported_at': DateTime.now().toIso8601String(),
         'initial_bank_balance': initialBankBalance,
         'monthly_cycle_start_day': monthlyCycleStartDay,
+        'custom_target_income': customTargetIncome,
+        'wallet_balance': walletBalance,
+        'wallet_history': walletHistory,
+        'category_targets': categoryTargets,
+        'category_is_fixed': categoryIsFixed,
         'expenses': expenseJsonList,
         'fixed_items': fixedItemsJsonList,
       };
@@ -103,7 +140,8 @@ class BackupService {
       final Map<String, dynamic> decodedData =
           jsonDecode(jsonContent) as Map<String, dynamic>;
 
-      if (!decodedData.containsKey('expenses')) {
+      final dynamic rawExpenses = decodedData['expenses'];
+      if (rawExpenses is! List) {
         throw const FormatException('Invalid backup file format');
       }
 
@@ -113,17 +151,30 @@ class BackupService {
 
       await expenseBox.clear();
 
-      final List<dynamic> jsonExpenses =
-          decodedData['expenses'] as List<dynamic>;
-      for (final item in jsonExpenses) {
-        final Map<String, dynamic> expMap = item as Map<String, dynamic>;
+      for (final item in rawExpenses) {
+        if (item is! Map) continue;
+        final expMap = Map<String, dynamic>.from(item);
+        final dynamic rawId = expMap['id'];
+        final int id = rawId is num
+            ? rawId.toInt()
+            : (int.tryParse(rawId?.toString() ?? '') ??
+                DateTime.now().millisecondsSinceEpoch);
+        final dynamic rawAmount = expMap['amount'];
+        final double amount = rawAmount is num
+            ? rawAmount.toDouble()
+            : (double.tryParse(rawAmount?.toString() ?? '') ?? 0.0);
+        final dynamic rawDate = expMap['date'];
+        final DateTime date = rawDate is String
+            ? (DateTime.tryParse(rawDate) ?? DateTime.now())
+            : DateTime.now();
+
         final ExpenseModel model = ExpenseModel(
-          id: expMap['id'] as int,
-          amount: (expMap['amount'] as num).toDouble(),
-          date: DateTime.parse(expMap['date'] as String),
-          description: expMap['description'] as String,
-          type: expMap['type'] as String?,
-          currency: expMap['currency'] as String?,
+          id: id,
+          amount: amount,
+          date: date,
+          description: expMap['description']?.toString() ?? '',
+          type: expMap['type']?.toString(),
+          currency: expMap['currency']?.toString(),
           isProfit: expMap['isProfit'] as bool? ?? false,
         );
         await expenseBox.put(model.id, model);
@@ -131,32 +182,81 @@ class BackupService {
 
       if (decodedData.containsKey('fixed_items')) {
         await fixedItemsBox.clear();
-        final List<dynamic> jsonFixed =
-            decodedData['fixed_items'] as List<dynamic>;
-        for (final item in jsonFixed) {
-          final Map<String, dynamic> fMap = item as Map<String, dynamic>;
-          final FixedItemModel model = FixedItemModel(
-            id: fMap['id'] as String,
-            title: fMap['title'] as String,
-            amount: (fMap['amount'] as num).toDouble(),
-            isIncome: fMap['isIncome'] as bool,
-            category: fMap['category'] as String?,
-            currency: fMap['currency'] as String?,
-            isActive: fMap['isActive'] as bool? ?? true,
-          );
-          await fixedItemsBox.put(model.id, model);
+        final dynamic rawFixed = decodedData['fixed_items'];
+        if (rawFixed is List) {
+          for (final item in rawFixed) {
+            if (item is! Map) continue;
+            final fMap = Map<String, dynamic>.from(item);
+            final dynamic rawAmount = fMap['amount'];
+            final double amount = rawAmount is num
+                ? rawAmount.toDouble()
+                : (double.tryParse(rawAmount?.toString() ?? '') ?? 0.0);
+
+            final FixedItemModel model = FixedItemModel(
+              id: fMap['id']?.toString() ??
+                  DateTime.now().millisecondsSinceEpoch.toString(),
+              title: fMap['title']?.toString() ?? '',
+              amount: amount,
+              isIncome: fMap['isIncome'] as bool? ?? false,
+              category: fMap['category']?.toString(),
+              currency: fMap['currency']?.toString(),
+              isActive: fMap['isActive'] as bool? ?? true,
+            );
+            await fixedItemsBox.put(model.id, model);
+          }
         }
       }
 
       if (decodedData.containsKey('initial_bank_balance')) {
-        final double balance =
-            (decodedData['initial_bank_balance'] as num).toDouble();
+        final dynamic rawBal = decodedData['initial_bank_balance'];
+        final double balance = rawBal is num
+            ? rawBal.toDouble()
+            : (double.tryParse(rawBal?.toString() ?? '') ?? 0.0);
         await settingsBox.put('initial_bank_balance', balance);
       }
 
       if (decodedData.containsKey('monthly_cycle_start_day')) {
-        final int cycleDay = decodedData['monthly_cycle_start_day'] as int;
-        await settingsBox.put('monthly_cycle_start_day', cycleDay);
+        final dynamic rawCycle = decodedData['monthly_cycle_start_day'];
+        final int cycleDay = rawCycle is num
+            ? rawCycle.toInt()
+            : (int.tryParse(rawCycle?.toString() ?? '') ??
+                MonthlyCycleHelper.defaultCycleStartDay);
+        await settingsBox.put(MonthlyCycleHelper.cycleStartDayKey, cycleDay);
+      }
+
+      if (decodedData.containsKey('custom_target_income')) {
+        final dynamic rawTgt = decodedData['custom_target_income'];
+        if (rawTgt is num) {
+          await settingsBox.put('custom_target_income', rawTgt.toDouble());
+        }
+      }
+
+      if (decodedData.containsKey('wallet_balance')) {
+        final dynamic rawWBal = decodedData['wallet_balance'];
+        if (rawWBal is num) {
+          await settingsBox.put('wallet_balance', rawWBal.toDouble());
+        }
+      }
+
+      if (decodedData.containsKey('wallet_history')) {
+        final dynamic rawWHist = decodedData['wallet_history'];
+        if (rawWHist is List) {
+          await settingsBox.put('wallet_history', rawWHist);
+        }
+      }
+
+      if (decodedData.containsKey('category_targets')) {
+        final dynamic rawCTgt = decodedData['category_targets'];
+        if (rawCTgt is Map) {
+          await settingsBox.put('category_targets', rawCTgt);
+        }
+      }
+
+      if (decodedData.containsKey('category_is_fixed')) {
+        final dynamic rawCFixed = decodedData['category_is_fixed'];
+        if (rawCFixed is Map) {
+          await settingsBox.put('category_is_fixed', rawCFixed);
+        }
       }
 
       // Reload providers
@@ -170,6 +270,9 @@ class BackupService {
 
         await expenseProvider.fetchAllExpenses();
         await summaryProvider.loadBankBalance();
+        await summaryProvider.loadTargetIncome();
+        await summaryProvider.loadWalletData();
+        await summaryProvider.loadCategoryTargets();
         await fixedProvider.loadFixedItems();
 
         final now = DateTime.now();

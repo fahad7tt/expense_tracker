@@ -21,7 +21,24 @@ class FetchExpenseSummaryByType {
   Future<List<ExpenseSummary>> execute(
       DateTime startDate, DateTime endDate) async {
     final expenses = await repository.getAllExpenses();
-    return _calculateSummaries(expenses, startDate, endDate);
+    final normalizedStart = DateTime(
+      startDate.year,
+      startDate.month,
+      startDate.day,
+      0,
+      0,
+      0,
+    );
+    final normalizedEnd = DateTime(
+      endDate.year,
+      endDate.month,
+      endDate.day,
+      23,
+      59,
+      59,
+      999,
+    );
+    return _calculateSummaries(expenses, normalizedStart, normalizedEnd);
   }
 
   List<ExpenseSummary> _calculateSummaries(

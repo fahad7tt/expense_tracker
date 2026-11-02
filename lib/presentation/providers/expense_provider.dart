@@ -28,6 +28,7 @@ class ExpenseProvider with ChangeNotifier {
   DateTime? _startDate;
   DateTime? _endDate;
   int _cycleStartDay = MonthlyCycleHelper.defaultCycleStartDay;
+  VoidCallback? onExpensesChanged;
 
   List<Expense> get expenses => _expenses;
   List<String> get customTypes => _customTypes;
@@ -72,18 +73,21 @@ class ExpenseProvider with ChangeNotifier {
   Future<void> addNewExpense(Expense expense) async {
     await addExpense(expense);
     await fetchAllExpenses();
+    onExpensesChanged?.call();
   }
 
   /// Updates an existing expense record.
   Future<void> modifyExpense(Expense expense) async {
     await updateExpense(expense);
     await fetchAllExpenses();
+    onExpensesChanged?.call();
   }
 
   /// Deletes an expense record by ID.
   Future<void> removeExpense(int id) async {
     await deleteExpense(id);
     await fetchAllExpenses();
+    onExpensesChanged?.call();
   }
 
   /// Adds a custom expense category type if not present.
